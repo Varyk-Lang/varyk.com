@@ -4,8 +4,6 @@ description = "Write, check, build, and run a first Varyk program."
 weight = 1
 +++
 
-<!-- TODO(release): run every command on this page against the first release and confirm the output. -->
-
 Varyk source files use the `.vr` extension and the compiler binary is `varyk`. [Install](/install/) it first.
 
 ## Hello, world
@@ -38,7 +36,7 @@ varyk build <file.vr> [--release] [--emit-rust] generate and build; prints the e
 varyk run   <file.vr> [--release] [-- args...]  build, then execute, forwarding the exit code
 ```
 
-`check` is the fast loop: it reports Varyk diagnostics without invoking cargo. `build` transpiles the program into a Rust crate under `target/varyk/`, builds it with cargo, and prints the path of the executable; generated Rust never lands in the source tree. `--emit-rust` shows the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer.
+`check` is the fast loop: it reports Varyk diagnostics without invoking cargo. `--release` builds with optimizations. `build` transpiles the program into a Rust crate under `target/varyk/`, builds it with cargo, and prints the path of the executable; generated Rust never lands in the source tree. `--emit-rust` prints every generated file (`Cargo.toml` and the Rust files) and then builds, so you can see the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer.
 
 ## Functions
 
@@ -77,7 +75,7 @@ fn main() {
 }
 ```
 
-Output: `Alice` twice. The second call compiles because a parameter written `user: User` is a shared borrow: `print_user` reads the value and the caller keeps it. There is no `&` at the call site. A function that changes a parameter writes `mut` in its signature; the [borrowing example](/learn/examples/#borrowing) shows that, and the [reference](/learn/reference/#ownership-rules) has the rules.
+Output: `Alice` twice. The second call compiles because a parameter written `user: User` is a shared borrow: `print_user` reads the value and the caller keeps it. There is no `&` at the call site. A function that changes a parameter writes `mut` in its signature; the [borrowing example](/learn/examples/#borrowing) shows that, and the [reference](/learn/reference/#functions-and-parameters) has the rules.
 
 `string` is the only string type. Writing `String` or `str` produces a diagnostic pointing at `string`.
 
@@ -87,4 +85,4 @@ Output: `Alice` twice. The second call compiles because a parameter written `use
 
 ## Diagnostics
 
-Every diagnostic has a code and, where it can, a fix-it. Rust habits are recognized and corrected: writing `&user` at a call site, `user: &User` in a signature, `String`, or a lifetime annotation each produce a diagnostic that says exactly what to change.
+Every diagnostic has a code (the [reference](/learn/reference/#error-codes) lists them) and, where it can, a fix-it. Rust habits are recognized and corrected: writing `&user` at a call site, `user: &User` in a signature, `String`, or a lifetime annotation each produce a diagnostic that says exactly what to change.

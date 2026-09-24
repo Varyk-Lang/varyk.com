@@ -6,7 +6,6 @@ sort_by = "weight"
 
 <p class="tagline">A systems programming language with Rust-like safety and Go-like simplicity. It compiles to Rust and runs on the Rust ecosystem.</p>
 
-<!-- TODO(release): confirm this notice against the first release (version, what changed). -->
 <div class="notice" role="note">
 
 **Experimental.** Varyk is pre-0.1: syntax, diagnostic codes, and command-line flags may change until a 0.1 release, which is not scheduled.
@@ -56,6 +55,8 @@ fn main() {
 ### generated Rust
 
 ```rust
+#![allow(dead_code, unused_variables, unused_mut)]
+
 struct User {
     name: String,
 }
@@ -69,7 +70,9 @@ fn print_user(user: &User) {
 }
 
 fn main() {
-    let mut user = User { name: "Alice".to_string() };
+    let mut user = User {
+        name: "Alice".to_string(),
+    };
     print_user(&user);
     rename(&mut user);
     print_user(&user);
@@ -79,8 +82,7 @@ fn main() {
 </div>
 </div>
 
-<!-- TODO(release): once the compiler emits this Rust, change "is designed to compile to" to "compiles to". -->
-<p class="note">The Varyk program is designed to compile to the Rust shown with it. It prints <code>Alice</code>, then <code>Bob</code>.</p>
+<p class="note">This is the Rust that <code>varyk build --emit-rust</code> generates for it. The program prints <code>Alice</code>, then <code>Bob</code>.</p>
 
 ## Why?
 

@@ -4,8 +4,6 @@ description = "The six milestone-1 example programs with their expected output."
 weight = 3
 +++
 
-<!-- TODO(release): confirm every output against the first release, and change "designed to compile to" to "compiles to" once the compiler emits the shown Rust. -->
-
 These are the six programs milestone 1 must compile and run with the shown output; they are the compiler's integration tests. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples).
 
 ## Hello
@@ -65,7 +63,7 @@ Output: `Alice` twice. The second call must compile: read-only parameters borrow
 
 ## Borrowing
 
-`borrowing.vr`, beside the Rust it is designed to compile to. Varyk visibility maps one to one: `pub` stays `pub`, everything else is private.
+`borrowing.vr`, beside the Rust that `varyk build --emit-rust` generates for it (`src/main.rs`). Varyk visibility maps one to one: `pub` stays `pub`, everything else is private.
 
 <div class="panes">
 <div>
@@ -102,6 +100,8 @@ fn main() {
 ### generated Rust
 
 ```rust
+#![allow(dead_code, unused_variables, unused_mut)]
+
 struct User {
     name: String,
 }
@@ -115,7 +115,9 @@ fn print_user(user: &User) {
 }
 
 fn main() {
-    let mut user = User { name: "Alice".to_string() };
+    let mut user = User {
+        name: "Alice".to_string(),
+    };
     print_user(&user);
     rename(&mut user);
     print_user(&user);

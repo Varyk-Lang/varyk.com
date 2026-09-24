@@ -14,11 +14,11 @@ varyk build <file.vr> [--release] [--emit-rust] generate and build; prints the e
 varyk run   <file.vr> [--release] [-- args...]  build, then execute, forwarding the exit code
 ```
 
-Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer. `check` is the fast loop and must stay fast. The build directory lives under `target/varyk/`, and generated Rust never lands in the source tree.
+`--release` builds with optimizations. `--emit-rust` prints every generated file, `Cargo.toml` and the Rust files, each after a line naming it, and then builds. Every command accepts `--message-format=json`, which prints errors as JSON on standard output, one object per line, with file, line, and byte column for the error, each label, and the fix-it. `check` is the fast loop and must stay fast. The build directory lives under `target/varyk/`, and generated Rust never lands in the source tree.
 
 ## Diagnostics
 
-Diagnostics have codes and fix-its. A code, once assigned, is never reused for a different meaning, though it may be retired. Rust habits are recognized: `&user` at a call site, `user: &User` in a signature, `String` or `str`, and lifetime annotations each get a diagnostic that says exactly what to change.
+Diagnostics have codes and fix-its; the [reference](/learn/reference/#error-codes) lists every code. A code, once assigned, is never reused for a different meaning, though it may be retired. Rust habits are recognized: `&user` at a call site, `user: &User` in a signature, `String` or `str`, and lifetime annotations each get a diagnostic that says exactly what to change.
 
 ## Planned
 

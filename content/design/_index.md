@@ -7,7 +7,7 @@ weight = 40
 
 Varyk is a systems programming language with Rust-like safety and Go-like simplicity. It compiles to Rust and runs on the Rust ecosystem, in the same way TypeScript compiles to JavaScript and runs on the JavaScript ecosystem. The analogy is about the ecosystem relationship, not the grammar: Varyk is not a superset of Rust. Rust code lives in `.rs` files next to Varyk code, and the two build together.
 
-Varyk targets services first, the space Go occupies, and standalone binaries second. The full [design specification](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-09-23-varyk-design.md) is in the compiler repository; this page summarizes it.
+Varyk targets services first, the space Go occupies, and standalone binaries second. This page summarizes the compiler repository's [design notes](https://github.com/Varyk-Lang/varyk/blob/main/docs/design.md); the [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md) and the full [design specification](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-09-23-varyk-design.md) are there too.
 
 ## Principles
 

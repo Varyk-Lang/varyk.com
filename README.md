@@ -44,9 +44,10 @@ Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Clo
 
 ### Launch checklist
 
-- [ ] Resolve every marker: `grep -rn "TODO(release)" content`
-- [ ] Replace the language reference with the compiler repository's `docs/language.md` once it exists
-- [ ] Publish the announcement post
+- [ ] Publish `varyk-syntax` and then `varyk` 0.0.1 to crates.io, and confirm `cargo install varyk` on a clean machine
+- [ ] Resolve the remaining markers: `grep -rn "TODO(release)" content`
+- [ ] Publish the announcement post: set its `date`, remove `draft = true`
+- [ ] Refresh `content/learn/reference.md` and the examples if the compiler repository's `docs/language.md` or `examples/` changed since the commit noted at the top of the reference
 - [ ] Add an `og:image` for link previews and review the `img-src` rule in `static/_headers`
 
 ### Cloudflare dashboard
