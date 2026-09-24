@@ -84,7 +84,7 @@ fn main() {
 
 ## Why?
 
-Rust's guarantees are worth having; its surface area is what keeps people out. Every `&`, every `String` versus `&str`, every lifetime, every `Send` bound is a decision Rust makes you write down. Varyk keeps the guarantees and moves the writing-down into the compiler. [Read why](/why/).
+Rust's speed and safety, without a garbage collector. Go's simplicity, without a runtime. And the whole Rust ecosystem on day one: every crate, Cargo, crates.io, no bindings. The generated Rust is readable and yours, so there is no lock-in, and the syntax Varyk removes is exactly where AI models writing Rust fail. [Read why](/why/).
 
 ## Who it's for
 

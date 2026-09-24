@@ -1,45 +1,51 @@
 +++
 title = "Why Varyk?"
-description = "Rust's guarantees are worth having. Its surface area is what keeps people out. Varyk keeps the guarantees and moves the surface into the compiler."
+description = "Rust's speed and safety, Go's simplicity, and the whole Rust ecosystem on day one, with no runtime and no lock-in."
 weight = 5
 +++
 
-Rust is the best answer we have to a hard question: how to get native speed and memory safety without a garbage collector. Its guarantees are real, and Varyk changes none of them. What Varyk changes is the amount of Rust you have to hold in your head to use them.
+Varyk is for teams that want what Rust delivers, native speed and memory safety without a garbage collector, but cannot afford what Rust costs to learn, to hire for, or to have written by a machine. It keeps every guarantee Rust makes, and it keeps the Rust ecosystem. What it removes is the part of Rust you have to hold in your head.
+
+## What you get
+
+**Rust's guarantees, unchanged.** A Varyk program becomes a Rust program and is checked by rustc, with the full borrow checker. Memory safety and freedom from data races are not approximated or re-implemented; they are Rust's, because the code is Rust. Varyk never uses `unsafe` to get around the checker.
+
+**Go's simplicity.** One string type. No `&` at call sites. No lifetime annotations. No `Send`, `Sync`, or `Pin` in your code. One way to do each thing, and a language reference short enough to fit in a prompt. A developer arriving from Go, TypeScript, or Python writes a service on the first day, not the first month.
+
+**The whole Rust ecosystem, on day one.** Every crate on crates.io, with no bindings, no FFI, and no ecosystem to bootstrap. A Varyk package is a Cargo package: `cargo add` works unchanged, `.rs` files sit next to `.vr` files in the same package, and the two build together. Every other simpler-than-Rust language starts its library ecosystem from zero. Varyk starts with Rust's.
+
+**Zero overhead.** No garbage collector, no reference counting, no runtime beyond what Rust already has. Passing a value to a Varyk function never allocates. The compiler inserts exactly one kind of allocation, a string literal placed into an owned slot, and `--emit-rust` shows you where. Nothing is cloned behind your back.
+
+**No lock-in.** The generated Rust is readable, and it is yours. Published Varyk libraries ship with their `.rs` files, so consumers need only cargo and never know the source language. If Varyk stops being the right choice, you keep the Rust.
+
+**Built for code that is written by machines.** AI agents are first-class writers of Varyk. The syntax Varyk removes, `&` at call sites, `&mut` versus `&`, lifetimes, `String` versus `&str`, is exactly where models that have read a great deal of Rust still fail. Diagnostics carry codes and fix-its and come in machine-readable form, so a generate-compile-fix loop has something precise to act on. Rust knowledge transfers; Rust's failure modes do not.
+
+**Gradual adoption, in both directions.** Add a `.vr` file to an existing Rust project, or start in Varyk and drop to a `.rs` file for the parts that need Rust's full expressiveness. Rust experts and newcomers work in one codebase, one build, one registry.
 
 ## The cost of Rust
 
-Writing a Rust service means making a set of decisions on almost every line, and writing each one down:
+Rust earns its guarantees by making you write down a decision on almost every line:
 
-- **At every call site**, whether to pass `x`, `&x`, or `&mut x`, which depends on the callee's signature and on whether you still need `x` afterwards. Get it wrong and the error arrives several lines later, phrased in terms of borrows you did not write.
-- **For every string**, which of `String`, `&str`, `&String`, `Box<str>`, or `Cow<str>` this one is, when to call `.to_string()`, `.to_owned()`, `.as_str()`, `.clone()`, and what each costs.
-- **In signatures**, lifetime annotations whenever elision does not cover the case, and the meaning of `'a` when it appears in an error.
-- **When a value moves**, whether you meant that, whether the type is `Copy`, and whether to `clone` instead. Cloning to make the compiler stop is the habit every Rust beginner picks up and every reviewer flags.
+- **At every call site**, whether to pass `x`, `&x`, or `&mut x`, depending on the callee and on whether you still need `x` afterwards.
+- **For every string**, which of `String`, `&str`, `&String`, `Box<str>`, or `Cow<str>` this one is, and when to `.to_string()`, `.as_str()`, or `.clone()`.
+- **In signatures**, lifetime annotations whenever elision does not cover the case.
+- **When a value moves**, whether you meant that, whether the type is `Copy`, and whether to clone instead. Cloning to make the compiler stop is the habit every Rust beginner picks up and every reviewer flags.
 - **In async code**, `Send`, `Sync`, `Pin`, and `'static` bounds on anything you spawn, with errors that name types you never wrote.
 - **Around every abstraction**, generics with trait bounds, `dyn Trait` behind a `Box`, `Rc` or `Arc`, `RefCell` or `Mutex`, and the borrow checker's view of each combination.
 
-Every one of these is a real decision with a real cost, and Rust makes you write it down. That discipline is what makes Rust programs fast and safe. It is also why the first weeks are hard, why the code stays dense long after, and why teams that would benefit from Rust choose Go instead: Go has the simplicity, but pays for it with a garbage collector and a runtime.
+That discipline is what makes Rust programs fast and safe. It is also why the first weeks are hard, why the code stays dense long after, why hiring for Rust is hard, and why teams that would benefit from Rust choose Go and accept the garbage collector.
 
-The same list is where AI coding agents fail. A model that has read a great deal of Rust still misplaces `&`, mixes up `String` and `&str`, invents lifetimes, and cannot see a `Send` bound coming. The syntax Rust makes you write is exactly the syntax that is hardest to get right from pattern-matching alone.
+## How Varyk removes it
 
-## The bet
+Most of that surface is the *spelling* of decisions the compiler can make on its own. Varyk keeps Rust's ownership model inside the compiler and takes the spelling out of the language:
 
-Most of that surface is the *spelling* of decisions the compiler can make. Varyk keeps Rust's ownership model inside the compiler and takes the spelling out of the language:
-
-- **Functions borrow by default.** A parameter written `user: User` is a shared borrow. One written `mut user: User` is a mutable borrow, and the caller sees the change. Call sites never write `&` or `&mut`; the signature carries the contract, and mutation of the caller's value is visible where the function is declared. *Milestone 1.*
-- **One string type.** `string` is the only one. The compiler decides the representation for each value, and the rules allow exactly one kind of allocation: a literal placed into an owned slot, converted at that line and visible in `--emit-rust`. Nothing is copied behind your back. *Milestone 1.*
-- **Lifetimes are inferred** wherever the compiler can infer them. Milestone 1 rejects the cases it cannot infer, with a diagnostic that says why; borrowed returns arrive with lifetime inference in *milestone 2*.
-- **Moves keep Rust's rules**, and the diagnostics for moved values are a first-class feature: the message shows where the move happened. Whether an explicit transfer syntax is needed at all is an open question, and Varyk does not add one until it is answered.
-- **`Send`, `Sync`, and `Pin` stay out of the surface language.** They are still enforced by rustc, and their failures are mapped to Varyk diagnostics that talk about your code, not the bounds. Async keeps JavaScript's surface: `async fn`, `.await`, and a built-in runtime. *Milestone 3.*
-- **Generics without declaring generics.** `Option`, `Result`, `Vec`, and `?` come in *milestone 2*, used without declaring type parameters. Declaring your own generics, traits, and attributes is unscheduled: each waits on an open question, because principle 9 says advanced features must justify their complexity, and these have not yet.
-- **Diagnostics with codes and fix-its**, and machine-readable output. When you write `&user`, `user: &User`, `String`, or a lifetime, the compiler says exactly what to change. That closes the loop for a person learning and for an agent iterating.
-
-## What you keep
-
-Everything Rust is good at. The generated program is Rust, checked by rustc with the full borrow check; Varyk never uses `unsafe` to get around it. There is no garbage collector and no runtime that Rust does not already have. Passing a value to a Varyk function never allocates.
-
-The ecosystem, without a bridge. A Varyk package is a Cargo package. `.rs` files sit next to `.vr` files in the same package and build with the same `cargo`; every Cargo crate is available; and from milestone 2 Varyk libraries publish to crates.io with their generated `.rs` included, so consumers need only cargo. This is the TypeScript relationship: adopt gradually, drop to the underlying language when you need it, and ship packages other people use without knowing what they were written in.
-
-The escape hatch is Rust itself. Anything Varyk cannot express goes in a `.rs` file, not in new syntax.
+- **Functions borrow by default.** `user: User` is a shared borrow; `mut user: User` is a mutable borrow, and the caller sees the change. The signature carries the contract, so mutation of the caller's value is visible where the function is declared, and call sites never write `&`. *Milestone 1.*
+- **One string type.** The compiler decides the representation for each value, with one visible allocation rule. *Milestone 1.*
+- **Lifetimes are inferred** wherever the compiler can infer them; borrowed returns arrive with lifetime inference in *milestone 2*.
+- **Moves keep Rust's rules**, and the diagnostic for a moved value shows where the move happened. Whether an explicit transfer syntax is needed at all is an open question, and Varyk does not add one until it is answered.
+- **`Send`, `Sync`, and `Pin` stay out of the surface.** Enforced by rustc, reported as Varyk diagnostics about your code rather than the bounds. Async keeps JavaScript's surface: `async fn`, `.await`, a built-in runtime. *Milestone 3.*
+- **Generics without declaring generics.** `Option`, `Result`, `Vec`, and `?`, used without type parameters. *Milestone 2.* Declaring your own generics, traits, and attributes is unscheduled: each waits on an open question, because advanced features must justify their complexity, and these have not yet.
+- **Diagnostics that recognize Rust habits.** Write `&user`, `user: &User`, `String`, or a lifetime, and the compiler says exactly what to change.
 
 ## Compared with others
 
