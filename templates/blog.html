@@ -5,7 +5,7 @@
 {%- if section.pages %}
 <ul class="pages posts">
 {%- for p in section.pages %}
-  <li><a href="{{ p.permalink }}">{{ p.title }}</a><time datetime="{{ p.date }}">{{ p.date | date(format="%-d %B %Y") }}</time>{% if p.description %}<p>{{ p.description }}</p>{% endif %}</li>
+  <li><a href="{{ p.path }}">{{ p.title }}</a><time datetime="{{ p.date }}">{{ p.date | date(format="%-d %B %Y") }}</time>{% if p.description %}<p>{{ p.description }}</p>{% endif %}</li>
 {%- endfor %}
 </ul>
 {%- else %}

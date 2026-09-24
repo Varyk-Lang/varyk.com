@@ -4,8 +4,6 @@ description = "How to install the Varyk compiler and check that it works."
 weight = 10
 +++
 
-<!-- TODO(release): publish varyk-syntax and varyk 0.0.1 to crates.io before launch, then confirm this command on a clean machine. -->
-
 Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build` and `varyk run` invoke `cargo`.
 
 ## Install the compiler
@@ -14,7 +12,7 @@ Varyk requires a stable Rust toolchain installed through [rustup](https://rustup
 cargo install varyk
 ```
 
-The current release is 0.0.1. To build the compiler from source instead, clone the [repository](https://github.com/Varyk-Lang/varyk) and run `cargo build -p varyk`.
+Releases are listed on [crates.io](https://crates.io/crates/varyk). To build the compiler from source instead, clone the [repository](https://github.com/Varyk-Lang/varyk) and run `cargo build -p varyk`.
 
 ## Check that it works
 

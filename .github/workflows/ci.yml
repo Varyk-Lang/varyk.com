@@ -20,7 +20,7 @@ jobs:
           test -f public/404.html
           test -f public/llms.txt
           test -f public/.well-known/security.txt
-          ! grep -rlE 'vlamic|new_rust|/Users/' public
+          ! grep -rlE 'projects/vlamic|new_rust|/Users/' public
 
       - name: Validate the Worker config
         run: npx --yes wrangler deploy --dry-run

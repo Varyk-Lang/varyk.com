@@ -4,9 +4,9 @@ description = "Everything Varyk accepts today: files and modules, types, stateme
 weight = 2
 +++
 
-<!-- Copied from docs/language.md in the compiler repository at commit 2c697b8. Refresh it by hand when that file changes. -->
+<!-- Copied from docs/language.md in the compiler repository at commit 8c04283. Refresh it by hand when that file changes. -->
 
-This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `2c697b8`.
+This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `8c04283`.
 
 This page describes everything Varyk accepts today, in milestone 1 of an
 experimental, pre-0.1 language (see [roadmap](/design/roadmap/) for what comes
@@ -269,6 +269,8 @@ dependencies, modules inside modules, per-field `pub`, joining strings with
 function cannot return something it only borrows, and a struct cannot store
 it.
 
+Names are ASCII only for now (letters, digits, and `_`); string text can be any Unicode.
+
 ## Calling Rust
 
 A module can be a Rust file. `mod greet;` next to `greet.rs`:
@@ -365,3 +367,4 @@ Every error has a code. A code is never reused for a different meaning.
 | V0303 | a parameter without `mut` passed to a `mut` parameter |
 | V0304 | a value the function only borrows, stored in a struct or returned |
 | V0305 | a value used after it was given away |
+| V0306 | one value passed twice to a call, where one of the parameters is `mut` |

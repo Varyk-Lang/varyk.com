@@ -12,13 +12,15 @@ sort_by = "weight"
 
 </div>
 
-## The central idea
+## The mission
 
-Rust-shaped source in which ordinary function calls do not require you to write borrowing. Functions borrow their parameters by default, so there is no `&` at the call site. A function that changes a parameter says so with `mut` in its signature.
+Varyk exists to make Rust available to everyone.
 
-Ownership, borrowing, and lifetimes still exist inside the compiler and in the safety guarantees. They rarely appear in everyday code.
+Rust is one of the safest and fastest languages there are, and one of the hardest to learn. Its guarantees belong in every program, but its complexity keeps most people out. Varyk keeps what makes Rust strong: memory safety without a garbage collector, native speed, and the Rust ecosystem. It removes the complexity that stands between people and those benefits, whether they come from another language, are writing their first program, or are an AI agent writing code.
 
-## Borrowing without `&`
+Varyk compiles to Rust, the way TypeScript compiles to JavaScript. The Rust compiler checks everything Varyk generates, so the guarantees are Rust's own.
+
+## What it looks like
 
 <div class="panes">
 <div>
@@ -86,7 +88,7 @@ fn main() {
 
 ## Why?
 
-Rust's speed and safety, without a garbage collector. Go's simplicity, without a runtime. And the whole Rust ecosystem on day one: every crate, Cargo, crates.io, no bindings. The generated Rust is readable and yours, so there is no lock-in, and the syntax Varyk removes is exactly where AI models writing Rust fail. [Read why](/why/).
+Rust's speed and safety, without a garbage collector. Go's simplicity, without a runtime. And the whole Rust ecosystem, with nothing to bootstrap: `.rs` files build alongside Varyk today, and every crate on crates.io, with no bindings, from milestone 2. The generated Rust is readable and yours, so there is no lock-in, and the syntax Varyk removes is exactly where AI models writing Rust fail. [Read why](/why/).
 
 ## Who it's for
 
@@ -96,7 +98,7 @@ Rust's speed and safety, without a garbage collector. Go's simplicity, without a
 ### Coming from JavaScript, TypeScript, Go, or Python
 
 - Native speed and memory safety without a garbage collector.
-- One string type, no reference sigils, no lifetime annotations.
+- Simple code: the compiler does the memory bookkeeping that Rust asks you to write by hand.
 - `async`/`await` that looks like JavaScript, with a built-in runtime (milestone 3).
 - One toolchain and one package registry, inherited from Cargo and crates.io (milestone 2).
 - Adopt gradually, drop to Rust when needed, and publish packages that other people use without knowing the source language (milestone 2).

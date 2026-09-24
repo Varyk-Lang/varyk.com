@@ -1,5 +1,6 @@
 base_url = "https://varyk.com"
 title = "Varyk"
+author = "Vlad Mickevic"
 description = "An experimental systems programming language with Rust-like safety and Go-like simplicity. It compiles to Rust."
 
 compile_sass = false

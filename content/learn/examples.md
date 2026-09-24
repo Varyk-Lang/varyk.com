@@ -4,7 +4,7 @@ description = "The six milestone-1 example programs with their expected output."
 weight = 3
 +++
 
-These are the six programs milestone 1 must compile and run with the shown output; they are the compiler's integration tests. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples).
+These are the six programs milestone 1 must compile and run with the shown output; they are the compiler's integration tests. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
