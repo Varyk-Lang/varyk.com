@@ -4,9 +4,9 @@ description = "Everything Varyk accepts today: files and modules, types, stateme
 weight = 2
 +++
 
-<!-- Copied from docs/language.md in the compiler repository at commit 8c04283. Refresh it by hand when that file changes. -->
+<!-- Copied from docs/language.md in the compiler repository at commit a98ae54. Refresh it by hand when that file changes. -->
 
-This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `8c04283`.
+This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `a98ae54`.
 
 This page describes everything Varyk accepts today, in milestone 1 of an
 experimental, pre-0.1 language (see [roadmap](/design/roadmap/) for what comes
@@ -33,7 +33,7 @@ fn main() {
 A program can be split into modules. `mod math;` in the entry file loads the
 module `math` from `math.vr` or `math.rs` in the same directory. A `.rs` file
 is Rust code; see "Calling Rust" below. Having both files is an error, and a
-module cannot be called `main`.
+module cannot be called `main` or `lib`.
 
 Inside a module, only items marked `pub` can be used from outside it. Use
 them through the module name:
@@ -293,9 +293,11 @@ fn main() {
 ```
 
 The `.rs` file is copied into the build as it is. It may use only Rust's
-standard library and may not declare modules of its own. Its top-level
-`pub fn` items can be called from Varyk when every parameter and the return
-type is one of these:
+standard library and may not declare modules of its own or include other
+files. `varyk check` reads its `pub fn` signatures and stops there; the Rust
+inside it is checked by rustc when you build. Its top-level `pub fn` items
+can be called from Varyk when every parameter and the return type is one of
+these:
 
 | Rust type | In Varyk |
 |---|---|
@@ -311,7 +313,9 @@ Any other signature, including `&String`, generics, lifetimes, trait
 objects, references in the return type, or unknown types, cannot be called.
 Calling such a function is an error that shows its Rust signature. Methods,
 `unsafe fn`, `async fn`, `const fn`, and `pub(crate)` functions are not
-imported.
+imported. A module that uses a glob import (`use ...::*`) cannot expose
+functions with these built-in parameter or return types, because the glob
+could redefine any of their names.
 
 ## The command line
 
@@ -350,8 +354,8 @@ Every error has a code. A code is never reused for a different meaning.
 | V0100 | unknown name |
 | V0101 | unknown type |
 | V0102 | unknown field |
-| V0103 | a name defined more than once |
-| V0104 | a module file that is missing, present as both `.vr` and `.rs`, unreadable, a `.rs` file that cannot be parsed as Rust, or named `main` |
+| V0103 | a name defined more than once, or a built-in type name used for a struct or module |
+| V0104 | a module file that is missing, present as both `.vr` and `.rs`, unreadable, a `.rs` file that cannot be parsed as Rust, or named `main` or `lib` |
 | V0105 | an item used from outside its module without `pub` |
 | V0106 | a missing or malformed `fn main()` |
 | V0107 | `String` or `str` written where `string` is meant |
@@ -367,4 +371,4 @@ Every error has a code. A code is never reused for a different meaning.
 | V0303 | a parameter without `mut` passed to a `mut` parameter |
 | V0304 | a value the function only borrows, stored in a struct or returned |
 | V0305 | a value used after it was given away |
-| V0306 | one value passed twice to a call, where one of the parameters is `mut` |
+| V0306 | a later argument changes or gives away a value that an earlier argument of the same call still borrows |
