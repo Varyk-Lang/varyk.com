@@ -19,7 +19,7 @@ PUBLIC = ROOT / "public"
 GROUPS = [
     ("Docs", ["/", "/why/", "/install/", "/learn/", "/learn/getting-started/", "/learn/reference/", "/learn/examples/"]),
     ("Project", ["/tools/", "/design/", "/design/roadmap/", "/community/", "/blog/"]),
-    ("Policies", ["/security/", "/license/"]),
+    ("Policies", ["/security/", "/license/", "/privacy/"]),
 ]
 
 FRONT_MATTER = re.compile(r"\A\+\+\+\n(.*?)\n\+\+\+\n", re.S)

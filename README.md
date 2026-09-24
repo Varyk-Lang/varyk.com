@@ -35,12 +35,20 @@ zola serve                                   # live preview while writing
 - Things that only the first release can settle are marked `<!-- TODO(release): ... -->` in the content. Comments are stripped from the Markdown copies.
 - To publish a blog post, remove `draft = true` from its front matter and set its `date`.
 
+## Contributing
+
+Open an issue or a pull request. CI builds the site and validates the Worker config on every pull request; a pull request that fails CI is not merged. Unless you explicitly state otherwise, any contribution you intentionally submit for inclusion, as defined in the Apache-2.0 license, is dual-licensed as below, without any additional terms or conditions.
+
 ## Deploying
 
-Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Cloudflare dashboard:
+Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Cloudflare dashboard (Workers & Pages → `varyk-com` → Settings → Build):
 
+- Git repository: `Varyk-Lang/varyk.com`, production branch `main`
 - Build command: `./scripts/build.sh`
 - Deploy command: `npx wrangler deploy`
+- Root directory: `/`
+
+Every pull request gets a preview build with its own URL; merging to `main` builds and deploys production. The custom domain `varyk.com` is attached to the Worker in the dashboard, not in `wrangler.jsonc`.
 
 ### Launch checklist
 

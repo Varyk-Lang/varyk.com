@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build the site
+        run: ./scripts/build.sh
+
+      - name: Check the outputs
+        run: |
+          test -f public/index.html
+          test -f public/404.html
+          test -f public/llms.txt
+          test -f public/.well-known/security.txt
+          ! grep -rlE 'vlamic|new_rust|/Users/' public
+
+      - name: Validate the Worker config
+        run: npx --yes wrangler deploy --dry-run

@@ -54,6 +54,7 @@ title = "Policies"
 links = [
   { name = "Security", path = "/security/" },
   { name = "License", path = "/license/" },
+  { name = "Privacy", path = "/privacy/" },
 ]
 
 [[extra.footer]]
