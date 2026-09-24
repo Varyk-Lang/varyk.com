@@ -39,6 +39,13 @@ zola serve                                   # live preview while writing
 
 Open an issue or a pull request. CI builds the site and validates the Worker config on every pull request; a pull request that fails CI is not merged. Unless you explicitly state otherwise, any contribution you intentionally submit for inclusion, as defined in the Apache-2.0 license, is dual-licensed as below, without any additional terms or conditions.
 
+### Previewing a pull request from a fork
+
+Cloudflare only builds branches in this repository, so fork pull requests get no preview URL. Two ways to see one:
+
+- **Locally.** `gh pr checkout <number>`, then `zola serve`. Zola only renders Markdown and templates, so this runs none of the contributor's code. For a production-like preview, `./scripts/build.sh && npx wrangler dev` runs their `scripts/`, so read that diff first.
+- **Build it on Cloudflare.** After reviewing the diff, push the branch into this repository: `gh pr checkout <number>` then `git push origin HEAD:preview/pr-<number>`. Cloudflare builds it and posts a preview URL. That build can deploy, so read any change to `scripts/`, `wrangler.jsonc`, or `static/_headers` first.
+
 ## Deploying
 
 Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Cloudflare dashboard (Workers & Pages → `varyk-com` → Settings → Build):
@@ -48,7 +55,7 @@ Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Clo
 - Deploy command: `npx wrangler deploy`
 - Root directory: `/`
 
-Every pull request gets a preview build with its own URL; merging to `main` builds and deploys production. The custom domain `varyk.com` is attached to the Worker in the dashboard, not in `wrangler.jsonc`.
+Every branch pushed to this repository, including pull request branches, gets a preview build with its own URL; pull requests from forks do not (see above). Merging to `main` builds and deploys production. The custom domain `varyk.com` is attached by the `routes` entry in `wrangler.jsonc`, so every deploy keeps it; the zone must be on the same Cloudflare account.
 
 ### Launch checklist
 
@@ -67,7 +74,7 @@ Settings the repository cannot control. All of them must allow crawlers, or the 
 - [ ] Bot Fight Mode: off, or not challenging verified bots
 - [ ] Crawler Hints (IndexNow): on
 - [ ] HSTS: on
-- [ ] Once the custom domain is attached: disable the `workers.dev` route and preview URLs, so search engines see one host
+- [ ] Once the custom domain is attached: disable the `workers.dev` route so search engines see one host, but keep preview URLs on, since fork previews depend on them. Check in the dashboard that preview URLs still work with the route off
 
 ### After launch
 
