@@ -82,7 +82,11 @@ fn main() {
 <!-- TODO(release): once the compiler emits this Rust, change "is designed to compile to" to "compiles to". -->
 <p class="note">The Varyk program is designed to compile to the Rust shown with it. It prints <code>Alice</code>, then <code>Bob</code>.</p>
 
-## Why Varyk
+## Why?
+
+Rust's guarantees are worth having; its surface area is what keeps people out. Every `&`, every `String` versus `&str`, every lifetime, every `Send` bound is a decision Rust makes you write down. Varyk keeps the guarantees and moves the writing-down into the compiler. [Read why](/why/).
+
+## Who it's for
 
 <div class="cols">
 <div>

@@ -17,7 +17,7 @@ PUBLIC = ROOT / "public"
 
 # Site-map order and grouping for llms.txt. Anything not listed goes under "Other".
 GROUPS = [
-    ("Docs", ["/", "/install/", "/learn/", "/learn/getting-started/", "/learn/reference/", "/learn/examples/"]),
+    ("Docs", ["/", "/why/", "/install/", "/learn/", "/learn/getting-started/", "/learn/reference/", "/learn/examples/"]),
     ("Project", ["/tools/", "/design/", "/design/roadmap/", "/community/", "/blog/"]),
     ("Policies", ["/security/", "/license/"]),
 ]

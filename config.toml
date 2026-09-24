@@ -20,6 +20,7 @@ extra_grammars = ["syntaxes/varyk.json"]
 
 [extra]
 nav = [
+  { name = "Why", path = "/why/" },
   { name = "Install", path = "/install/" },
   { name = "Learn", path = "/learn/" },
   { name = "Tools", path = "/tools/" },
@@ -40,6 +41,7 @@ links = [
 [[extra.footer]]
 title = "Project"
 links = [
+  { name = "Why Varyk?", path = "/why/" },
   { name = "Tools", path = "/tools/" },
   { name = "Design", path = "/design/" },
   { name = "Roadmap", path = "/design/roadmap/" },
