@@ -57,29 +57,26 @@ Pushes to `main` deploy through Cloudflare Workers Builds, configured in the Clo
 
 Every branch pushed to this repository, including pull request branches, gets a preview build with its own URL; pull requests from forks do not (see above). Merging to `main` builds and deploys production. The custom domain `varyk.com` is attached by the `routes` entry in `wrangler.jsonc`, so every deploy keeps it; the zone must be on the same Cloudflare account.
 
-### Launch checklist
+### Keeping the site in sync with the compiler
 
-- [ ] Publish `varyk-syntax` and then `varyk` 0.0.1 to crates.io, and confirm `cargo install varyk` on a clean machine
-- [ ] Resolve the remaining markers: `grep -rn "TODO(release)" content`
-- [ ] Publish the announcement post: set its `date`, remove `draft = true`
-- [ ] Refresh `content/learn/reference.md` and the examples if the compiler repository's `docs/language.md` or `examples/` changed since the commit noted at the top of the reference
-- [ ] Add an `og:image` for link previews and review the `img-src` rule in `static/_headers`
+`content/learn/reference.md` and the examples are copies from the compiler repository, and the generated Rust on the home and examples pages is the output of the released compiler. When the compiler's `docs/language.md`, `examples/`, or code generation changes, copy them again and update the commit noted at the top of the reference. The compiler is released by release-please, so the site never names a version; the Install page links to crates.io instead.
 
-### Cloudflare dashboard
+### Cloudflare settings
 
-Settings the repository cannot control. All of them must allow crawlers, or the site's own `robots.txt` is moot:
+Set in the dashboard, not in this repository. They must allow crawlers, or the site's own `robots.txt` is moot:
 
-- [ ] AI crawler blocking: off
-- [ ] Managed `robots.txt`: off
-- [ ] Bot Fight Mode: off, or not challenging verified bots
-- [ ] Crawler Hints (IndexNow): on
-- [ ] HSTS: on
-- [ ] Once the custom domain is attached: disable the `workers.dev` route so search engines see one host, but keep preview URLs on, since fork previews depend on them. Check in the dashboard that preview URLs still work with the route off
+- AI crawler blocking: off
+- Managed `robots.txt`: off
+- Bot Fight Mode: off
+- Crawler Hints (IndexNow): on
+- HSTS: on
+- The `workers.dev` route is off and preview URLs are on, set by `workers_dev` and `preview_urls` in `wrangler.jsonc` so deploys keep them
 
-### After launch
+The domain is verified in Google Search Console and Bing Webmaster Tools by a DNS TXT record, not by a file or tag in this repository, and `https://varyk.com/sitemap.xml` is submitted to both.
 
-- [ ] Verify the domain in Google Search Console and Bing Webmaster Tools using a DNS TXT record in Cloudflare, not a file or tag in this repository
-- [ ] Submit `https://varyk.com/sitemap.xml` to both
+### To do
+
+- Add an `og:image` for link previews and review the `img-src` rule in `static/_headers`
 
 ## License
 

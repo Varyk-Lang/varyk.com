@@ -2,10 +2,7 @@
 title = "Announcing Varyk 0.0.1"
 description = "The first release of Varyk: a compiler that proves the approach on six small programs and generates readable Rust."
 date = 2026-09-24
-draft = true
 +++
-
-<!-- TODO(release): set the date to the publish day and remove `draft = true` once varyk 0.0.1 is on crates.io. -->
 
 Varyk exists to make Rust available to everyone. Rust is one of the safest and fastest languages there are, and one of the hardest to learn. Its guarantees belong in every program, but its complexity keeps most people out. Varyk keeps what makes Rust strong: memory safety without a garbage collector, native speed, and the Rust ecosystem. It removes the complexity that stands between people and those benefits, whether they come from another language, are writing their first program, or are an AI agent writing code. Varyk compiles to Rust, the way TypeScript compiles to JavaScript, and the Rust compiler checks everything it generates. Today the first release, 0.0.1, is on crates.io, and the [compiler repository](https://github.com/Varyk-Lang/varyk) is public.
 

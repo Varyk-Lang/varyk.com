@@ -100,7 +100,13 @@ fn main() {
 ### generated Rust
 
 ```rust
-#![allow(dead_code, unused_variables, unused_mut)]
+#![allow(
+    dead_code,
+    unused_variables,
+    unused_mut,
+    arithmetic_overflow,
+    unconditional_panic
+)]
 
 struct User {
     name: String,
