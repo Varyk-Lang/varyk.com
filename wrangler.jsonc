@@ -5,6 +5,8 @@
   "workers_dev": false,
   // Keep preview URLs for pull request previews; the default follows workers_dev.
   "preview_urls": true,
+  // Required by `wrangler preview`, which Workers Builds runs for non-production branches.
+  "previews": {},
   "routes": [
     { "pattern": "varyk.com", "custom_domain": true }
   ],
