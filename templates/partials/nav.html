@@ -1,0 +1,6 @@
+<nav class="nav" aria-label="Site">
+  <a class="brand" href="/">Varyk</a>
+  {%- for item in config.extra.nav %}
+  <a href="{{ item.path }}"{% if item.path in current.path %} aria-current="page"{% endif %}>{{ item.name }}</a>
+  {%- endfor %}
+</nav>

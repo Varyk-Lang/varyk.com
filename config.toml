@@ -1,0 +1,61 @@
+base_url = "https://varyk.com"
+title = "Varyk"
+description = "An experimental systems programming language with Rust-like safety and Go-like simplicity. It compiles to Rust."
+
+compile_sass = false
+minify_html = false
+generate_sitemap = true
+generate_robots_txt = true
+# Site-wide feed off; the blog section turns its own feed on.
+generate_feeds = false
+feed_filenames = ["atom.xml"]
+
+# Zola 0.23 cannot switch highlighting off. Class-based output with the theme
+# stylesheet left unlinked renders code as plain text, and the small Varyk
+# grammar keeps `data-lang="varyk"` on Varyk blocks instead of "plain".
+[markdown.highlighting]
+style = "class"
+theme = "github-light"
+extra_grammars = ["syntaxes/varyk.json"]
+
+[extra]
+nav = [
+  { name = "Install", path = "/install/" },
+  { name = "Learn", path = "/learn/" },
+  { name = "Tools", path = "/tools/" },
+  { name = "Design", path = "/design/" },
+  { name = "Community", path = "/community/" },
+  { name = "Blog", path = "/blog/" },
+]
+
+[[extra.footer]]
+title = "Learn"
+links = [
+  { name = "Install", path = "/install/" },
+  { name = "Getting started", path = "/learn/getting-started/" },
+  { name = "Language reference", path = "/learn/reference/" },
+  { name = "Examples", path = "/learn/examples/" },
+]
+
+[[extra.footer]]
+title = "Project"
+links = [
+  { name = "Tools", path = "/tools/" },
+  { name = "Design", path = "/design/" },
+  { name = "Roadmap", path = "/design/roadmap/" },
+  { name = "Blog", path = "/blog/" },
+  { name = "Repository", url = "https://github.com/Varyk-Lang/varyk" },
+]
+
+[[extra.footer]]
+title = "Policies"
+links = [
+  { name = "Security", path = "/security/" },
+  { name = "License", path = "/license/" },
+]
+
+[[extra.footer]]
+title = "For agents"
+links = [
+  { name = "llms.txt", path = "/llms.txt" },
+]

@@ -1,0 +1,14 @@
+{
+  "name": "varyk",
+  "scopeName": "source.varyk",
+  "fileTypes": ["vr"],
+  "patterns": [
+    { "match": "//.*$", "name": "comment.line.double-slash.varyk" },
+    { "begin": "\"", "end": "\"", "name": "string.quoted.double.varyk", "patterns": [ { "match": "\\\\.", "name": "constant.character.escape.varyk" } ] },
+    { "match": "\\b(fn|let|mut|struct|mod|pub|if|else|while|break|continue|return)\\b", "name": "keyword.control.varyk" },
+    { "match": "\\b(true|false)\\b", "name": "constant.language.varyk" },
+    { "match": "\\b(bool|i8|i16|i32|i64|u8|u16|u32|u64|f32|f64|string)\\b", "name": "storage.type.varyk" },
+    { "match": "\\b[0-9]+(\\.[0-9]+)?\\b", "name": "constant.numeric.varyk" },
+    { "match": "\\b[a-z_][a-z0-9_]*!", "name": "entity.name.function.macro.varyk" }
+  ]
+}

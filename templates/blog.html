@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ section.title }}</h1>
+{{ section.content | safe }}
+{%- if section.pages %}
+<ul class="pages posts">
+{%- for p in section.pages %}
+  <li><a href="{{ p.permalink }}">{{ p.title }}</a><time datetime="{{ p.date }}">{{ p.date | date(format="%-d %B %Y") }}</time>{% if p.description %}<p>{{ p.description }}</p>{% endif %}</li>
+{%- endfor %}
+</ul>
+{%- else %}
+<p>No posts yet.</p>
+{%- endif %}
+<p class="meta"><a href="/blog/atom.xml">Atom feed</a></p>
+{% endblock content %}

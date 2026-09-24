@@ -1,0 +1,16 @@
+<footer>
+  <div class="footer-cols">
+  {%- for col in config.extra.footer %}
+    <div>
+      <h2>{{ col.title }}</h2>
+      <ul>
+      {%- for link in col.links %}
+        <li><a href="{{ link.url | default(value=link.path) }}">{{ link.name }}</a></li>
+      {%- endfor %}
+      </ul>
+    </div>
+  {%- endfor %}
+  </div>
+  <p><i lang="lt">Varyk</i> is Lithuanian for “go!” or “go on!”, the imperative of <i lang="lt">varyti</i>.</p>
+  <p>Varyk is licensed under MIT or Apache-2.0.</p>
+</footer>

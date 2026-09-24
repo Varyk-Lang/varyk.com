@@ -1,0 +1,42 @@
+{%- set is_home = current.path == "/" -%}
+{%- set description = current.description | default(value=config.description) -%}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if is_home %}Varyk: a systems language that compiles to Rust{% else %}{{ current.title }} · Varyk{% endif %}</title>
+<meta name="description" content="{{ description }}">
+<meta name="color-scheme" content="light dark">
+<link rel="canonical" href="{{ current.permalink }}">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/site.css">
+<link rel="alternate" type="text/markdown" href="{{ current.permalink }}index.md">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
+<link rel="alternate" type="application/atom+xml" href="/blog/atom.xml" title="Varyk blog">
+<meta property="og:type" content="{% if page is defined and page.date %}article{% else %}website{% endif %}">
+<meta property="og:url" content="{{ current.permalink }}">
+<meta property="og:site_name" content="Varyk">
+<meta property="og:title" content="{% if is_home %}Varyk{% else %}{{ current.title }}{% endif %}">
+<meta property="og:description" content="{{ description }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Varyk",
+  "url": "{{ config.base_url }}/",
+  "description": "{{ config.description }}"
+}
+</script>
+{%- if current.ancestors | length > 1 %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+{%- for ancestor in current.ancestors %}
+{%- set s = get_section(path=ancestor, metadata_only=true) %}
+    { "@type": "ListItem", "position": {{ loop.index }}, "name": "{% if s.path == "/" %}Varyk{% else %}{{ s.title }}{% endif %}", "item": "{{ s.permalink }}" },
+{%- endfor %}
+    { "@type": "ListItem", "position": {{ current.ancestors | length + 1 }}, "name": "{{ current.title }}", "item": "{{ current.permalink }}" }
+  ]
+}
+</script>
+{%- endif %}
