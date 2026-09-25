@@ -32,7 +32,11 @@ else
     mkdir -p .zola
     curl -sSfL -o ".zola/$tarball" \
       "https://github.com/getzola/zola/releases/download/v$ZOLA_VERSION/$tarball"
-    actual=$(python3 -c 'import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],"rb").read()).hexdigest())' ".zola/$tarball")
+    if command -v sha256sum >/dev/null; then
+      actual=$(sha256sum ".zola/$tarball" | cut -d ' ' -f 1)
+    else
+      actual=$(shasum -a 256 ".zola/$tarball" | cut -d ' ' -f 1)
+    fi
     if [ "$actual" != "$sha256" ]; then
       echo "build.sh: checksum mismatch for $tarball" >&2
       exit 1
@@ -45,6 +49,6 @@ fi
 "$zola" --version
 "$zola" build --force
 
-if [ -f scripts/agents.py ]; then
-  python3 scripts/agents.py
+if [ -f scripts/agents.sh ]; then
+  bash scripts/agents.sh
 fi

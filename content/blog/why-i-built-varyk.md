@@ -1,7 +1,7 @@
 +++
 title = "Why I built Varyk"
 description = "The languages I worked in before Varyk, what each of them got right, and the one thing none of them gave me."
-date = 2026-09-24
+date = 2026-09-24T14:31:00+02:00
 +++
 
 Varyk exists to make Rust available to everyone. That is the mission; this post is the story behind it.

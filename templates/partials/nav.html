@@ -1,6 +1,11 @@
-<nav class="nav" aria-label="Site">
-  <a class="brand" href="/">Varyk</a>
+<header class="site-head">
+<div class="wrap">
+  <a class="brand" href="/" aria-label="Varyk home">{% include "partials/logo.html" %}<span>varyk</span></a>
+  <nav class="site-nav" aria-label="Site">
   {%- for item in config.extra.nav %}
-  <a href="{{ item.path }}"{% if item.path in current.path %} aria-current="page"{% endif %}>{{ item.name }}</a>
+    <a href="{{ item.path }}"{% if item.path in current.path %} aria-current="page"{% endif %}>{{ item.name }}</a>
   {%- endfor %}
-</nav>
+  </nav>
+  <a class="gh" href="{{ config.extra.repository }}">{% include "partials/icon-github.html" %}<span>GitHub</span></a>
+</div>
+</header>

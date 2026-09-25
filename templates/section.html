@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="wrap doc">
 <h1>{{ section.title }}</h1>
 {{ section.content | safe }}
 {%- if section.pages %}
@@ -9,4 +10,5 @@
 {%- endfor %}
 </ul>
 {%- endif %}
+</div>
 {% endblock content %}
