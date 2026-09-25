@@ -3,3 +3,6 @@
   Referrer-Policy: strict-origin-when-cross-origin
   Content-Security-Policy: default-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'
   X-Frame-Options: DENY
+
+/
+  Link: </index.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"; type="text/plain", </blog/atom.xml>; rel="alternate"; type="application/atom+xml"

@@ -19,7 +19,7 @@ A change is done when `./scripts/build.sh` and `npx wrangler deploy --dry-run` b
 
 - `content/` pages as Markdown with TOML front matter; `content/blog/` posts.
 - `templates/` Tera templates; `partials/` holds head, nav, footer; `robots.txt` allows all crawlers and declares Content Signals.
-- `static/` copied as is: `site.css`, `_headers` (security headers and CSP), `.well-known/security.txt`.
+- `static/` copied as is: `site.css`, `_headers` (security headers, CSP, and the home page's `Link` header), `.well-known/security.txt`.
 - `config.toml` site settings; nav and footer links live under `[extra]`.
 - `scripts/build.sh` build entry point for local builds, CI, and Cloudflare.
 - `scripts/agents.py` writes a Markdown copy of each page and `/llms.txt`.
