@@ -20,6 +20,12 @@ theme = "github-light"
 extra_grammars = ["syntaxes/varyk.json"]
 
 [extra]
+# Site-wide copy used by the templates. Values are Markdown, rendered inline.
+repository = "https://github.com/Varyk-Lang/varyk"
+notice = "**Experimental.** Varyk is pre-0.1: syntax, diagnostic codes, and command-line flags may change until a 0.1 release, which is not scheduled."
+tagline = "Rust’s safety. Go’s *simplicity.*"
+contact = "Discussion happens in the [issues](https://github.com/Varyk-Lang/varyk/issues). Write to [hello@varyk.com](mailto:hello@varyk.com); security reports go to [security@varyk.com](mailto:security@varyk.com)."
+
 nav = [
   { name = "Why", path = "/why/" },
   { name = "Install", path = "/install/" },

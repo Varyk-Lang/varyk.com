@@ -2,17 +2,18 @@
 
 The website for [Varyk](https://varyk.com), an experimental systems programming language with Rust-like safety and Go-like simplicity that compiles to Rust. The compiler lives at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
 
-The site is built with [Zola](https://www.getzola.org) and served as static assets by a Cloudflare Worker. No JavaScript, no external requests.
+The site is built with [Zola](https://www.getzola.org) and served as static assets by a Cloudflare Worker. No JavaScript, no external requests. The design system (logo, colour, type, layout) is in [docs/design-guidelines.md](docs/design-guidelines.md).
 
 ## Layout
 
 - `content/` — the pages, as Markdown with TOML front matter.
-- `templates/` — Tera templates; `partials/` holds the head, nav, and footer.
-- `static/` — copied as is: `site.css`, `favicon.svg`, `_headers`, `.well-known/security.txt`.
+- `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, and the home page figure.
+- `static/` — copied as is: `site.css`, `favicon.svg`, `fonts/` (Newsreader, SIL Open Font License), `_headers`, `.well-known/security.txt`.
 - `syntaxes/varyk.json` — a minimal grammar so Varyk code blocks keep their `varyk` label.
-- `scripts/build.sh` — fetches the pinned Zola if needed, builds into `public/`, then runs `scripts/agents.py`.
-- `scripts/agents.py` — writes a Markdown copy of every page (`<page>/index.md`) and `/llms.txt` for AI agents.
-- `config.toml` — site settings; the nav and footer link lists live under `[extra]`.
+- `scripts/build.sh` — fetches the pinned Zola if needed, builds into `public/`, then runs `scripts/agents.sh`.
+- `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`) and `/llms.txt` for AI agents, and fails the build if the home page figure drifts from the borrowing example.
+- `config.toml` — site settings; the nav and footer link lists and the site-wide copy live under `[extra]`.
+- `docs/` — the design guidelines and the brand assets (`docs/brand/`); not published.
 - `wrangler.jsonc` — the Worker: assets only, served from `public/`, with `404.html` for missing paths.
 
 ## Working on the site
@@ -24,7 +25,7 @@ zola serve                                   # live preview while writing
 ./scripts/build.sh && npx wrangler dev       # production-like preview: headers, 404, Markdown copies
 ```
 
-`zola serve` does not run `agents.py`, so `/llms.txt` and the `.md` copies only appear in the full build.
+`zola serve` does not run `agents.sh`, so `/llms.txt` and the `.md` copies only appear in the full build.
 
 ## Content rules
 
@@ -33,7 +34,7 @@ zola serve                                   # live preview while writing
 - Varyk code blocks are tagged `varyk`, never `rust`, so agents reading the Markdown copies see the right language.
 - No shortcodes in content; the build fails if one is used, because it would leak into the Markdown copies.
 - Things that only the first release can settle are marked `<!-- TODO(release): ... -->` in the content. Comments are stripped from the Markdown copies.
-- To publish a blog post, remove `draft = true` from its front matter and set its `date`.
+- To publish a blog post, remove `draft = true` from its front matter and set its `date` with the time, such as `date = 2026-09-24T20:25:00+02:00`. The blog lists the newest post first, and a time keeps posts from the same day in order.
 
 ## Contributing
 

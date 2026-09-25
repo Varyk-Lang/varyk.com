@@ -1,17 +1,28 @@
-<footer>
-  <div class="footer-cols">
-  {%- for col in config.extra.footer %}
+<footer class="site-foot">
+<div class="wrap">
+  <div class="foot-top">
     <div>
-      <h2>{{ col.title }}</h2>
-      <ul>
-      {%- for link in col.links %}
-        <li><a href="{{ link.url | default(value=link.path) }}">{{ link.name }}</a></li>
-      {%- endfor %}
-      </ul>
+      <a class="brand" href="/" aria-label="Varyk home">{% include "partials/logo.html" %}<span>varyk</span></a>
+      <p class="foot-tag">{{ config.extra.tagline | markdown(inline=true) | safe }}</p>
+      <p>{{ config.extra.contact | markdown(inline=true) | safe }}</p>
     </div>
-  {%- endfor %}
+    <div class="footer-cols">
+    {%- for col in config.extra.footer %}
+      <div>
+        <h2>{{ col.title }}</h2>
+        <ul>
+        {%- for link in col.links %}
+          <li><a href="{{ link.url | default(value=link.path) }}">{{ link.name }}</a></li>
+        {%- endfor %}
+        </ul>
+      </div>
+    {%- endfor %}
+    </div>
   </div>
-  <p><i lang="lt">Varyk</i> is Lithuanian for “go!” or “go on!”, the imperative of <i lang="lt">varyti</i>.</p>
-  <p>Created by <a href="https://github.com/vlamic">Vlad Mickevic</a>.</p>
-  <p>© 2026 Vladislav (Vlad) Mickevic and Varyk contributors. Licensed under MIT or Apache-2.0.</p>
+  <div class="foot-legal">
+    <p><i lang="lt">Varyk</i> is Lithuanian for “go!” or “go on!”, the imperative of <i lang="lt">varyti</i>.</p>
+    <p>Created by <a href="https://github.com/vlamic">Vlad Mickevic</a>.</p>
+    <p>© 2026 Vladislav (Vlad) Mickevic and Varyk contributors. Licensed under MIT or Apache-2.0.</p>
+  </div>
+</div>
 </footer>

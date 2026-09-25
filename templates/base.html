@@ -5,13 +5,12 @@
 {% include "partials/head.html" %}
 </head>
 <body>
-<div class="wrap">
 <a class="skip" href="#main">Skip to content</a>
+<aside class="strip" aria-label="Project status"><p class="wrap">{{ config.extra.notice | markdown(inline=true) | safe }}</p></aside>
 {% include "partials/nav.html" %}
 <main id="main">
 {% block content %}{% endblock content %}
 </main>
 {% include "partials/footer.html" %}
-</div>
 </body>
 </html>

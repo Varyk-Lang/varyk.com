@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<div class="wrap doc">
 <h1>{{ section.title }}</h1>
 {{ section.content | safe }}
 {%- if section.pages %}
@@ -12,4 +13,5 @@
 <p>No posts yet.</p>
 {%- endif %}
 <p class="meta"><a href="/blog/atom.xml">Atom feed</a></p>
+</div>
 {% endblock content %}

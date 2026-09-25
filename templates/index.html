@@ -1,5 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>{{ section.title }}</h1>
-{{ section.content | safe }}
+{%- set home = section.extra %}
+<section class="hero">
+<div class="wrap">
+  <div>
+    <p class="eyebrow">{{ home.eyebrow }}</p>
+    <h1>{% for line in home.headline %}<span>{{ line | markdown(inline=true) | safe }}</span>{% if not loop.last %} {% endif %}{% endfor %}</h1>
+    <p class="lead">{{ home.lead }}</p>
+    <div class="actions">
+    {%- for action in home.actions %}
+      <a{% if loop.first %} class="button"{% endif %} href="{{ action.path }}">{{ action.name }}</a>
+    {%- endfor %}
+    </div>
+    <p class="install"><span>{{ home.install_label }}</span><code>{{ home.install }}</code></p>
+  </div>
+  {% include "partials/home-figure.html" %}
+</div>
+</section>
+{#- Each `##` section of content/_index.md becomes a numbered band described by `extra.bands`, in order. -#}
+{%- set parts = section.content | split(pat="<h2") %}
+{%- for part in parts %}
+{%- if loop.first %}
+{{ part | safe }}
+{%- else %}
+{%- set band = home.bands[loop.index0 - 1] %}
+<section class="band band-{{ band.style }}" id="{{ band.id }}" data-num="{% if loop.index0 < 10 %}0{% endif %}{{ loop.index0 }}" data-label="{{ band.label }}"{% if band.done is defined %} data-done="{{ band.done }}"{% endif %}>
+{%- if band.columns is defined and band.columns %}
+{%- for column in part | split(pat="<h3") %}
+{%- if loop.first %}
+<h2{{ column | safe }}
+<div class="cols">
+{%- else %}
+<div><h3{{ column | safe }}</div>
+{%- endif %}
+{%- endfor %}
+</div>
+{%- else %}
+<h2{{ part | safe }}
+{%- endif %}
+</section>
+{%- endif %}
+{%- endfor %}
 {% endblock content %}
