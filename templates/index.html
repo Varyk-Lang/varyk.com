@@ -14,10 +14,11 @@
     </div>
     <p class="install"><span>{{ home.install_label }}</span><code>{{ home.install }}</code></p>
   </div>
-  {% include "partials/home-figure.html" %}
+  {% include "partials/home-service.html" %}
 </div>
 </section>
-{#- Each `##` section of content/_index.md becomes a numbered band described by `extra.bands`, in order. -#}
+{#- Each `##` section of content/_index.md becomes a numbered band described by `extra.bands`, in order.
+    A band with `figure = "borrowing"` gets the borrowing figure after its first paragraph. -#}
 {%- set parts = section.content | split(pat="<h2") %}
 {%- for part in parts %}
 {%- if loop.first %}
@@ -35,6 +36,11 @@
 {%- endif %}
 {%- endfor %}
 </div>
+{%- elif band.figure is defined and band.figure == "borrowing" %}
+{%- set chunks = part | split(pat="</p>") %}
+<h2{{ chunks[0] | safe }}</p>
+{% include "partials/home-figure.html" %}
+{%- for chunk in chunks %}{% if not loop.first %}{{ chunk | safe }}{% if not loop.last %}</p>{% endif %}{% endif %}{% endfor %}
 {%- else %}
 <h2{{ part | safe }}
 {%- endif %}

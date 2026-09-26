@@ -32,4 +32,4 @@ varyk run hello.vr
 
 It prints `Hello, world!`. The [getting started](/learn/getting-started/) page continues from here.
 
-Varyk is pre-0.1. Command-line flags and the generated Rust layout have no stability guarantee before 0.1.
+Varyk is experimental and pre-1.0. Command-line flags and the generated Rust layout have no stability guarantee before 1.0.

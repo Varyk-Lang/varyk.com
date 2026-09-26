@@ -1,5 +1,5 @@
 {#- Copied from content/learn/examples.md (borrowing.vr and its generated Rust), which copies the compiler README.
-    scripts/agents.sh fails the build if this text drifts from that copy. <mark> = written by the compiler; tabindex lets keyboards scroll the panes; the caption is `extra.figure_caption` in content/_index.md. -#}
+    scripts/agents.sh fails the build if this text drifts from that copy. <mark> = written by the compiler; tabindex lets keyboards scroll the panes; the caption is `extra.borrowing_caption` in content/_index.md, and templates/index.html places the figure in the band whose entry sets `figure = "borrowing"`. -#}
 <figure class="compare">
 <div class="compare-panes">
 <div class="pane"><p class="pane-head pane-varyk">borrowing.vr</p>
@@ -54,5 +54,5 @@ fn main() {
     print_user(<mark>&amp;</mark>user);
 }</code></pre></div>
 </div>
-<figcaption><span class="fig">Fig. 1</span> {{ section.extra.figure_caption | markdown(inline=true) | safe }}</figcaption>
+<figcaption><span class="fig">Fig. 2</span> {{ section.extra.borrowing_caption | markdown(inline=true) | safe }}</figcaption>
 </figure>

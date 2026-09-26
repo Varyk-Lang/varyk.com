@@ -4,7 +4,7 @@ description = "Rust's speed and safety, Go's simplicity, and the Rust ecosystem 
 weight = 5
 +++
 
-Varyk exists to make Rust available to everyone. It is for people and teams that want what Rust delivers, native speed and memory safety without a garbage collector, but cannot afford what Rust costs to learn, to hire for, or to have written by a machine. It keeps every guarantee Rust makes, and it keeps the Rust ecosystem. What it removes is the part of Rust you have to hold in your head.
+Varyk is a small language for backend services: APIs, workers, and command-line tools. You write Go-like application code and ship a native binary with Rust's safety and speed, no garbage collector, and the Rust ecosystem behind it. Varyk exists to make Rust available to everyone: to people and teams that want what Rust delivers but cannot afford what Rust costs to learn, to hire for, or to have written by a machine. It keeps every guarantee Rust makes, and it keeps the Rust ecosystem. What it removes is the part of Rust you have to hold in your head.
 
 ## Why I built it
 
@@ -22,15 +22,15 @@ What I wanted did not exist: Rust's ecosystem, guarantees, and performance, with
 
 **Go's simplicity.** You write what the program does, and the compiler does the memory bookkeeping that Rust makes you spell out. One way to do each thing, and a language reference short enough to fit in a prompt. A developer arriving from Go, TypeScript, or Python reads and writes Varyk on the first day, not the first month.
 
-**The whole Rust ecosystem, with nothing to bootstrap.** Today, `.rs` files sit next to `.vr` files and the two build together. From milestone 2, a Varyk package is a Cargo package: every crate on crates.io, with no bindings and no FFI, and `cargo add` works unchanged. Every other simpler-than-Rust language starts its library ecosystem from zero. Varyk starts with Rust's.
+**The whole Rust ecosystem, with nothing to bootstrap.** Today, `.rs` files sit next to `.vr` files and the two build together. From milestone 3, a Varyk package is a Cargo package: you add any crate from crates.io with `cargo add`, the same way a Rust project does, and it becomes part of the same build. There is nothing to generate and no second toolchain, because your program is Rust by the time the crate sees it. The goal is that Varyk uses a crate as easily as Rust does; milestone 3 gets most of the way there, and the last step is on the roadmap. Every other simpler-than-Rust language starts its library ecosystem from zero. Varyk starts with Rust's.
 
-**Zero overhead.** No garbage collector, no reference counting, no runtime beyond what Rust already has. Passing a value to a Varyk function never allocates. The compiler inserts exactly one kind of allocation, a string literal placed into an owned slot, and `--emit-rust` shows you where. Nothing is cloned behind your back.
+**Zero overhead.** No garbage collector, no reference counting, no runtime beyond what Rust already has. Passing a value to a Varyk function never allocates. The compiler inserts exactly one kind of allocation, a string literal stored into a value you own, and `--emit-rust` shows you where. Nothing is cloned behind your back.
 
-**No lock-in.** The generated Rust is readable, and it is yours: `--emit-rust` shows all of it. From milestone 2, published Varyk libraries ship with their `.rs` files, so consumers need only cargo and never know the source language. If Varyk stops being the right choice, you keep the Rust.
+**No lock-in.** The generated Rust is readable, and it is yours: `--emit-rust` shows all of it. From milestone 3, published Varyk libraries ship with their `.rs` files, so consumers need only cargo and never know the source language. If Varyk stops being the right choice, you keep the Rust.
 
 **Built for code that is written by machines.** AI agents are first-class writers of Varyk. The syntax Varyk removes, `&` at call sites, `&mut` versus `&`, lifetimes, `String` versus `&str`, is exactly where models that have read a great deal of Rust still fail. Diagnostics carry codes and fix-its and come in machine-readable form, so a generate-compile-fix loop has something precise to act on. Rust knowledge transfers; Rust's failure modes do not.
 
-**Gradual adoption, in both directions.** Start in Varyk and drop to a `.rs` file for the parts that need Rust's full expressiveness, or, from milestone 2, add Varyk to an existing Rust project. Rust experts and newcomers work in one codebase, one build, one registry.
+**Gradual adoption, in both directions.** Start in Varyk and drop to a `.rs` file for the parts that need Rust's full expressiveness, or, from milestone 3, add Varyk to an existing Rust project. Rust experts and newcomers work in one codebase, one build, one registry.
 
 ## The cost of Rust
 
@@ -51,10 +51,10 @@ Most of that surface is the *spelling* of decisions the compiler can make on its
 
 - **Functions borrow by default.** `user: User` is a shared borrow; `mut user: User` is a mutable borrow, and the caller sees the change. The signature carries the contract, so mutation of the caller's value is visible where the function is declared, and call sites never write `&`. *Milestone 1.*
 - **One string type.** The compiler decides the representation for each value, with one visible allocation rule. *Milestone 1.*
-- **Lifetimes are inferred** wherever the compiler can infer them; borrowed returns arrive with lifetime inference in *milestone 2*.
+- **Lifetimes are inferred** wherever the compiler can infer them; borrowed returns arrive with lifetime inference in *milestone 4*.
 - **Moves keep Rust's rules**, and the diagnostic for a moved value shows where the move happened. Whether an explicit transfer syntax is needed at all is an open question, and Varyk does not add one until it is answered.
-- **`Send`, `Sync`, and `Pin` stay out of the surface.** Enforced by rustc, reported as Varyk diagnostics about your code rather than the bounds. Async keeps JavaScript's surface: `async fn`, `.await`, a built-in runtime. *Milestone 3.*
-- **Generics without declaring generics.** `Option`, `Result`, `Vec`, and `?`, used without type parameters. *Milestone 2.* Declaring your own generics, traits, and attributes is unscheduled: each waits on an open question, because advanced features must justify their complexity, and these have not yet.
+- **`Send`, `Sync`, and `Pin` stay out of the surface.** Enforced by rustc, reported as Varyk diagnostics about your code rather than the bounds. Async keeps JavaScript's surface: `async fn`, `.await`, a built-in runtime. *Milestone 5.*
+- **Generics without declaring generics.** `Option`, `Result`, `Vec`, and `?`, written as in Rust, with no generics of your own to declare. *Milestone 2.* Declaring your own generics, traits, and attributes is unscheduled: each waits on an open question, because advanced features must justify their complexity, and these have not yet.
 - **Diagnostics that recognize Rust habits.** Write `&user`, `user: &User`, `String`, or a lifetime, and the compiler says exactly what to change.
 
 ## Compared with others
@@ -75,7 +75,8 @@ Declaring a parameter's passing convention in the signature and inferring the re
 - **Not a superset of Rust.** Varyk does not accept arbitrary Rust in `.vr` files, and one Rust keyword changes meaning: `mut` on a parameter means "mutable borrow", not "owned and rebindable".
 - **Not a new runtime.** No garbage collector, no reference counting, nothing between your program and the Rust it becomes.
 - **Not for every Rust niche.** Varyk targets services first, the space Go occupies, and standalone binaries second. Embedded and `no_std` are out of scope.
+- **Not for kernels, database engines, custom allocators, or borrow-heavy libraries.** Write those in Rust, in a `.rs` file beside your Varyk, in the same build. Varyk is for the application on top.
 
 ## Where it stands
 
-Varyk is pre-0.1. Milestone 1 proves the approach with [six programs](/learn/examples/) and the [language surface](/learn/reference/) needed to run them; the [roadmap](/design/roadmap/) lists what comes after, without dates. The [design page](/design/) has the principles in priority order, and the open questions, including ownership transfer and the async runtime shape, are recorded in the [specification](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-09-23-varyk-design.md). If you think the bet is wrong, the [issues](https://github.com/Varyk-Lang/varyk/issues) are the place to say so.
+Varyk is experimental and pre-1.0: until 1.0, a breaking change bumps the minor version. Milestones 1 and 2 are complete and prove the approach on the [example programs](/learn/examples/) with the [language surface](/learn/reference/) they need; the [roadmap](/design/roadmap/) lists what comes after, without dates. The [design page](/design/) has the principles in priority order, and the open questions, including ownership transfer and the async runtime shape, are recorded in the [specification](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-09-23-varyk-design.md). If you think the bet is wrong, the [issues](https://github.com/Varyk-Lang/varyk/issues) are the place to say so.
