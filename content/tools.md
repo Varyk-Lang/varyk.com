@@ -22,7 +22,8 @@ Diagnostics have codes and fix-its; the [reference](/learn/reference/#error-code
 
 ## Planned
 
-- **Milestone 2:** `varyk init`, which sets up a package with a `build.rs` so plain `cargo build` works; `varyk fmt`, a deterministic formatter; `Cargo.toml` as the package manifest, with Varyk-specific settings under `[package.metadata.varyk]`.
-- **Milestone 4:** a language server built on the `varyk-syntax` crate.
+- **Milestone 3:** `varyk init`, which sets up a package with a `build.rs` so plain `cargo build` works, and `Cargo.toml` as the package manifest, with Varyk-specific settings under `[package.metadata.varyk]`.
+- **Milestone 4:** `varyk fmt`, a deterministic formatter.
+- **Milestone 6:** a language server built on the `varyk-syntax` crate.
 
-Milestone 1 has no package manifest, formatter, or language server. The [roadmap](/design/roadmap/) has the full list.
+Milestones 1 and 2 have no package manifest, formatter, or language server. The [roadmap](/design/roadmap/) has the full list.

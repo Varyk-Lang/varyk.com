@@ -248,6 +248,9 @@ main { display: block; }
 .pane-head::before { content: ""; width: 0.5rem; height: 0.5rem; background: var(--accent); }
 .pane-rust::before { background: var(--red); }
 .compare pre { margin: 0; border: 0; border-radius: 0; background: none; padding: 1.1rem 1.25rem 1.4rem; font-size: 0.875rem; }
+/* The hero figure has one pane: a service as Varyk is designed to write it, with a "coming" note in the header. */
+.compare-panes.compare-single { grid-template-columns: minmax(0, 1fr); }
+.pane-note { margin-left: auto; font-family: var(--sans); color: var(--muted); }
 figcaption { margin-top: 0.9rem; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); }
 .fig { font-family: var(--serif); font-style: italic; font-size: 1.1em; color: var(--ink); margin-right: 0.3rem; }
 figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark); box-shadow: inset 0 -2px 0 var(--red); padding: 0 2px; }
@@ -287,7 +290,8 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
   .band-mission li:not(:last-child)::after { content: "→"; position: absolute; top: 0.95rem; right: -1.6rem; color: var(--faint); }
 }
 
-/* 02: Rust beside Varyk. */
+/* 03: Rust beside Varyk, the borrowing figure first. */
+.band-changes .compare { margin: 0.5rem 0 2.5rem; }
 .band-changes table { display: table; border-top: 1px solid var(--ink); font-size: 1rem; margin-top: 1rem; }
 .band-changes th { font-weight: 400; color: var(--muted); font-size: 0.9375rem; padding: 0.9rem 1.25rem; }
 .band-changes th:last-child { color: var(--accent); }
@@ -312,7 +316,7 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
   .band-changes td code { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 }
 
-/* 03: who it is for. */
+/* 04: who it is for. */
 .cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; margin: 1rem 0 0; }
 @media (min-width: 56rem) {
   .cols { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
@@ -325,7 +329,7 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .cols li { position: relative; padding-left: 1.4rem; margin-bottom: 0.8rem; font-size: 1rem; line-height: 1.55; }
 .cols li::before { content: ""; position: absolute; left: 0; top: 0.8em; width: 0.7rem; height: 1px; background: var(--accent); }
 
-/* 04: what you get. */
+/* 02: what you get. */
 .band-get ul { list-style: none; padding: 0; margin: 0.5rem 0 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 3.5rem; }
 @media (min-width: 48rem) { .band-get ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .band-get li { margin: 0; padding: 1.4rem 0 1.6rem; border-top: 1px solid var(--line); font-size: 1rem; line-height: 1.55; }
@@ -333,7 +337,7 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 
 /* 05: the roadmap, one gear per milestone. */
 .band-road ol { list-style: none; padding: 0; margin: 1rem 0 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }
-@media (min-width: 64rem) { .band-road ol { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5rem; } }
+@media (min-width: 64rem) { .band-road ol { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem 3rem; } }
 .band-road li { position: relative; margin: 0; padding-top: 3.5rem; font-size: 1rem; line-height: 1.55; }
 .band-road li::before {
   content: "";
@@ -350,19 +354,25 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band-road[data-done="1"] li:nth-child(-n + 1)::before,
 .band-road[data-done="2"] li:nth-child(-n + 2)::before,
 .band-road[data-done="3"] li:nth-child(-n + 3)::before,
-.band-road[data-done="4"] li:nth-child(-n + 4)::before { background: var(--accent); }
+.band-road[data-done="4"] li:nth-child(-n + 4)::before,
+.band-road[data-done="5"] li:nth-child(-n + 5)::before,
+.band-road[data-done="6"] li:nth-child(-n + 6)::before { background: var(--accent); }
 .band-road[data-done="0"] li:nth-child(1)::before,
 .band-road[data-done="1"] li:nth-child(2)::before,
 .band-road[data-done="2"] li:nth-child(3)::before,
-.band-road[data-done="3"] li:nth-child(4)::before { background: var(--accent); opacity: 0.45; }
+.band-road[data-done="3"] li:nth-child(4)::before,
+.band-road[data-done="4"] li:nth-child(5)::before,
+.band-road[data-done="5"] li:nth-child(6)::before { background: var(--accent); opacity: 0.45; }
 @media (min-width: 64rem) {
-  .band-road li:not(:last-child)::after { content: ""; position: absolute; top: 1.25rem; left: 3.25rem; right: -1.75rem; height: 1px; background: var(--line); }
+  .band-road li:not(:last-child):not(:nth-child(3n))::after { content: ""; position: absolute; top: 1.25rem; left: 3.25rem; right: -2.25rem; height: 1px; background: var(--line); }
 }
 .band-road li > strong:first-child { display: block; margin-bottom: 0.4rem; font-weight: 400; font-size: 0.9375rem; color: var(--muted); }
 .band-road[data-done="1"] li:nth-child(-n + 1) > strong:first-child,
 .band-road[data-done="2"] li:nth-child(-n + 2) > strong:first-child,
 .band-road[data-done="3"] li:nth-child(-n + 3) > strong:first-child,
-.band-road[data-done="4"] li:nth-child(-n + 4) > strong:first-child { color: var(--accent); }
+.band-road[data-done="4"] li:nth-child(-n + 4) > strong:first-child,
+.band-road[data-done="5"] li:nth-child(-n + 5) > strong:first-child,
+.band-road[data-done="6"] li:nth-child(-n + 6) > strong:first-child { color: var(--accent); }
 :root { --gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cmask id='m'%3E%3Crect width='64' height='64' fill='white'/%3E%3Ccircle cx='32' cy='32' r='7.6' fill='black'/%3E%3C/mask%3E%3Cg mask='url(%23m)'%3E%3Ccircle cx='32' cy='32' r='20'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(22.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(67.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(112.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(157.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(202.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(247.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(292.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(337.5 32 32)'/%3E%3C/g%3E%3C/svg%3E"); }
 
 /* 06: get started. */

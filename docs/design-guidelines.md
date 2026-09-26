@@ -100,7 +100,7 @@ Rules:
 
 | Use | Face | Size | Notes |
 |---|---|---|---|
-| Hero headline | Newsreader 500 | clamp(2.75rem, 6.2vw, 4.75rem) | "Rust's safety." underlined in red oxide; "*simplicity.*" italic in verdigris |
+| Hero headline | Newsreader 500 | clamp(2.75rem, 6.2vw, 4.75rem) | "Simple services." underlined in red oxide; "*speed.*" italic in verdigris |
 | Home section headline (h2) | Newsreader 500 | clamp(2rem, 4vw, 3rem) | italic verdigris for one emphasised word at most |
 | Page title (h1) | Newsreader 500 | clamp(2.5rem, 6vw, 3.5rem) | |
 | Page h2 | Newsreader 500 | clamp(1.625rem, 3vw, 2.125rem) | |
@@ -134,8 +134,9 @@ Rules:
 
 The home page is ordinary Zola: `content/_index.md` holds all the copy as Markdown and front matter, and `templates/index.html` turns it into the page. Nothing in the Markdown is presentational, so the Markdown copy for agents stays clean.
 
-- **Hero.** From `[extra]` in the front matter: `eyebrow`, `headline` (one entry per line; Markdown, so `*simplicity.*` becomes the verdigris italic; the first line gets the red-oxide underline), `lead`, `actions` (the first is the button, the rest text links), `install_label` and `install`, and `figure_caption` (Markdown; `**Marked**` renders as a compiler mark).
-- **Figure.** `templates/partials/home-figure.html`: the borrowing example beside its generated Rust, with the compiler's additions in `<mark>`. It is a copy of `content/learn/examples.md`, checked on every build.
+- **Hero.** From `[extra]` in the front matter: `eyebrow`, `headline` (one entry per line; Markdown, so `*speed.*` becomes the verdigris italic; the first line gets the red-oxide underline), `lead`, `actions` (the first is the button, the rest text links), `install_label` and `install`, and `figure_caption` for the hero figure and `borrowing_caption` for the borrowing figure (both Markdown; `**Marked**` renders as a compiler mark).
+- **Hero figure.** `templates/partials/home-service.html`: one Varyk pane showing a service as milestone 5 is designed to write it, with a "coming" note in the pane header (`.pane-note`) and no compiler marks. It is a design target, not code the compiler accepts, and lives only in the template so it never reaches the Markdown copies.
+- **Borrowing figure.** `templates/partials/home-figure.html`: the borrowing example beside its generated Rust, with the compiler's additions in `<mark>`. It is a copy of `content/learn/examples.md`, checked on every build, and is placed after the first paragraph of the band whose `[[extra.bands]]` entry sets `figure = "borrowing"`.
 - **Numbered sections.** Every `##` heading in the body starts a band. The template splits the rendered Markdown at each `<h2`, numbers the bands 01, 02, …, and describes each with the matching entry of `[[extra.bands]]`, in order:
 
   ```text
@@ -147,7 +148,7 @@ The home page is ordinary Zola: `content/_index.md` holds all the copy as Markdo
   ```
 
   Add a `##` section and a `[[extra.bands]]` entry together; headings inside a band are `###`. The build fails if the counts of `##` headings, `[[extra.bands]]` entries, and rendered sections differ, or if any raw `<h2`/`<h3` text sneaks into the Markdown, because the template splits the rendered content on those tags.
-- **Band styles** turn plain Markdown into layouts, with no HTML in the content: `mission` shows an ordered list as the source-to-binary pipeline (each entry's leading bold text is the step), `changes` styles the Rust-versus-Varyk table, `who` (with `columns = true`) puts each `###` subsection in its own column, `get` shows a list as the two-column "what you get" grid, `road` shows an ordered list as the roadmap with one gear per milestone (solid up to `done`, faded for the next), and `start` keeps code blocks to a readable width.
+- **Band styles** turn plain Markdown into layouts, with no HTML in the content: `mission` shows an ordered list as the source-to-binary pipeline (each entry's leading bold text is the step), `changes` styles the Rust-versus-Varyk table and, with `figure = "borrowing"`, holds the borrowing figure after its first paragraph, `who` (with `columns = true`) puts each `###` subsection in its own column, `get` shows a list as the two-column "what you get" grid, `road` shows an ordered list as the roadmap with one gear per milestone (solid up to `done`, faded for the next), and `start` keeps code blocks to a readable width.
 - Bands alternate automatically, starting on `--alt`: the first band contrasts with the hero above it and, with an even number of bands, the last contrasts with the `--alt` footer. The rule counts bands only (`:nth-child(odd of .band)`), so the hero section does not shift the rhythm; an `@supports` fallback gives engines without that syntax the same result by counting sections, since the hero is always first.
 
 ### Other pages
@@ -160,7 +161,7 @@ The notice in the strip, the repository link, and the footer's tagline and conta
 
 ## Components
 
-- **Experimental strip.** Every page opens with it until 0.1: "Experimental." in bold, then the pre-0.1 sentence. It is an `aside` landmark labelled "Project status", so assistive technology can reach and skip it. The one exception is the 404 page, which is deliberately minimal: skip link, header with the mark, the message, and a link home; no strip, nav, or footer.
+- **Experimental strip.** Every page opens with it until 1.0: "Experimental." in bold, then the pre-1.0 sentence from `config.toml`. It is an `aside` landmark labelled "Project status", so assistive technology can reach and skip it. The one exception is the 404 page, which is deliberately minimal: skip link, header with the mark, the message, and a link home; no strip, nav, or footer.
 - **Header.** Mark and wordmark, the nav from `config.toml`, and GitHub's mark with "GitHub" at the right, linking to `extra.repository`. The icon is GitHub's own mark from Octicons (MIT), used as GitHub's logo guidelines allow, to link to a GitHub page; do not recolour or redraw it. The current section is marked with a verdigris underline. On phones the nav wraps onto its own row.
 - **Buttons.** One style: verdigris fill, 4 px radius, at least 50 px tall. Use one per view at most; everything else is a text link.
 - **Text links.** Ink text with a 2 px verdigris underline; verdigris on hover.

@@ -3,8 +3,11 @@
 #
 # Runs after `zola build`. Reads content/**/*.md, strips the TOML front matter
 # and HTML comments, and writes public/<path>/index.md. Draft pages are skipped.
+# The home page copy starts with the hero lead (`lead` under `[extra]`), which
+# the template renders and the body does not contain.
 # Content must not use shortcodes: they would leak into the copies unexpanded.
-# Also fails the build if the home page figure drifts from the borrowing example.
+# Also fails the build if the borrowing figure on the home page drifts from
+# the borrowing example.
 #
 # Needs only bash and POSIX tools (awk, sed, grep, find, sort, cmp).
 set -euo pipefail
@@ -125,8 +128,11 @@ while IFS= read -r md; do
   # Every page needs both: they become the copy's heading and the llms.txt entry.
   [ -n "$title" ] || fail "$md has no title in its front matter"
   [ -n "$desc" ] || fail "$md has no description in its front matter"
+  # The hero lead (`lead` under `[extra]`, the home page only) is rendered by the template rather
+  # than the body, so it is prepended to the copy: it carries the pitch.
+  lead=$(awk '/^\[extra\]$/ { f = 1; next } f && /^\[/ { exit } f' "$tmp/fm" | toml_get lead)
   # Strip HTML comments (with trailing spaces and one newline) and surrounding whitespace.
-  awk -v title="$title" '
+  awk -v title="$title" -v lead="$lead" '
     { text = text $0 "\n" }
     END {
       out = ""
@@ -142,7 +148,8 @@ while IFS= read -r md; do
       out = out text
       sub(/^[ \t\r\n]+/, "", out)
       sub(/[ \t\r\n]+$/, "", out)
-      printf "# %s\n\n%s\n", title, out
+      if (lead != "") printf "# %s\n\n%s\n\n%s\n", title, lead, out
+      else printf "# %s\n\n%s\n", title, out
     }' "$tmp/body" > "$out/index.md"
   printf '%s\t%s\t%s\t%s\n' "$url" "$title" "$desc" "$(toml_get date < "$tmp/fm")" >> "$tmp/pages"
 done < <(find "$CONTENT" -name '*.md' | LC_ALL=C sort)
@@ -153,7 +160,7 @@ site_desc=$(toml_get description < config.toml)
 entry() { awk -F '\t' -v u="$1" -v b="$site_base" '$1 == u { printf "- [%s](%s%sindex.md): %s\n", $2, b, $1, $3 }' "$tmp/pages"; }
 {
   printf '# Varyk\n\n> %s\n\n' "$site_desc"
-  printf '%s\n' "Varyk is pre-0.1: syntax, diagnostic codes, and command-line flags may change until a 0.1 release. Every page below is also available as Markdown at the linked address."
+  printf '%s\n' "Varyk is experimental and pre-1.0: syntax, diagnostic codes, and command-line flags may still change, and a breaking change bumps the minor version. Every page below is also available as Markdown at the linked address."
   : > "$tmp/listed"
   for i in "${!GROUP_NAMES[@]}"; do
     lines=""

@@ -1,0 +1,28 @@
+{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5 design target, not
+    code the compiler accepts today, which the caption (`extra.figure_caption` in content/_index.md) says.
+    It lives only in this template, so it never reaches the Markdown copies that agents read. -#}
+<figure class="compare">
+<div class="compare-panes compare-single">
+<div class="pane"><p class="pane-head pane-varyk">users.vr<span class="pane-note">coming in milestone 5</span></p>
+<pre tabindex="0"><code data-lang="varyk">struct User {
+    id: i64,
+    name: string,
+}
+
+async fn get_user(req: http::Request) -&gt; Result&lt;http::Response, Error&gt; {
+    let id: i64 = req.param("id")?;
+    let user: User = db::query_one(
+        "select id, name from users where id = $1",
+        id,
+    ).await?;
+    Ok(http::json(user))
+}
+
+async fn main() {
+    let mut app = http::App::new();
+    app.get("/users/:id", get_user);
+    app.serve(3000).await;
+}</code></pre></div>
+</div>
+<figcaption><span class="fig">Fig. 1</span> {{ home.figure_caption | markdown(inline=true) | safe }}</figcaption>
+</figure>

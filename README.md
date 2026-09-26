@@ -1,17 +1,17 @@
 # varyk.com
 
-The website for [Varyk](https://varyk.com), an experimental systems programming language with Rust-like safety and Go-like simplicity that compiles to Rust. The compiler lives at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+The website for [Varyk](https://varyk.com), an experimental programming language for backend services, with Rust-like safety and Go-like simplicity, that compiles to Rust. The compiler lives at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
 
 The site is built with [Zola](https://www.getzola.org) and served as static assets by a Cloudflare Worker. No JavaScript, no external requests. The design system (logo, colour, type, layout) is in [docs/design-guidelines.md](docs/design-guidelines.md).
 
 ## Layout
 
 - `content/` — the pages, as Markdown with TOML front matter.
-- `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, and the home page figure.
+- `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, the borrowing figure, and the hero figure.
 - `static/` — copied as is: `site.css`, `favicon.svg`, `fonts/` (Newsreader, SIL Open Font License), `_headers`, `.well-known/security.txt`.
 - `syntaxes/varyk.json` — a minimal grammar so Varyk code blocks keep their `varyk` label.
 - `scripts/build.sh` — fetches the pinned Zola if needed, builds into `public/`, then runs `scripts/agents.sh`.
-- `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`) and `/llms.txt` for AI agents, and fails the build if the home page figure drifts from the borrowing example.
+- `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`, the home page copy starting with the hero lead) and `/llms.txt` for AI agents, and fails the build if the borrowing figure on the home page drifts from the borrowing example.
 - `config.toml` — site settings; the nav and footer link lists and the site-wide copy live under `[extra]`.
 - `docs/` — the design guidelines and the brand assets (`docs/brand/`); not published.
 - `wrangler.jsonc` — the Worker: assets only, served from `public/`, with `404.html` for missing paths.
