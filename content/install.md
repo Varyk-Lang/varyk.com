@@ -4,7 +4,7 @@ description = "How to install the Varyk compiler and check that it works."
 weight = 10
 +++
 
-Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build` and `varyk run` invoke `cargo`.
+Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build`, `varyk run`, and `varyk publish` invoke `cargo`, and a plain `cargo build` of a package that `varyk init` wrote invokes `varyk`.
 
 ## Install the compiler
 
@@ -32,4 +32,4 @@ varyk run hello.vr
 
 It prints `Hello, world!`. The [getting started](/learn/getting-started/) page continues from here.
 
-Varyk is pre-0.1. Command-line flags and the generated Rust layout have no stability guarantee before 0.1.
+Varyk is experimental and pre-1.0. Command-line flags and the generated Rust layout have no stability guarantee before 1.0.

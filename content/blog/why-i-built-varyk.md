@@ -14,6 +14,6 @@ What I wanted did not exist: Rust's ecosystem, guarantees, and performance, with
 
 ## What that means in practice
 
-Varyk compiles to Rust, the way TypeScript compiles to JavaScript. Every program becomes ordinary Rust that the Rust compiler checks, so the safety and the speed are Rust's own, and from milestone 2 every crate on crates.io is available without bindings. What Varyk removes is the part of Rust you have to hold in your head. The [Why page](/why/) lays out what that costs in Rust and how Varyk takes it out; the [examples](/learn/examples/) show what the code looks like.
+Varyk compiles to Rust, the way TypeScript compiles to JavaScript. Every program becomes ordinary Rust that the Rust compiler checks, so the safety and the speed are Rust's own, and since milestone 3 any crate on crates.io is available through a small `.rs` file in the package, a facade, with no bindings to generate. What Varyk removes is the part of Rust you have to hold in your head. The [Why page](/why/) lays out what that costs in Rust and how Varyk takes it out; the [examples](/learn/examples/) show what the code looks like.
 
-Varyk is pre-0.1 and experimental. If the bet sounds wrong to you, I would like to hear why: [hello@varyk.com](mailto:hello@varyk.com).
+Varyk is pre-1.0 and experimental. If the bet sounds wrong to you, I would like to hear why: [hello@varyk.com](mailto:hello@varyk.com).

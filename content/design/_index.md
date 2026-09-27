@@ -5,7 +5,7 @@ sort_by = "weight"
 weight = 40
 +++
 
-Varyk is a systems programming language with Rust-like safety and Go-like simplicity. It compiles to Rust and runs on the Rust ecosystem, in the same way TypeScript compiles to JavaScript and runs on the JavaScript ecosystem. The analogy is about the ecosystem relationship, not the grammar: Varyk is not a superset of Rust. Rust code lives in `.rs` files next to Varyk code, and the two build together.
+Varyk is a programming language for backend services with Rust-like safety and Go-like simplicity. It compiles to Rust and runs on the Rust ecosystem, in the same way TypeScript compiles to JavaScript and runs on the JavaScript ecosystem. The analogy is about the ecosystem relationship, not the grammar: Varyk is not a superset of Rust. Rust code lives in `.rs` files next to Varyk code, and the two build together.
 
 Varyk targets services first, the space Go occupies, and standalone binaries second. This page summarizes the compiler repository's [design notes](https://github.com/Varyk-Lang/varyk/blob/main/docs/design.md); the [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md) and the full [design specification](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-09-23-varyk-design.md) are there too.
 
@@ -31,11 +31,12 @@ In priority order. When two conflict, the earlier one wins.
 - No inline Rust blocks inside `.vr` files. Rust goes in `.rs` files.
 - No commitment to a native backend. The option is kept open; the roadmap does not promise it.
 - Not every Rust niche. Embedded and `no_std` targets are out of scope.
+- Not for kernels, database engines, or borrow-heavy libraries. Write those in Rust, in a `.rs` file beside your Varyk, in the same build; Varyk is for the application on top.
 
 ## Stability
 
-Before 0.1, everything may change. Diagnostic codes are stable in one sense from the start: a code, once assigned, is never reused for a different meaning, though it may be retired. Command-line flags and the generated Rust layout have no stability guarantee before 0.1.
+Before 1.0, everything may change; a breaking change bumps the minor version. Diagnostic codes are stable in one sense from the start: a code, once assigned, is never reused for a different meaning, though it may be retired. Command-line flags and the generated Rust layout have no stability guarantee before 1.0.
 
 ## Concurrency direction
 
-Varyk keeps Rust's async model and JavaScript's surface: `async fn` and `.await`, a built-in runtime, and `spawn` as a built-in. `Send`, `Sync`, and `Pin` are kept out of the surface syntax; they are still enforced by rustc, and their failures must be mapped to Varyk diagnostics. Whether the runtime is multi-threaded or current-thread is an open question to be decided before milestone 3. Varyk does not adopt Go-style colorless concurrency: the Rust crates it builds on are already async.
+Varyk keeps Rust's async model and JavaScript's surface: `async fn` and `.await`, a built-in runtime, and `spawn` as a built-in. `Send`, `Sync`, and `Pin` are kept out of the surface syntax; they are still enforced by rustc, and their failures must be mapped to Varyk diagnostics. Whether the runtime is multi-threaded or current-thread is an open question to be decided before milestone 5. Varyk does not adopt Go-style colorless concurrency: the Rust crates it builds on are already async.
