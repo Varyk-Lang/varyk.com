@@ -1,5 +1,5 @@
 {#- Copied from content/learn/examples.md (borrowing.vr and its generated Rust), which copies the compiler README.
-    scripts/agents.sh fails the build if this text drifts from that copy. <mark> = written by the compiler; tabindex lets keyboards scroll the panes; the caption is `extra.figure_caption` in content/_index.md. -#}
+    scripts/agents.sh fails the build if this text drifts from that copy. <mark> = written by the compiler; tabindex lets keyboards scroll the panes; the caption is `extra.borrowing_caption` in content/_index.md, and templates/index.html places the figure in the band whose entry sets `figure = "borrowing"`. -#}
 <figure class="compare">
 <div class="compare-panes">
 <div class="pane"><p class="pane-head pane-varyk">borrowing.vr</p>
@@ -25,34 +25,28 @@ fn main() {
     print_user(user);
 }</code></pre></div>
 <div class="pane"><p class="pane-head pane-rust">generated Rust</p>
-<pre data-copy="borrowing.rs" tabindex="0"><code data-lang="rust">#![allow(
-    dead_code,
-    unused_variables,
-    unused_mut,
-    arithmetic_overflow,
-    unconditional_panic
-)]
-
+<pre data-copy="borrowing.rs" tabindex="0"><code data-lang="rust"><mark>#[allow(warnings, arithmetic_overflow, unconditional_panic)]</mark>
 struct User {
     name: <mark>String</mark>,
 }
 
+<mark>#[allow(warnings, arithmetic_overflow, unconditional_panic)]</mark>
 fn rename(user: <mark>&amp;mut</mark> User) {
     user.name = "Bob"<mark>.to_string()</mark>;
 }
 
+<mark>#[allow(warnings, arithmetic_overflow, unconditional_panic)]</mark>
 fn print_user(user: <mark>&amp;</mark>User) {
-    println!("{}", user.name);
+    <mark>::std::</mark>println!("{}", user.name);
 }
 
+<mark>#[allow(warnings, arithmetic_overflow, unconditional_panic)]</mark>
 fn main() {
-    let mut user = User {
-        name: "Alice"<mark>.to_string()</mark>,
-    };
+    let mut user = User { name: "Alice"<mark>.to_string()</mark> };
     print_user(<mark>&amp;</mark>user);
     rename(<mark>&amp;mut</mark> user);
     print_user(<mark>&amp;</mark>user);
 }</code></pre></div>
 </div>
-<figcaption><span class="fig">Fig. 1</span> {{ section.extra.figure_caption | markdown(inline=true) | safe }}</figcaption>
+<figcaption><span class="fig">Fig. 2</span> {{ section.extra.borrowing_caption | markdown(inline=true) | safe }}</figcaption>
 </figure>

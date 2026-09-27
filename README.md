@@ -1,17 +1,17 @@
 # varyk.com
 
-The website for [Varyk](https://varyk.com), an experimental systems programming language with Rust-like safety and Go-like simplicity that compiles to Rust. The compiler lives at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+The website for [Varyk](https://varyk.com), an experimental programming language for backend services, with Rust-like safety and Go-like simplicity, that compiles to Rust. The compiler lives at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
 
 The site is built with [Zola](https://www.getzola.org) and served as static assets by a Cloudflare Worker. No JavaScript, no external requests. The design system (logo, colour, type, layout) is in [docs/design-guidelines.md](docs/design-guidelines.md).
 
 ## Layout
 
 - `content/` — the pages, as Markdown with TOML front matter.
-- `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, and the home page figure.
+- `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, the borrowing figure, and the hero figure.
 - `static/` — copied as is: `site.css`, `favicon.svg`, `fonts/` (Newsreader, SIL Open Font License), `_headers`, `.well-known/security.txt`.
 - `syntaxes/varyk.json` — a minimal grammar so Varyk code blocks keep their `varyk` label.
 - `scripts/build.sh` — fetches the pinned Zola if needed, builds into `public/`, then runs `scripts/agents.sh`.
-- `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`) and `/llms.txt` for AI agents, and fails the build if the home page figure drifts from the borrowing example.
+- `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`, the home page copy starting with the hero lead) and `/llms.txt` for AI agents, and fails the build if the borrowing figure on the home page drifts from the borrowing example.
 - `config.toml` — site settings; the nav and footer link lists and the site-wide copy live under `[extra]`.
 - `docs/` — the design guidelines and the brand assets (`docs/brand/`); not published.
 - `wrangler.jsonc` — the Worker: assets only, served from `public/`, with `404.html` for missing paths.
@@ -60,7 +60,7 @@ Every branch pushed to this repository, including pull request branches, gets a 
 
 ### Keeping the site in sync with the compiler
 
-`content/learn/reference.md` and the examples are copies from the compiler repository, and the generated Rust on the home and examples pages is the output of the released compiler. When the compiler's `docs/language.md`, `examples/`, or code generation changes, copy them again and update the commit noted at the top of the reference. The compiler is released by release-please, so the site never names a version; the Install page links to crates.io instead.
+`content/learn/reference.md` and the examples are copies from the compiler repository, and the generated Rust on the home and examples pages matches the generated `src/main.rs` byte for byte: the file the compiler writes for `examples/borrowing.vr` (`varyk emit --out-dir DIR examples/borrowing.vr` writes it to `DIR/src/main.rs`), not the rustfmt pass that `--emit-rust` prints. When the compiler's `docs/language.md`, `examples/`, or code generation changes, copy them again and update the commit noted at the top of the reference. The compiler is released by release-please, so release versions appear only on the roadmap page, in the home page's roadmap band, in the blog, and inside the copied files (the reference, the examples' manifests); the Install page links to crates.io instead.
 
 ### Cloudflare settings
 

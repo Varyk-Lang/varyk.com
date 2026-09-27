@@ -31,12 +31,17 @@ Hello, world!
 ## The commands
 
 ```text
-varyk check <file.vr>                          parse and analyze; never runs cargo
-varyk build <file.vr> [--release] [--emit-rust] generate and build; prints the executable path
-varyk run   <file.vr> [--release] [-- args...]  build, then execute, forwarding the exit code
+varyk check [file.vr]                            check for errors; never runs cargo
+varyk build [file.vr] [--release] [--emit-rust]  generate and build; print the executable's path
+varyk run [file.vr] [--release] [-- args...]     build, then run with the given arguments
+varyk emit [file.vr] --out-dir DIR               check, then write the generated tree to DIR;
+                                                  never runs cargo
+varyk init [dir] [--lib]                         write a package that plain cargo build compiles
+varyk publish [--assemble-only] [-- cargo args]  check, assemble a plain Rust crate, and run
+                                                  cargo publish there
 ```
 
-`check` is the fast loop: it reports Varyk diagnostics without invoking cargo. `--release` builds with optimizations. `build` transpiles the program into a Rust crate under `target/varyk/`, builds it with cargo, and prints the path of the executable; generated Rust never lands in the source tree. `--emit-rust` prints every generated file (`Cargo.toml` and the Rust files) and then builds, so you can see the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer.
+Without a file, a command works on the package around the current directory (see [a package](#a-package) below). `check` is the fast loop: it reports Varyk diagnostics without invoking cargo. `--release` builds with optimizations. `build` transpiles the program into a Rust crate, builds it with cargo, and prints the path of the executable; generated Rust goes under `target/varyk/`, never next to your `.vr` files. `--emit-rust` prints every generated file (`Cargo.toml` and the Rust files) and then builds, so you can see the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). `emit` writes the generated tree to a directory, for a file or a package; `init` and `publish` are for packages; the [tools page](/tools/#packages) describes them. Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer, including the warnings rustc gives about your `.rs` modules; under `run`, they go to standard error, since standard output is the program's own.
 
 ## Functions
 
@@ -81,7 +86,19 @@ Output: `Alice` twice. The second call compiles because a parameter written `use
 
 ## Modules and Rust files
 
-`mod name;` in the entry file resolves to `name.vr` or `name.rs` in the same directory. A `.vr` module exports its `pub` items; a `.rs` module is plain Rust, compiled as part of the same crate, and its top-level `pub fn` items are callable from Varyk. The [modules](/learn/examples/#modules) and [interop](/learn/examples/#rust-interop) examples show both.
+`mod name;` loads the module `name` from `name.vr` or `name.rs` beside the file, or from `name/mod.vr`. Any `.vr` file can declare modules of its own, to any depth: `mod cart;` in `shop.vr` loads `shop/cart.vr`. A module is private to the module that declares it unless it is declared `pub mod`, and a `.vr` module exports its `pub` items. `use crate::shop::cart::Cart;` makes a shorter local name for a module, struct, enum, or function of the package. A `.rs` module is plain Rust, compiled as part of the same crate; Varyk imports its `pub fn`s, its `pub struct`s with their inherent methods, and its `pub enum`s. The [modules](/learn/examples/#modules), [interop](/learn/examples/#rust-interop), and [package](/learn/examples/#packages) examples show all of these.
+
+## A package
+
+A program with dependencies, or one you want to publish, is a package. `varyk init` writes one:
+
+```text
+varyk init hello
+cd hello
+varyk run
+```
+
+It prints `Hello, world!`. `init` wrote `Cargo.toml` (the manifest, with `edition = "2024"`), `.gitignore`, `build.rs`, a one-line `src/main.rs` stub, and `src/main.vr`, the program. Inside the package, commands need no file name. `cargo run` works too, with `varyk` on the `PATH`, because `build.rs` calls it to generate the Rust. To use a crate, add it with `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way.
 
 ## Diagnostics
 
