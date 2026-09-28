@@ -1,7 +1,7 @@
 base_url = "https://varyk.com"
 title = "Varyk"
 author = "Vlad Mickevic"
-description = "An experimental programming language for backend services, with Rust-like safety and Go-like simplicity. It compiles to Rust."
+description = "Build backend services simply. Ship Rust binaries. Varyk is an experimental language for APIs, workers, and microservices that compiles to Rust, with Rust's safety and Go's simplicity."
 
 compile_sass = false
 minify_html = false

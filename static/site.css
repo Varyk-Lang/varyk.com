@@ -278,19 +278,22 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band h2 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.08; margin: 0 0 1.5rem; max-width: 20em; }
 .band > p { max-width: var(--measure); font-size: 1.125rem; }
 
-/* 01: the path from source to binary. */
-.band-mission ol { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; gap: 1.5rem; }
-.band-mission li { margin: 0; color: var(--muted); font-size: 0.9375rem; line-height: 1.5; position: relative; }
-.band-mission li > strong:first-child { display: block; margin-bottom: 0.8rem; padding: 0.8rem 1rem; border: 1px solid var(--line); font-family: var(--serif); font-size: 1.1875rem; font-weight: 500; font-style: italic; color: var(--ink); }
-.band-mission li > strong:first-child code { background: none; padding: 0; font-size: 1rem; font-style: normal; }
-.band-mission li:first-child > strong code { color: var(--accent); }
-.band-mission li:nth-child(4) > strong { border-color: var(--red); }
+/* 02 and 03: an ordered list as a pipeline, one step per entry, the entry's leading bold text as the step.
+   `flow` (Cargo underneath: .vr, .rs facade, crates.io) and `changes` (source to binary) both use it. */
+.band-flow ol, .band-changes ol { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; gap: 1.5rem; }
+.band-flow li, .band-changes li { margin: 0; color: var(--muted); font-size: 0.9375rem; line-height: 1.5; position: relative; }
+.band-flow li > strong:first-child, .band-changes li > strong:first-child { display: block; margin-bottom: 0.8rem; padding: 0.8rem 1rem; border: 1px solid var(--line); font-family: var(--serif); font-size: 1.1875rem; font-weight: 500; font-style: italic; color: var(--ink); }
+.band-flow li > strong:first-child code, .band-changes li > strong:first-child code { background: none; padding: 0; font-size: 1rem; font-style: normal; }
+.band-flow li:first-child > strong code, .band-changes li:first-child > strong code { color: var(--accent); }
+.band-flow ol + p, .band-changes ol + p { margin-top: 2.5rem; }
+/* The step where rustc checks the program is marked in red oxide. */
+.band-changes li:nth-child(4) > strong { border-color: var(--red); }
 @media (min-width: 64rem) {
-  .band-mission ol { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2.25rem; }
-  .band-mission li:not(:last-child)::after { content: "→"; position: absolute; top: 0.95rem; right: -1.6rem; color: var(--faint); }
+  .band-flow ol, .band-changes ol { grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 2.25rem; }
+  .band-flow li:not(:last-child)::after, .band-changes li:not(:last-child)::after { content: "→"; position: absolute; top: 0.95rem; right: -1.6rem; color: var(--faint); }
 }
 
-/* 03: Rust beside Varyk, the borrowing figure first. */
+/* 03: how it works: the borrowing figure first, then Rust beside Varyk, then the pipeline. */
 .band-changes .compare { margin: 0.5rem 0 2.5rem; }
 .band-changes table { display: table; border-top: 1px solid var(--ink); font-size: 1rem; margin-top: 1rem; }
 .band-changes th { font-weight: 400; color: var(--muted); font-size: 0.9375rem; padding: 0.9rem 1.25rem; }
@@ -329,11 +332,12 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .cols li { position: relative; padding-left: 1.4rem; margin-bottom: 0.8rem; font-size: 1rem; line-height: 1.55; }
 .cols li::before { content: ""; position: absolute; left: 0; top: 0.8em; width: 0.7rem; height: 1px; background: var(--accent); }
 
-/* 02: what you get. */
+/* 01: what you get, then the batteries under a `###`. */
 .band-get ul { list-style: none; padding: 0; margin: 0.5rem 0 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr); column-gap: 3.5rem; }
 @media (min-width: 48rem) { .band-get ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .band-get li { margin: 0; padding: 1.4rem 0 1.6rem; border-top: 1px solid var(--line); font-size: 1rem; line-height: 1.55; }
 .band-get li > strong:first-child { display: block; margin-bottom: 0.4rem; font-family: var(--serif); font-weight: 500; font-size: 1.4375rem; line-height: 1.25; }
+.band-get h3 { margin: 2.5rem 0 0.5rem; font-family: var(--serif); font-weight: 500; font-size: 1.75rem; line-height: 1.2; }
 
 /* 05: the roadmap, one gear per milestone. */
 .band-road ol { list-style: none; padding: 0; margin: 1rem 0 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; }

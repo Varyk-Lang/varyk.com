@@ -1,13 +1,13 @@
 +++
 title = "Varyk"
-description = "An experimental programming language for backend services, with Rust-like safety and Go-like simplicity. It compiles to Rust."
+description = "Build backend services simply. Ship Rust binaries. Varyk is an experimental language for APIs, workers, and microservices that compiles to Rust, with Rust's safety and Go's simplicity."
 sort_by = "weight"
 
 # The hero and its figure are rendered by templates/index.html.
 [extra]
-eyebrow = "A language for backend services, compiled to Rust"
-headline = ["Simple services.", "Rust’s safety and *speed.*"]
-lead = "Varyk is a small language designed for APIs, workers, and command-line tools; the batteries for services arrive in milestone 5. You write Go-like application code. The compiler turns it into readable Rust, rustc checks it, and you ship a native binary with no garbage collector and the Rust ecosystem behind it."
+eyebrow = "Simple services. Rust underneath."
+headline = ["Build backend services simply.", "Ship Rust *binaries.*"]
+lead = "Varyk is a small language for APIs, workers, and microservices. No garbage collector, no lifetime annotations, no borrow ceremony, and Rust and crates.io underneath. You write Go-like application code and ship one native binary, checked by the Rust compiler."
 install_label = "Install with Cargo"
 install = "cargo install varyk"
 # The hero figure (templates/partials/home-service.html) shows a service as milestone 5 is meant to write it.
@@ -28,18 +28,18 @@ path = "/why/"
 # `figure = "borrowing"` places the borrowing figure after the band's first paragraph;
 # `done` is the number of completed milestones in the roadmap.
 [[extra.bands]]
-id = "mission"
-label = "Mission"
-style = "mission"
-
-[[extra.bands]]
 id = "what-you-get"
 label = "What you get"
 style = "get"
 
 [[extra.bands]]
-id = "what-changes"
-label = "What changes"
+id = "cargo"
+label = "Cargo underneath"
+style = "flow"
+
+[[extra.bands]]
+id = "how-it-works"
+label = "How it works"
 style = "changes"
 figure = "borrowing"
 
@@ -61,19 +61,9 @@ label = "Get started"
 style = "start"
 +++
 
-## Varyk exists to make Rust available to *everyone.*
-
-Rust is one of the safest and fastest languages there are, and one of the hardest to learn. Its guarantees belong in every program, but its complexity keeps most people out, whether they come from another language or are writing their first program. The Rust compiler checks everything Varyk generates, so the guarantees are Rust's own.
-
-1. **`.vr`** Varyk source, with `.rs` files beside it in the same build.
-2. **`varyk build`** Parses, type-checks, and runs borrow analysis. Diagnostics carry codes and fix-its.
-3. **`target/varyk/`** A Cargo project of readable Rust. It is yours, so there is no lock-in.
-4. **`cargo`** rustc and the full borrow checker. Varyk never uses `unsafe` to get around it.
-5. **A native binary** No garbage collector, no reference counting, no runtime beyond Rust's.
-
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you the first four today. The batteries are what every service uses and what a Go or TypeScript team expects to find built in; they ship in milestone 5.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them and ship in milestone 5.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -81,18 +71,34 @@ Rust underneath gives you the first four today. The batteries are what every ser
 - **Starts instantly, stays small.** The `todo` example starts in a few milliseconds and uses about a megabyte and a half of memory on an Apple Silicon Mac. There is no garbage collector, so no pauses and no memory ceiling to tune.
 - **Bugs caught before the program runs.** No null: a value that can be missing is an `Option`, and you must handle it. Errors are values, not exceptions: a function that can fail says so in its return type, and there is nothing to catch. Two threads cannot touch the same data unsafely. All of it is rustc checking your program, not Varyk approximating it.
 - **As fast as Rust, because it is Rust.** Native code, no interpreter, no just-in-time compiler, nothing cloned behind your back.
-- **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack. Coming in milestone 5.
-- **JSON from your structs.** Turn your structs into JSON and back. Coming in milestone 5.
-- **Databases through one API.** Query a database and get your structs back, on a proven Rust driver. Coming in milestone 5.
-- **Async built in.** `async fn` and `.await` on a built-in runtime. Coming in milestone 5.
-- **Configuration, logging, tests.** Settings from the environment, structured logs, and `varyk test`. Coming in milestone 5.
-- **The whole Rust ecosystem.** Rust files build alongside Varyk, and since milestone 3 you add a crate with `cargo add` and call it from a `.rs` file in the package.
+- **No ownership ceremony.** No lifetime annotations, no choosing between `x`, `&x`, and `&mut x` at a call site, and one string type. The compiler makes those decisions, and rustc checks every one of them.
 - **Readable Rust, yours to keep.** The generated Rust is a normal Cargo project, `--emit-rust` shows all of it, and there is no lock-in.
-- **Built for code written by machines.** Diagnostics carry codes and fix-its and come in machine-readable form, so a generate-compile-fix loop has something precise to act on.
+- **The whole Rust ecosystem.** A Varyk package is a Cargo package: since milestone 3 you add a crate with `cargo add` and call it from a `.rs` file in the package, and the next section shows how.
+- **Drop into Rust when you need it.** A `.rs` file beside your `.vr`, in the same package and the same build. Write the borrow-heavy part in Rust and the rest in Varyk. Use Varyk until you actually need Rust.
 
-Varyk is for the application. Kernels, database engines, and borrow-heavy libraries stay in Rust, in a `.rs` file beside your Varyk, in the same build. [Read why Varyk exists](/why/).
+### The batteries, milestone 5
 
-## Same ownership model. Less *spelling.*
+None of these are in the compiler yet. The figure at the top of the page shows the shape they are designed to take.
+
+- **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack.
+- **JSON from your structs.** Turn your structs into JSON and back.
+- **Databases through one API.** Query a database and get your structs back, on a proven Rust driver.
+- **Async built in.** `async fn` and `.await` on a built-in runtime.
+- **Configuration, logging, tests.** Settings from the environment, structured logs, and `varyk test`.
+
+Varyk exists so that ordinary backend services can be written simply and shipped as safe Rust. It is for the application: kernels, database engines, and borrow-heavy libraries stay in Rust, in a `.rs` file beside your Varyk, in the same build. [Read why Varyk exists](/why/).
+
+## Varyk packages are Cargo *packages.*
+
+A Varyk package is a `Cargo.toml` and a `src/main.vr`. `varyk init` writes one, plain `cargo build` compiles it, and `varyk publish` ships it to crates.io as an ordinary Rust crate that needs no Varyk to use. There is nothing to bootstrap: every crate on crates.io was Varyk's ecosystem from the first day, and every Varyk package joins it.
+
+1. **`main.vr`** Your service, in Varyk. It never names a crate, and it never writes a reference.
+2. **`text.rs`** A Rust file beside it: a facade that wraps what the program needs in plain functions, structs, and enums, which Varyk imports like a module of its own.
+3. **crates.io** Any crate, added with `cargo add`. Need Stripe, AWS, or Kafka? Use the Rust crate.
+
+Need something Varyk doesn't provide? Use the Rust crate. Need Rust itself, for the one hot loop or the borrow-heavy library? Write it in the `.rs` file, in the same build, and call it from Varyk. The [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way, and the [tools page](/tools/#packages) describes `init` and `publish`.
+
+## How it *works.*
 
 Most of Rust's surface is the *spelling* of decisions the compiler can make on its own. Varyk keeps Rust's ownership model inside the compiler and takes the spelling out of the language. This program runs today; everything marked is what the compiler wrote for you.
 
@@ -102,15 +108,23 @@ Most of Rust's surface is the *spelling* of decisions the compiler can make on i
 | **Call sites never write `&`.** No choosing between `x`, `&x`, and `&mut x`. | `rename(&mut user);` | `rename(user);` |
 | **One string type.** The compiler decides the representation. | `name: "Alice".to_string()` | `name: "Alice"` |
 
+From your source to the binary:
+
+1. **`.vr`** Varyk source, with `.rs` files beside it in the same build.
+2. **`varyk build`** Parses, type-checks, and runs borrow analysis. Diagnostics carry codes and fix-its.
+3. **`target/varyk/`** A Cargo project of readable Rust. It is yours, so there is no lock-in.
+4. **`cargo`** rustc and the full borrow checker. Varyk never uses `unsafe` to get around it.
+5. **A native binary** No garbage collector, no reference counting, no runtime beyond Rust's.
+
 ## Wherever you’re coming from.
 
 ### Building services in Go, TypeScript, or Python
 
-- Native speed and memory safety without a garbage collector.
 - Application code as simple as Go: the compiler does the memory bookkeeping that Rust asks you to write by hand.
+- Native speed and memory safety with no garbage collector: no pauses, no memory ceiling to tune, and one small binary to deploy with no language runtime to install.
+- The bugs Go and TypeScript compile, a missing value, an unhandled error, two threads on one piece of data, rustc rejects.
 - `async`/`await` that looks like JavaScript, with a built-in runtime (milestone 5).
 - One toolchain and one package registry, inherited from Cargo and crates.io, since milestone 3.
-- One binary to deploy, with no language runtime to install.
 
 ### Coming from Rust
 
@@ -120,11 +134,11 @@ Most of Rust's surface is the *spelling* of decisions the compiler can make on i
 - `.rs` files next to `.vr` files in the same package, built by the same `cargo`.
 - Varyk packages are Cargo packages and publish to crates.io as ordinary crates, since milestone 3.
 
-### For AI coding agents
+### Written with a coding agent
 
 - Rust syntax, so what a model learned from Rust transfers, minus the parts models most often get wrong: which `&` to write at a call site, `&mut` versus `&`, lifetime annotations, `String` versus `&str`.
-- No `unsafe` in the surface language, so every generated program is checked by rustc.
-- Structured, machine-readable diagnostics with codes and fix-its.
+- rustc checks what the model wrote, so generated code is memory-safe and free of data races, not merely compiling.
+- Structured, machine-readable diagnostics with codes and fix-its, so a generate-compile-fix loop has something precise to act on.
 - Diagnostics that recognize Rust habits and say exactly what to change.
 - A language reference short enough to fit in a prompt, and one way to do each thing.
 
@@ -141,17 +155,14 @@ The [roadmap](/design/roadmap/) has every item; nothing there is a date or a rel
 
 ## Install. Write. Run.
 
-Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). Install the compiler with `cargo install varyk`, save this as `hello.vr`, and run it:
-
-```varyk
-fn main() {
-    println!("Hello, world!");
-}
-```
+Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). Install the compiler, write a package, and run it:
 
 ```text
-$ varyk run hello.vr
+$ cargo install varyk
+$ varyk init hello
+$ cd hello
+$ varyk run
 Hello, world!
 ```
 
-Continue with [getting started](/learn/getting-started/) and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+`init` wrote `Cargo.toml`, `build.rs`, and `src/main.vr`, the program; `cargo run` works too. Continue with [getting started](/learn/getting-started/) and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
