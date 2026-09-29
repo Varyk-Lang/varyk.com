@@ -4,7 +4,7 @@ description = "Milestone 2 makes Varyk able to express a real small program: enu
 date = 2026-09-26
 +++
 
-Varyk 0.0.2 is on crates.io. It is milestone 2 of the [roadmap](/design/roadmap/): the language core a small program needs. Milestone 1 proved borrow-by-default on six programs; this release adds enums and `match`, `for`, methods, `Option`, `Result`, `Vec`, `?`, `format!`, and a deliberate string copy, and it keeps every milestone-1 rule. Calls never write `&`, mutation is declared with `mut`, and the compiler adds no allocation except a string literal stored into a value you own and the copy you ask for with `.clone()`.
+Varyk 0.0.2 is on crates.io. Varyk is a language for backend services that compiles to Rust, and this release, milestone 2 of the [roadmap](/design/roadmap/), brings the language core a small program needs. Milestone 1 proved borrow-by-default on six programs; this release adds enums and `match`, `for`, methods, `Option`, `Result`, `Vec`, `?`, `format!`, and a deliberate string copy, and it keeps every milestone-1 rule. Calls never write `&`, mutation is declared with `mut`, and the compiler adds no allocation except a string literal stored into a value you own and the copy you ask for with `.clone()`.
 
 ## What is in it
 

@@ -4,7 +4,7 @@ description = "Milestone 3 makes Varyk code a Cargo package: Cargo dependencies 
 date = 2026-09-27T14:00:00+02:00
 +++
 
-Varyk 0.1.0 is on crates.io. It is milestone 3 of the [roadmap](/design/roadmap/). Milestones 1 and 2 made a single `.vr` file, with the modules it declares, into a running program. Milestone 3 makes Varyk code a Cargo package, with a `Cargo.toml`, crates from crates.io called through a `.rs` facade, modules at any depth, `use`, private fields, Rust structs and enums imported from `.rs` modules, plain `cargo build` through a `build.rs`, and publishing to crates.io as a crate whose consumers need only cargo.
+Varyk 0.1.0 is on crates.io. It is milestone 3 of the [roadmap](/design/roadmap/), and it connects Varyk, a language for backend services that compiles to Rust, to the Rust ecosystem. Milestones 1 and 2 made a single `.vr` file, with the modules it declares, into a running program. Milestone 3 makes Varyk code a Cargo package, with a `Cargo.toml`, crates from crates.io called through a `.rs` facade, modules at any depth, `use`, private fields, Rust structs and enums imported from `.rs` modules, plain `cargo build` through a `build.rs`, and publishing to crates.io as a crate whose consumers need only cargo.
 
 The minor version moved because one rule changed. Until 1.0, a breaking change bumps the minor version, and this release has one, described below.
 

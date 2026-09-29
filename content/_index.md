@@ -136,11 +136,12 @@ From your source to the binary:
 
 ### Written with a coding agent
 
-- Rust syntax, so what a model learned from Rust transfers, minus the parts models most often get wrong: which `&` to write at a call site, `&mut` versus `&`, lifetime annotations, `String` versus `&str`.
-- rustc checks what the model wrote, so generated code is memory-safe and free of data races, not merely compiling.
-- Structured, machine-readable diagnostics with codes and fix-its, so a generate-compile-fix loop has something precise to act on.
-- Diagnostics that recognize Rust habits and say exactly what to change.
-- A language reference short enough to fit in a prompt, and one way to do each thing.
+- Agents already write good code; the slow part is reviewing it. Varyk is designed to keep reviews short.
+- A small language with one way to do each thing, so agent output looks like the code around it.
+- Concrete code, with few abstractions to see through.
+- rustc checks memory safety and data races, so a review can focus on what the service does.
+- A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
+- One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (milestone 5).
 
 ## Ordered milestones, no *dates.*
 

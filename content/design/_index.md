@@ -14,7 +14,7 @@ Varyk targets services first, the space Go occupies, and standalone binaries sec
 In priority order. When two conflict, the earlier one wins.
 
 1. **Rust's safety model, unchanged.** No garbage collector, no implicit `Clone`, no implicit deep copy. The compiler inserts exactly one kind of allocation: a string literal placed into an owned slot is converted at that line, and `--emit-rust` shows it. The generated Rust is checked by rustc, and Varyk never works around rustc with unsafe code.
-2. **Newcomer first, human or agent.** Every tie-breaker on the surface language goes toward the developer who has never written Rust. AI agents are first-class writers of Varyk; where their needs and human readability diverge, human readability wins.
+2. **The service developer first, human or agent.** Every tie-breaker on the surface language goes toward the developer building services who has never written Rust. AI agents are first-class writers of Varyk; where their needs and human readability diverge, human readability wins.
 3. **Rust syntax with sigils inferred.** Functions borrow their arguments by default. Mutation is declared in the function contract with `mut`. References are never written at call sites. Lifetimes are inferred wherever the compiler can infer them.
 4. **One way to do each thing.** A small, regular grammar with one obvious spelling per idea is the most useful property a language can have for both a newcomer and a code generator.
 5. **Predictable cost.** Passing a value to a Varyk-declared function never allocates. Storing a string literal into an owned slot allocates once, at the line where the literal is written. Moves follow Rust's rules, and the diagnostics for moved values are a first-class feature.
