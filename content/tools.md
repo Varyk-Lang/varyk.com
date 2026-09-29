@@ -35,7 +35,6 @@ Diagnostics have codes and fix-its; the [reference](/learn/reference/#error-code
 
 ## Planned
 
-- **Milestone 4:** `varyk fmt`, a deterministic formatter.
-- **Milestone 6:** a language server built on the `varyk-syntax` crate.
+- **Milestone 6:** `varyk fmt`, a deterministic formatter, and a language server, both built on the `varyk-syntax` crate.
 
 Milestone 3 added `Cargo.toml`; there is no formatter or language server yet. The [roadmap](/design/roadmap/) has the full list.

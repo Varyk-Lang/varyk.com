@@ -1,10 +1,10 @@
 +++
 title = "Examples"
-description = "The twelve example programs from milestones 1 and 2, and three packages from milestone 3, with their expected output."
+description = "The example programs from milestones 1, 2, and 4, and three packages from milestone 3, with their expected output."
 weight = 3
 +++
 
-These are the twelve programs milestones 1 and 2 must compile and run with the shown output, and three packages from milestone 3; they are the compiler's integration tests. The first six programs are milestone 1, the rest milestone 2, and the packages are under [Packages](#packages). They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
+These are the eighteen programs milestones 1, 2, and 4 must compile and run with the shown output, and three packages from milestone 3; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, and the six from [Iterators](#iterators) on milestone 4; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
@@ -101,6 +101,7 @@ fn main() {
 
 ```rust
 #[allow(warnings, arithmetic_overflow, unconditional_panic)]
+#[derive(Clone, PartialEq)]
 struct User {
     name: String,
 }
@@ -161,6 +162,7 @@ mod greet;
 fn main() {
     let name = "Varyk";
     println!("{}", greet::hello(name));
+    println!("{}", greet::first_word("Hello from Rust"));
 }
 ```
 
@@ -170,9 +172,16 @@ fn main() {
 pub fn hello(name: &str) -> String {
     format!("Hello from Rust, {}!", name)
 }
+
+pub fn first_word(s: &str) -> &str {
+    match s.find(' ') {
+        Some(i) => &s[..i],
+        None => s,
+    }
+}
 ```
 
-Output: `Hello from Rust, Varyk!`
+Output: `Hello from Rust, Varyk!`, then `Hello`.
 
 ## Enums
 
@@ -347,13 +356,7 @@ Output: `Alice`, `Alice`, `Hello, Alice!`, `5`, `true`.
 mod task;
 
 fn count_done(tasks: Vec<task::Task>) -> usize {
-    let mut done: usize = 0;
-    for t in tasks {
-        if t.is_done() {
-            done = done + 1;
-        }
-    }
-    done
+    tasks.iter().filter(|t| t.is_done()).count()
 }
 
 fn print_all(tasks: Vec<task::Task>) {
@@ -402,9 +405,13 @@ impl Task {
         }
     }
 
+    pub fn title(self) -> string {
+        self.title
+    }
+
     pub fn label(self) -> string {
         let mark = if self.is_done() { "x" } else { " " };
-        format!("[{}] {}", mark, self.title)
+        format!("[{}] {}", mark, self.title())
     }
 }
 ```
@@ -417,6 +424,391 @@ Output:
 [x] Buy milk
 [ ] Write spec
 1 of 2 done
+```
+
+## Iterators
+
+Chains over a `Vec` and over the pieces of a string, with closures as the arguments of `filter` and `map`.
+
+`iterators.vr`
+
+```varyk
+fn main() {
+    let numbers = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    println!("{}", numbers.iter().sum());
+    println!("{}", numbers.iter().filter(|n| n % 3 == 0).count());
+    println!("{}", numbers.iter().any(|n| n > 9));
+    let doubled: Vec<string> = numbers.iter().filter(|n| n < 4).map(|n| format!("{}", n * 2)).collect();
+    println!("{}", doubled.join(" "));
+    let names = vec!["cherry", "apple", "banana"];
+    let mut sorted: Vec<string> = names.iter().map(|n| n.clone()).collect();
+    sorted.sort();
+    println!("{}", sorted.join(", "));
+    let text = "one two three";
+    println!("{}", text.split(" ").count());
+}
+```
+
+Output:
+
+```text
+55
+3
+true
+2 4 6
+apple, banana, cherry
+3
+```
+
+## Words
+
+Counting words in a `HashMap`, with `get` looked into by `if let` where it is made.
+
+`words.vr`
+
+```varyk
+fn main() {
+    let text = "the cat saw the dog and the cat ran";
+    let mut counts: HashMap<string, i32> = HashMap::new();
+    for word in text.split(" ") {
+        let n = counts.get(word).unwrap_or(0) + 1;
+        counts.insert(word.clone(), n);
+    }
+    let mut words: Vec<string> = counts.keys().map(|w| w.clone()).collect();
+    words.sort();
+    for word in words {
+        if let Some(n) = counts.get(word) {
+            println!("{} {}", word, n);
+        }
+    }
+    println!("{} distinct words", counts.len());
+}
+```
+
+Output:
+
+```text
+and 1
+cat 2
+dog 1
+ran 1
+saw 1
+the 3
+6 distinct words
+```
+
+## Patterns
+
+A variant with named fields, nested, literal, and range patterns, `if let`, and `while let`.
+
+`patterns.vr`
+
+```varyk
+enum Event {
+    Click { x: i32, y: i32 },
+    Key(string),
+    Quit,
+}
+
+fn describe(event: Event) -> string {
+    match event {
+        Event::Click { x: 0, y: 0 } => "click at the origin",
+        Event::Click { x, y } => format!("click at {}, {}", x, y),
+        Event::Key(key) => format!("key {}", key),
+        Event::Quit => "quit",
+    }
+}
+
+fn grade(score: i32) -> string {
+    match score {
+        90..=100 => "A",
+        80..=89 => "B",
+        _ => "lower",
+    }
+}
+
+fn is_yes(answer: string) -> bool {
+    match answer {
+        "y" => true,
+        "yes" => true,
+        _ => false,
+    }
+}
+
+fn first_click(events: Vec<Event>) -> Option<i32> {
+    for event in events {
+        if let Event::Click { x, y: _ } = event {
+            return Some(x);
+        }
+    }
+    None
+}
+
+fn main() {
+    let events = vec![Event::Key("a"), Event::Click { x: 0, y: 0 }, Event::Click { x: 3, y: 4 }, Event::Quit];
+    for event in events {
+        println!("{}", describe(event));
+    }
+    println!("{} {} {}", grade(95), grade(85), grade(12));
+    println!("{} {}", is_yes("yes"), is_yes("no"));
+    match first_click(events) {
+        Some(x) => println!("first click at x = {}", x),
+        None => println!("no clicks"),
+    }
+    let mut stack = vec![1, 2, 3];
+    while let Some(top) = stack.pop() {
+        println!("{}", top);
+    }
+    let last = Some(Event::Quit);
+    if let Some(Event::Quit) = last {
+        println!("quit");
+    }
+}
+```
+
+Output:
+
+```text
+key a
+click at the origin
+click at 3, 4
+quit
+A B lower
+true false
+first click at x = 0
+3
+2
+1
+quit
+```
+
+## Getters
+
+Functions that return part of what they are given, with no copy: Varyk works it out from the body, and the generated Rust returns a reference.
+
+`getters.vr`
+
+```varyk
+struct User {
+    name: string,
+    nickname: string,
+}
+
+impl User {
+    fn new(name: string, nickname: string) -> User {
+        User { name: name.clone(), nickname: nickname.clone() }
+    }
+
+    fn display_name(self) -> string {
+        if self.nickname.is_empty() { self.name } else { self.nickname }
+    }
+}
+
+fn trimmed(text: string) -> string {
+    text.trim()
+}
+
+fn first(users: Vec<User>) -> User {
+    users[0]
+}
+
+fn name_unless(user: User, hidden: string) -> string {
+    if user.name == hidden { user.nickname } else { user.name }
+}
+
+fn main() {
+    let user = User::new("Alice", "");
+    let friend = User::new("Robert", "Bob");
+    println!("{}", user.display_name());
+    println!("{}", friend.display_name());
+    let padded = "  hello  ";
+    println!("[{}]", trimmed(padded));
+    let users = vec![user, friend];
+    let leader = first(users);
+    println!("{}", leader.name);
+    println!("[{}]", name_unless(leader, "Alice"));
+}
+```
+
+Output:
+
+```text
+Alice
+Bob
+[hello]
+Alice
+[]
+```
+
+## Readings
+
+`parse`, `?` on the way to a `Result`, `as`, and `.clone()` and `==` on a struct and an enum.
+
+`readings.vr`
+
+```varyk
+enum Unit {
+    Celsius,
+    Fahrenheit,
+}
+
+struct Reading {
+    value: f64,
+    unit: Unit,
+}
+
+fn parse_reading(text: string) -> Result<Reading, string> {
+    let parsed: Option<f64> = text.trim().parse();
+    let value = parsed.ok_or(format!("not a number: {}", text.trim()))?;
+    Ok(Reading { value: value, unit: Unit::Celsius })
+}
+
+fn to_fahrenheit(reading: Reading) -> Reading {
+    if reading.unit == Unit::Fahrenheit {
+        reading.clone()
+    } else {
+        Reading { value: reading.value * 9.0 / 5.0 + 32.0, unit: Unit::Fahrenheit }
+    }
+}
+
+fn main() {
+    let inputs = vec![" 25 ", "abc"];
+    for input in inputs {
+        match parse_reading(input) {
+            Ok(reading) => {
+                let converted = to_fahrenheit(reading);
+                println!("{} -> {}", reading.value, converted.value);
+            }
+            Err(message) => println!("{}", message),
+        }
+    }
+    let lengths = vec![3, 10];
+    println!("{}", lengths.len() as i32 - 1);
+    println!("{}", lengths.get(1).unwrap_or(0));
+    let missing: Option<i32> = None;
+    println!("{}", missing.unwrap_or(7));
+    println!("{}", Some(4).map(|n| n * 2).is_some());
+    let failed: Result<i32, string> = Err("bad");
+    println!("{}", failed.is_err());
+    println!("{}", failed.unwrap_or(0));
+}
+```
+
+Output:
+
+```text
+25 -> 77
+not a number: abc
+1
+10
+7
+true
+true
+0
+```
+
+## Text
+
+A log filter: chains with `filter`, `map`, `all`, and `find`, `?` on an `Option`, `parse`, `map_err`, and a `HashMap`.
+
+`text.vr`
+
+```varyk
+fn keep(line: string, levels: Vec<string>) -> bool {
+    levels.iter().any(|level| line.starts_with(level))
+}
+
+fn first_error(lines: Vec<string>) -> Option<usize> {
+    for i in 0..lines.len() {
+        if lines[i].starts_with("ERROR") {
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn report(lines: Vec<string>) -> Option<string> {
+    let i = first_error(lines)?;
+    Some(lines[i].to_uppercase())
+}
+
+fn parse_code(text: string) -> Result<i32, string> {
+    let parsed: Option<i32> = text.parse();
+    parsed.ok_or(format!("bad code: {}", text))
+}
+
+fn next_port(text: string) -> Option<i32> {
+    let port: i32 = text.trim().parse()?;
+    Some(port + 1)
+}
+
+fn main() {
+    let mut lines: Vec<string> = Vec::new();
+    lines.push("ERROR disk full");
+    lines.push("INFO started");
+    lines.push("WARN low memory");
+    lines.insert(1, "DEBUG tick");
+    lines.remove(2);
+    let levels = vec!["ERROR", "WARN"];
+    let kept: Vec<string> = lines.iter().filter(|line| keep(line, levels)).map(|line| line.replace(" ", "_")).collect();
+    println!("{}", kept.join(", "));
+    println!("{} of {} lines kept", kept.len(), lines.len());
+    println!("{}", lines.iter().map(|line| line.trim()).all(|line| line.contains(" ")));
+    println!("{}", lines.contains("DEBUG tick"));
+    println!("{}", lines.is_empty());
+    if let Some(line) = lines.get(1) {
+        println!("second: {}", line);
+    }
+    match report(lines) {
+        Some(text) => println!("{}", text),
+        None => println!("no errors"),
+    }
+    match lines.iter().find(|line| line.starts_with("WARN")) {
+        Some(line) => println!("found {}", line),
+        None => println!("no warnings"),
+    }
+    let mut codes: HashMap<string, i32> = HashMap::new();
+    for i in 1..=3 {
+        codes.insert(format!("e{}", i), i * 100);
+    }
+    println!("{}", codes.contains_key("e2"));
+    println!("{}", codes.values().sum());
+    println!("{}", parse_code("404").is_ok());
+    let maybe = parse_code("42").ok();
+    if let Some(code) = maybe {
+        println!("{}", code);
+    } else {
+        println!("no code");
+    }
+    match parse_code("x").map_err(|e| format!("{}!", e)) {
+        Ok(code) => println!("{}", code),
+        Err(message) => println!("{}", message),
+    }
+    println!("{}", next_port(" 8079 ").unwrap_or(0));
+    let mut greeting = "hello";
+    greeting.push_str(" world");
+    println!("{}", greeting);
+}
+```
+
+Output:
+
+```text
+ERROR_disk_full, WARN_low_memory
+2 of 3 lines kept
+true
+true
+false
+second: DEBUG tick
+ERROR DISK FULL
+found WARN low memory
+true
+600
+true
+42
+bad code: x!
+8080
+hello world
 ```
 
 ## Packages
@@ -466,6 +858,7 @@ fn main() {
         println!("{}: {}, {} digit runs", s, describe(text::classify(s)), digits.count(s));
     }
     println!("{} of {} contain digits", with_digits, inputs.len());
+    println!("{}", text::classify("apple") == text::Kind::Word);
 }
 ```
 
@@ -494,6 +887,7 @@ impl Matcher {
     }
 }
 
+#[derive(Clone, PartialEq)]
 pub enum Kind {
     Word,
     Number(i32),
@@ -517,6 +911,7 @@ apple: word, 0 digit runs
 42: the number 42, 1 digit runs
 route 66 or 101: word, 2 digit runs
 2 of 3 contain digits
+true
 ```
 
 ### greeting

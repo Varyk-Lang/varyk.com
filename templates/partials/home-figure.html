@@ -26,6 +26,7 @@ fn main() {
 }</code></pre></div>
 <div class="pane"><p class="pane-head pane-rust">generated Rust</p>
 <pre data-copy="borrowing.rs" tabindex="0"><code data-lang="rust"><mark>#[allow(warnings, arithmetic_overflow, unconditional_panic)]</mark>
+<mark>#[derive(Clone, PartialEq)]</mark>
 struct User {
     name: <mark>String</mark>,
 }
