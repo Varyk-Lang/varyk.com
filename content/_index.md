@@ -53,7 +53,7 @@ columns = true
 id = "roadmap"
 label = "Roadmap"
 style = "road"
-done = 3
+done = 4
 
 [[extra.bands]]
 id = "get-started"
@@ -148,9 +148,9 @@ From your source to the binary:
 1. **Milestone 1, complete.** Compiler skeleton and the borrow-by-default proof: six example programs, diagnostics with codes and fix-its, and `varyk check`, `build`, and `run`.
 2. **Milestone 2, complete.** Enums, `match`, `for`, methods, `Option`, `Result`, `Vec`, `?`, and `format!`.
 3. **Milestone 3, complete.** Packages and interop: `Cargo.toml`, Cargo dependencies through `.rs` facades, nested modules, `use`, private fields, Rust structs and enums imported from `.rs` files, `varyk init`, and publishing to crates.io. Released as 0.1.0.
-4. **Milestone 4, next.** Closures, iterators, `HashMap`, borrowed return values, `varyk fmt`, and more of Rust imported from `.rs` files.
-5. **Milestone 5.** Batteries for services: HTTP, JSON, databases, logging, tests, and `async`/`await` on a built-in runtime.
-6. **Milestone 6.** Tooling and beyond: a language server, and a decision on a native backend.
+4. **Milestone 4, complete.** Closures, iterators, and patterns: chains such as `filter` and `map`, `if let` and `while let`, nested, literal, and range patterns, `HashMap`, `as`, `.clone()` and `==` on structs and enums, and getters that return part of their value with no copy. Released as 0.2.0.
+5. **Milestone 5, next.** Batteries for services: HTTP, JSON, databases, logging, tests, and `async`/`await` on a built-in runtime.
+6. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 
