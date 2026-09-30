@@ -4,8 +4,6 @@ description = "Milestone 4 adds closures as the arguments of built-in calls, ite
 date = 2026-09-29
 +++
 
-<!-- TODO(release): set the date to the day 0.2.0 is on crates.io. -->
-
 Varyk 0.2.0 is on crates.io. It is milestone 4 of the [roadmap](/design/roadmap/), and it is about the language: the everyday code of a service that milestone 3 made awkward. Milestone 3 connected Varyk, a language for backend services that compiles to Rust, to Cargo and the Rust ecosystem. Milestone 4 adds closures, chains over collections, richer patterns, `HashMap`, and functions that return part of what they are given without a copy.
 
 ## What is in it

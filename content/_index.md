@@ -10,8 +10,8 @@ headline = ["Build backend services simply.", "Ship Rust *binaries.*"]
 lead = "Varyk is a small language for APIs, workers, and microservices. No garbage collector, no lifetime annotations, no borrow ceremony, and Rust and crates.io underneath. You write Go-like application code and ship one native binary, checked by the Rust compiler."
 install_label = "Install with Cargo"
 install = "cargo install varyk"
-# The hero figure (templates/partials/home-service.html) shows a service as milestone 5 is meant to write it.
-figure_caption = "A service as milestone 5 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). The compiler does not accept `http`, `db`, or `async` yet. See the [roadmap](/design/roadmap/)."
+# The hero figure (templates/partials/home-service.html) shows a service as milestone 5b2 is meant to write it.
+figure_caption = "A service as milestone 5b2 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). The compiler does not accept `http`, `db`, or `async` yet; `Error` and `log` are here since milestone 5a. See the [roadmap](/design/roadmap/)."
 # The borrowing figure (templates/partials/home-figure.html) is placed in the band whose entry sets `figure = "borrowing"`.
 borrowing_caption = "The Rust that `varyk build` generates from `borrowing.vr`, as the compiler writes `src/main.rs`. **Marked**: everything the compiler writes for you. The program prints `Alice`, then `Bob`."
 
@@ -53,7 +53,7 @@ columns = true
 id = "roadmap"
 label = "Roadmap"
 style = "road"
-done = 4
+done = 5
 
 [[extra.bands]]
 id = "get-started"
@@ -63,7 +63,7 @@ style = "start"
 
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them and ship in milestone 5.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, and `async`, HTTP, and databases come in milestones 5b1 and 5b2.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -73,18 +73,18 @@ Rust underneath gives you all of this today. The batteries that make a service, 
 - **As fast as Rust, because it is Rust.** Native code, no interpreter, no just-in-time compiler, nothing cloned behind your back.
 - **No ownership ceremony.** No lifetime annotations, no choosing between `x`, `&x`, and `&mut x` at a call site, and one string type. The compiler makes those decisions, and rustc checks every one of them.
 - **Readable Rust, yours to keep.** The generated Rust is a normal Cargo project, `--emit-rust` shows all of it, and there is no lock-in.
-- **The whole Rust ecosystem.** A Varyk package is a Cargo package: since milestone 3 you add a crate with `cargo add` and call it from a `.rs` file in the package, and the next section shows how.
+- **The whole Rust ecosystem.** A Varyk package is a Cargo package: since milestone 3 you add a crate with `cargo add`, or `varyk add` since milestone 5a, and call it from a `.rs` file in the package, and the next section shows how.
 - **Drop into Rust when you need it.** A `.rs` file beside your `.vr`, in the same package and the same build. Write the borrow-heavy part in Rust and the rest in Varyk. Use Varyk until you actually need Rust.
 
 ### The batteries, milestone 5
 
-None of these are in the compiler yet. The figure at the top of the page shows the shape they are designed to take.
+JSON, configuration, logging, and tests are in the compiler since milestone 5a; the [examples](/learn/examples/#json) show them. HTTP, databases, and `async` are not there yet; the figure at the top of the page shows the shape they are designed to take.
 
-- **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack.
-- **JSON from your structs.** Turn your structs into JSON and back.
-- **Databases through one API.** Query a database and get your structs back, on a proven Rust driver.
-- **Async built in.** `async fn` and `.await` on a built-in runtime.
-- **Configuration, logging, tests.** Settings from the environment, structured logs, and `varyk test`.
+- **JSON from your structs.** Turn your structs into JSON and back with `json::parse` and `json::stringify`, and rename, default, or skip a field with an attribute. *Milestone 5a.*
+- **Configuration, logging, tests.** A struct filled from the environment and a `.env` file with `env::parse`, log lines on stderr as text or JSON, and `varyk test`. *Milestone 5a.*
+- **Async built in.** `async fn` and `.await` on a built-in runtime. *Milestone 5b1.*
+- **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack. *Milestone 5b2.*
+- **Databases through one API.** Query a database and get your structs back, on a proven Rust driver. *Milestone 5b2.*
 
 Varyk exists so that ordinary backend services can be written simply and shipped as safe Rust. It is for the application: kernels, database engines, and borrow-heavy libraries stay in Rust, in a `.rs` file beside your Varyk, in the same build. [Read why Varyk exists](/why/).
 
@@ -94,7 +94,7 @@ A Varyk package is a `Cargo.toml` and a `src/main.vr`. `varyk init` writes one, 
 
 1. **`main.vr`** Your service, in Varyk. It never names a crate, and it never writes a reference.
 2. **`text.rs`** A Rust file beside it: a facade that wraps what the program needs in plain functions, structs, and enums, which Varyk imports like a module of its own.
-3. **crates.io** Any crate, added with `cargo add`. Need Stripe, AWS, or Kafka? Use the Rust crate.
+3. **crates.io** Any crate, added with `varyk add` or `cargo add`. Need Stripe, AWS, or Kafka? Use the Rust crate.
 
 Need something Varyk doesn't provide? Use the Rust crate. Need Rust itself, for the one hot loop or the borrow-heavy library? Write it in the `.rs` file, in the same build, and call it from Varyk. The [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way, and the [tools page](/tools/#packages) describes `init` and `publish`.
 
@@ -123,7 +123,7 @@ From your source to the binary:
 - Application code as simple as Go: the compiler does the memory bookkeeping that Rust asks you to write by hand.
 - Native speed and memory safety with no garbage collector: no pauses, no memory ceiling to tune, and one small binary to deploy with no language runtime to install.
 - The bugs Go and TypeScript compile, a missing value, an unhandled error, two threads on one piece of data, rustc rejects.
-- `async`/`await` that looks like JavaScript, with a built-in runtime (milestone 5).
+- `async`/`await` that looks like JavaScript, with a built-in runtime (milestone 5b1).
 - One toolchain and one package registry, inherited from Cargo and crates.io, since milestone 3.
 
 ### Coming from Rust
@@ -141,7 +141,7 @@ From your source to the binary:
 - Concrete code, with few abstractions to see through.
 - rustc checks memory safety and data races, so a review can focus on what the service does.
 - A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
-- One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (milestone 5).
+- One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; HTTP and databases in milestone 5b2).
 
 ## Ordered milestones, no *dates.*
 
@@ -149,8 +149,10 @@ From your source to the binary:
 2. **Milestone 2, complete.** Enums, `match`, `for`, methods, `Option`, `Result`, `Vec`, `?`, and `format!`.
 3. **Milestone 3, complete.** Packages and interop: `Cargo.toml`, Cargo dependencies through `.rs` facades, nested modules, `use`, private fields, Rust structs and enums imported from `.rs` files, `varyk init`, and publishing to crates.io. Released as 0.1.0.
 4. **Milestone 4, complete.** Closures, iterators, and patterns: chains such as `filter` and `map`, `if let` and `while let`, nested, literal, and range patterns, `HashMap`, `as`, `.clone()` and `==` on structs and enums, and getters that return part of their value with no copy. Released as 0.2.0.
-5. **Milestone 5, next.** Batteries for services: HTTP, JSON, databases, logging, tests, and `async`/`await` on a built-in runtime.
-6. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
+5. **Milestone 5a, complete.** Data, configuration, logging, and tests: a built-in `Error`, `json::parse` and `json::stringify`, `env::parse` with `.env`, `log` calls, the attributes `#[rename]`, `#[default]`, `#[skip]`, and `#[test]`, and `varyk test` and `varyk add`. Released as 0.3.0.
+6. **Milestone 5b1, next.** Async: `async`/`await` on a built-in runtime, and `spawn`.
+7. **Milestone 5b2.** HTTP and the database: an HTTP server and client, and databases through one API. The golden path, a users API on a database, is met here.
+8. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 
