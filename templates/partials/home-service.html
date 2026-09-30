@@ -1,9 +1,10 @@
-{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5 design target, not
+{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5b2 design target, not
     code the compiler accepts today, which the caption (`extra.figure_caption` in content/_index.md) says.
+    `Error` and `log::info` are written as milestone 5a settled them; `http`, `db`, and `async` are 5b1 and 5b2.
     It lives only in this template, so it never reaches the Markdown copies that agents read. -#}
 <figure class="compare">
 <div class="compare-panes compare-single">
-<div class="pane"><p class="pane-head pane-varyk">users.vr <span class="pane-note">coming in milestone 5</span></p>
+<div class="pane"><p class="pane-head pane-varyk">users.vr <span class="pane-note">coming in milestone 5b2</span></p>
 <pre tabindex="0"><code data-lang="varyk">struct User {
     id: i64,
     name: string,
@@ -19,9 +20,11 @@ async fn get_user(req: http::Request) -&gt; Result&lt;http::Response, Error&gt; 
 }
 
 async fn main() {
+    let port = 3000;
     let mut app = http::App::new();
     app.get("/users/:id", get_user);
-    app.serve(3000).await;
+    log::info("listening on port {}", port);
+    app.serve(port).await;
 }</code></pre></div>
 </div>
 <figcaption><span class="fig">Fig. 1</span> {{ section.extra.figure_caption | markdown(inline=true) | safe }}</figcaption>

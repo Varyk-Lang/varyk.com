@@ -1,10 +1,10 @@
 +++
 title = "Examples"
-description = "The example programs from milestones 1, 2, and 4, and three packages from milestone 3, with their expected output."
+description = "The example programs from milestones 1, 2, 4, and 5a, and the packages from milestones 3 and 5a, with their expected output."
 weight = 3
 +++
 
-These are the eighteen programs milestones 1, 2, and 4 must compile and run with the shown output, and three packages from milestone 3; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, and the six from [Iterators](#iterators) on milestone 4; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
+These are the twenty-one programs milestones 1, 2, 4, and 5a must compile and run with the shown output, and four packages from milestones 3 and 5a; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, and the three from [JSON](#json) on milestone 5a; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
@@ -658,8 +658,8 @@ struct Reading {
 }
 
 fn parse_reading(text: string) -> Result<Reading, string> {
-    let parsed: Option<f64> = text.trim().parse();
-    let value = parsed.ok_or(format!("not a number: {}", text.trim()))?;
+    let parsed: Result<f64, Error> = text.trim().parse();
+    let value = parsed.ok().ok_or(format!("not a number: {}", text.trim()))?;
     Ok(Reading { value: value, unit: Unit::Celsius })
 }
 
@@ -733,12 +733,13 @@ fn report(lines: Vec<string>) -> Option<string> {
 }
 
 fn parse_code(text: string) -> Result<i32, string> {
-    let parsed: Option<i32> = text.parse();
-    parsed.ok_or(format!("bad code: {}", text))
+    let parsed: Result<i32, Error> = text.parse();
+    parsed.map_err(|e| format!("bad code: {}", text))
 }
 
 fn next_port(text: string) -> Option<i32> {
-    let port: i32 = text.trim().parse()?;
+    let parsed: Result<i32, Error> = text.trim().parse();
+    let port = parsed.ok()?;
     Some(port + 1)
 }
 
@@ -811,9 +812,162 @@ bad code: x!
 hello world
 ```
 
+## JSON
+
+`json::parse` and `json::stringify`: `#[rename]` on a field and a variant, a missing `Option` read as `None`, a `#[default]` used, a `#[skip]` field neither read nor written, and a number out of range for its type an `Error` printed with `{}`, not a panic.
+
+`json.vr`
+
+```varyk
+enum Role {
+    Admin,
+    #[rename("member")]
+    Member,
+}
+
+struct User {
+    id: u32,
+    #[rename("userName")]
+    user_name: string,
+    role: Role,
+    nickname: Option<string>,
+    tags: Vec<string>,
+    #[default(18)]
+    age: u8,
+    #[skip]
+    password_hash: Option<string>,
+}
+
+fn role_name(role: Role) -> string {
+    match role {
+        Role::Admin => "admin",
+        Role::Member => "member",
+    }
+}
+
+fn load(body: string) -> Result<User, Error> {
+    let u: User = json::parse(body)?;
+    Ok(u)
+}
+
+fn main() {
+    let text = "{\"id\": 7, \"userName\": \"ann\", \"role\": \"member\", \"tags\": [\"a\", \"b\"], \"password_hash\": \"x\"}";
+    match load(text) {
+        Ok(u) => {
+            println!("{} {} {}", u.id, u.user_name, role_name(u.role));
+            println!("{} tags, age {}, nickname: {}", u.tags.len(), u.age, u.nickname.is_some());
+            println!("{}", json::stringify(u));
+        }
+        Err(e) => println!("error: {}", e),
+    }
+    let bad = "{\"id\": 1, \"userName\": \"bo\", \"role\": \"Admin\", \"tags\": [], \"age\": 300}";
+    match load(bad) {
+        Ok(u) => println!("{}", u.id),
+        Err(e) => println!("error: {}", e),
+    }
+}
+```
+
+Output:
+
+```text
+7 ann member
+2 tags, age 18, nickname: false
+{"id":7,"userName":"ann","role":"member","nickname":null,"tags":["a","b"],"age":18}
+error: invalid value: integer `300`, expected u8 at line 1 column 67
+```
+
+## Config
+
+`env::parse` fills a struct from the environment, then from a `.env` file in the current directory, then from `#[default]`: `#[rename]` on a field and a variant, an `Option` left unset, and a default used.
+
+`config.vr`
+
+```varyk
+enum Mode {
+    Dev,
+    #[rename("live")]
+    Live,
+}
+
+struct Config {
+    port: u16,
+    #[rename("db_url")]
+    database_url: string,
+    mode: Mode,
+    token: Option<string>,
+    #[default(30)]
+    timeout_secs: u32,
+}
+
+fn mode_name(mode: Mode) -> string {
+    match mode {
+        Mode::Dev => "dev",
+        Mode::Live => "live",
+    }
+}
+
+fn load() -> Result<Config, Error> {
+    let c: Config = env::parse()?;
+    Ok(c)
+}
+
+fn main() {
+    match load() {
+        Ok(c) => {
+            println!("port {}", c.port);
+            println!("database {}", c.database_url);
+            println!("mode {}", mode_name(c.mode));
+            println!("token set: {}", c.token.is_some());
+            println!("timeout {}s", c.timeout_secs);
+        }
+        Err(e) => println!("error: {}", e),
+    }
+}
+```
+
+Output, with `PORT=8080`, `DB_URL=postgres://h/db?sslmode=require`, and `MODE=live` set, and `TOKEN` and `TIMEOUT_SECS` not set:
+
+```text
+port 8080
+database postgres://h/db?sslmode=require
+mode live
+token set: false
+timeout 30s
+```
+
+With `PORT` not set, it prints ``error: `PORT` is not set``; with `PORT=abc`, ``error: `PORT` is not a number: `abc` ``.
+
+## Logging
+
+The four `log` calls, each writing a line to stderr.
+
+`logging.vr`
+
+```varyk
+fn main() {
+    let workers = 3;
+    let port = 8080;
+    let cause = Error::new("connection refused");
+    log::debug("starting with {} workers", workers);
+    log::info("listening on port {}", port);
+    log::warn("queue is {} percent full", 90);
+    log::error("request failed: {}", cause);
+}
+```
+
+Nothing is printed on stdout. With `LOG=debug`, stderr holds these lines, each after the time:
+
+```text
+DEBUG starting with 3 workers
+INFO listening on port 8080
+WARN queue is 90 percent full
+ERROR request failed: connection refused
+```
+
 ## Packages
 
-A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`. These three are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
+A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`. These four are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
 
 ### matcher
 
@@ -1054,3 +1208,188 @@ fn main() {
 ```
 
 Output of `cargo run` in `consumer/`, after `varyk publish --assemble-only` in `units/`: `7 meters`.
+
+### users
+
+Milestone 5a together: a store of users read from JSON, with `#[rename]` and `#[default]`, configuration from the environment and a `.env` file, logging, and three tests. It is laid out as `varyk init` writes a package: `Cargo.toml` depends on `varyk-std`, `src/main.rs` is `init`'s one-line stub, and `build.rs`, not shown, is `init`'s too.
+
+<!-- TODO(release): re-copy packages/users/Cargo.toml once the release pull request sets its varyk-std line to 0.3.0. -->
+
+`packages/users/Cargo.toml`
+
+```toml
+[package]
+name = "users"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+varyk-std = "0.2.0"
+```
+
+`packages/users/.env`
+
+```text
+# Committed on purpose: the defaults `varyk run` and the tests read.
+PORT=8080
+DB_URL=postgres://localhost/users?sslmode=disable
+LOG=info
+```
+
+`packages/users/src/main.vr`
+
+```varyk
+mod store;
+
+struct Config {
+    port: u16,
+    #[rename("db_url")]
+    database_url: string,
+}
+
+fn add_user(mut users: store::Store, body: string) {
+    match users.add_json(body) {
+        Ok(n) => {
+            log::info("now {} users", n);
+            println!("added, {} in the store", n);
+        }
+        Err(e) => {
+            log::warn("rejected a user: {}", e);
+            println!("rejected: {}", e);
+        }
+    }
+}
+
+fn load_config() -> Result<Config, Error> {
+    let c: Config = env::parse()?;
+    Ok(c)
+}
+
+fn main() {
+    let config = match load_config() {
+        Ok(c) => c,
+        Err(e) => {
+            log::error("bad configuration: {}", e);
+            return;
+        }
+    };
+    log::info("serving on port {} with {}", config.port, config.database_url);
+    let mut users = store::Store::new();
+    add_user(users, "{\"id\": 1, \"name\": \"ann\", \"role\": \"member\"}");
+    add_user(users, "{\"id\": 2, \"name\": \"bo\", \"role\": \"Admin\", \"email\": \"bo@example.com\", \"age\": 41}");
+    add_user(users, "{\"id\": 3, \"name\": \"\", \"role\": \"member\"}");
+    add_user(users, "{\"id\": 4, \"name\": \"cy\", \"role\": \"Root\"}");
+    println!("{}", json::stringify(users.users()));
+}
+```
+
+`packages/users/src/store.vr`
+
+```varyk
+pub enum Role {
+    Admin,
+    #[rename("member")]
+    Member,
+}
+
+pub struct User {
+    pub id: u32,
+    pub name: string,
+    pub role: Role,
+    pub email: Option<string>,
+    #[default(18)]
+    pub age: u8,
+}
+
+pub struct Store {
+    users: Vec<User>,
+}
+
+impl Store {
+    pub fn new() -> Store {
+        Store { users: Vec::new() }
+    }
+
+    /// Parses a user from JSON and keeps it, giving the new count, or says
+    /// why it was refused.
+    pub fn add_json(mut self, body: string) -> Result<usize, Error> {
+        let user = parse_user(body)?;
+        self.users.push(user);
+        Ok(self.users.len())
+    }
+
+    pub fn len(self) -> usize {
+        self.users.len()
+    }
+
+    pub fn users(self) -> Vec<User> {
+        self.users
+    }
+}
+
+/// Parses one user from JSON and rejects one with no name.
+pub fn parse_user(body: string) -> Result<User, Error> {
+    let user: User = json::parse(body)?;
+    if user.name.is_empty() {
+        return Err(Error::new("a user needs a name"));
+    }
+    Ok(user)
+}
+
+#[test]
+fn parses_a_user_and_fills_the_default_age() {
+    match parse_user("{\"id\": 1, \"name\": \"ann\", \"role\": \"member\"}") {
+        Ok(u) => {
+            assert_eq(u.age, 18);
+            assert_eq(u.email.is_some(), false);
+        }
+        Err(e) => assert_eq(e.message(), "unexpected"),
+    }
+}
+
+#[test]
+fn rejects_a_user_with_no_name() {
+    match parse_user("{\"id\": 2, \"name\": \"\", \"role\": \"Admin\"}") {
+        Ok(u) => assert_eq(u.id, 0),
+        Err(e) => assert_eq(e.message(), "a user needs a name"),
+    }
+}
+
+#[test]
+fn a_store_counts_its_users() {
+    let mut store = Store::new();
+    assert_eq(store.len(), 0);
+    match store.add_json("{\"id\": 3, \"name\": \"bo\", \"role\": \"member\", \"age\": 30}") {
+        Ok(n) => assert_eq(n, 1),
+        Err(e) => assert_eq(e.message(), "unexpected"),
+    }
+}
+```
+
+`packages/users/src/main.rs`
+
+```rust
+::std::include!(::std::concat!(::std::env!("OUT_DIR"), "/varyk/src/main.rs"));
+```
+
+Output of `varyk run`, in this directory, with its `.env`:
+
+```text
+added, 1 in the store
+added, 2 in the store
+rejected: a user needs a name
+rejected: unknown variant `Root`, expected `Admin` or `member` at line 1 column 38
+[{"id":1,"name":"ann","role":"member","email":null,"age":18},{"id":2,"name":"bo","role":"Admin","email":"bo@example.com","age":41}]
+```
+
+The log goes to stderr, each line after the time:
+
+```text
+INFO serving on port 8080 with postgres://localhost/users?sslmode=disable
+INFO now 1 users
+INFO now 2 users
+WARN rejected a user: a user needs a name
+WARN rejected a user: unknown variant `Root`, expected `Admin` or `member` at line 1 column 38
+```
+
+`varyk test` runs the three tests in `store.vr`, and all three pass.

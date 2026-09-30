@@ -24,7 +24,19 @@ Milestones are ordered; items within a milestone are not. Nothing here is a rele
 
 ## Milestone 5: batteries for services
 
-`varyk-std`: JSON via serde, logging via tracing, an HTTP server on a proven Rust crate chosen at that time and an HTTP client on the same stack, databases through one API with sqlx as the candidate crate, configuration from the environment, `varyk test`, and `async`/`await` on a built-in tokio runtime with `spawn` as a built-in and `Send`, `Sync`, and `Pin` kept out of the surface syntax. Also `varyk add`, a pass-through to `cargo add`; `.rs` signatures naming Varyk-declared types, so the `varyk-std` facades can take and return Varyk structs; and an agent evaluation, the examples written by a model from the language reference alone with pass rates published, before any page claims that agents write Varyk well. Gated on open questions: how Varyk structs derive serde's traits, the async runtime shape, and ownership-transfer syntax. The bar is one golden path: a users API on a database is `varyk init`, one file, and `varyk run` away, within fifteen minutes of `cargo install varyk`.
+Milestone 5 is three milestones. The bar for the whole of it is one golden path: a users API on a database is `varyk init`, one file, and `varyk run` away, within fifteen minutes of `cargo install varyk`, and `varyk build --release` leaves an ordinary native executable. It is met at the end of 5b2, and promotion waits for it.
+
+### Milestone 5a: data, configuration, logging, and tests
+
+**Complete, released as 0.3.0.** The `varyk-std` crate, and the `varyk-std` dependency in every package, whose version and lock `varyk check` reads; `Error`, one built-in error type with a message, and `parse` returning a `Result`; the attributes `#[rename]`, `#[default]`, `#[skip]`, and `#[test]`; serde derivation for the types a `json` or `env` call reaches; JSON through `json::parse` and `json::stringify`; configuration from the environment and `.env` through `env::parse`; logging via tracing, with `log::debug`, `info`, `warn`, and `error`; `varyk test`, with `assert` and `assert_eq`; `varyk add`, a pass-through to `cargo add`; and the examples `json`, `config`, and `logging` and the `users` package. Its release is 0.3.0, because `parse` returning a `Result` is a breaking change.
+
+### Milestone 5b1: async
+
+Gated on two open questions: the async runtime shape and ownership-transfer syntax. `async`/`await` on a built-in tokio runtime, `spawn` as a built-in, and `Send`, `Sync`, and `Pin` kept out of the surface syntax, with their failures mapped to Varyk diagnostics.
+
+### Milestone 5b2: HTTP and the database
+
+An HTTP server on a proven Rust crate, chosen at that time, and an HTTP client on the same stack; databases through one API, with sqlx as the candidate crate; `.rs` signatures naming Varyk-declared types and `varyk_std::Error`, so the `varyk-std` facades can take and return Varyk structs; and an agent evaluation, the examples written by a model from the language reference alone with pass rates published, before any page claims that agents write Varyk well.
 
 ## Milestone 6: tooling and beyond
 
@@ -32,4 +44,4 @@ Milestones are ordered; items within a milestone are not. Nothing here is a rele
 
 ## Unscheduled
 
-Declaring generics, traits, and attributes in Varyk code, and using a crate directly from Varyk code, with no facade `.rs` module in between. Each waits on an open question in the specification. Using a crate directly is an experiment for after traits exist, because most crate APIs are generic; the facade rule stands until that experiment says otherwise. Also unscheduled: `Box`, until a program needs a recursive type that `Vec` or `HashMap` cannot hold, and the rest of the milestone-4 cut list, a character type, closures as values, tuples, `HashSet`, and the remaining iterator adapters.
+Declaring generics, traits, and attributes of your own in Varyk code, and using a crate directly from Varyk code, with no facade `.rs` module in between. Each waits on an open question in the specification; the four attributes milestone 5a added are the compiler's own, and only the compiler defines attributes. Using a crate directly is an experiment for after traits exist, because most crate APIs are generic; the facade rule stands until that experiment says otherwise. TOML is unscheduled too, beside the rest of the cuts the [language reference](/learn/reference/#not-in-milestone-5a) lists under "Not in milestone 5a": nothing on the golden path needs it, and the same machinery adds it later. Also unscheduled: `Box`, until a program needs a recursive type that `Vec` or `HashMap` cannot hold, and the rest of the milestone-4 cut list, a character type, closures as values, tuples, `HashSet`, and the remaining iterator adapters.

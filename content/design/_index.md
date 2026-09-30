@@ -39,4 +39,4 @@ Before 1.0, everything may change; a breaking change bumps the minor version. Di
 
 ## Concurrency direction
 
-Varyk keeps Rust's async model and JavaScript's surface: `async fn` and `.await`, a built-in runtime, and `spawn` as a built-in. `Send`, `Sync`, and `Pin` are kept out of the surface syntax; they are still enforced by rustc, and their failures must be mapped to Varyk diagnostics. Whether the runtime is multi-threaded or current-thread is an open question to be decided before milestone 5. Varyk does not adopt Go-style colorless concurrency: the Rust crates it builds on are already async.
+Varyk keeps Rust's async model and JavaScript's surface: `async fn` and `.await`, a built-in runtime, and `spawn` as a built-in. `Send`, `Sync`, and `Pin` are kept out of the surface syntax; they are still enforced by rustc, and their failures must be mapped to Varyk diagnostics. Whether the runtime is multi-threaded or current-thread is an open question to be decided before milestone 5b1. Varyk does not adopt Go-style colorless concurrency: the Rust crates it builds on are already async.
