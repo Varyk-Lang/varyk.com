@@ -33,3 +33,15 @@ The wordmark, `varyk` in lower case, is set in the system sans at weight 800; th
 | `varyk-mark-mono-black-512.png`, `varyk-mark-mono-white-512.png` | 512 | single-colour use |
 
 They were rendered from the SVGs with a browser engine. When the SVGs change, re-export at the same sizes rather than editing the PNGs.
+
+## Social preview
+
+`og-image.html` is the source of `static/og.png`, the 1200 × 630 card that `og:image` points to on every page: the mark, the wordmark, and the hero headline on the dark page colour. It uses the site's self-hosted Newsreader, so render it through a local server from the repository root:
+
+```sh
+python3 -m http.server 8771 --bind 127.0.0.1 &
+/Applications/Firefox.app/Contents/MacOS/firefox --headless --new-instance --profile "$(mktemp -d)" \
+  --window-size=1200,630 --screenshot "$PWD/static/og.png" http://127.0.0.1:8771/docs/brand/og-image.html
+```
+
+Re-render it when the hero headline or the mark changes.

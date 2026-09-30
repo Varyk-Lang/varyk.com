@@ -34,6 +34,7 @@ Files:
 - `templates/partials/logo.html`: the inline SVG used in the header, footer, and 404 page. Its colours and motion come from classes in `site.css` (`vk-tile`, `vk-rust`, `vk-varyk`, `vk-hole`, `vk-in-*`, `vk-big`, `vk-small`), because the CSP forbids inline styles.
 - `static/favicon.svg`: the same geometry with fixed colours on the dark tile, so it reads on light and dark browser chrome.
 - `docs/brand/`: standalone SVGs of every version (dark and paper tiles, no tile, one colour, app icon) and PNG exports at common sizes under `docs/brand/png/`, for use outside the site. Its README lists which file to use where.
+- `static/og.png`: the 1200 × 630 social preview (`og:image`), rendered from `docs/brand/og-image.html`: the mark, the wordmark, and the hero headline on the dark page colour.
 
 ### Colours of the mark
 
