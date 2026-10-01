@@ -1,0 +1,61 @@
+<!doctype html>
+<!--
+  Source of png/varyk-linkedin-cover.png, the LinkedIn page cover (1128 x 191,
+  rendered at 2x). LinkedIn lays the page logo over the left quarter of the
+  cover, so the text is centred in the space to its right. Render it like
+  og-image.html; see README.md.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Varyk LinkedIn cover</title>
+<style>
+  @font-face {
+    font-family: "Newsreader";
+    src: url("/static/fonts/Newsreader.woff2") format("woff2");
+    font-weight: 400 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Newsreader";
+    src: url("/static/fonts/Newsreader-Italic.woff2") format("woff2");
+    font-weight: 400 600;
+    font-style: italic;
+  }
+  /* Laid out at 1128 x 191, rendered at 2x for sharp text. */
+  html { zoom: 2; }
+  html, body { margin: 0; }
+  body {
+    width: 1128px;
+    height: 191px;
+    overflow: hidden;
+    background: #0F1211;
+    color: #EEEAE0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    box-sizing: border-box;
+    padding: 0 56px 0 338px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  h1 {
+    margin: 0;
+    font-family: "Newsreader", Georgia, serif;
+    font-weight: 500;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+  h1 u { text-decoration: underline 0.06em #BF3B33; text-underline-offset: 0.14em; }
+  h1 em { color: #5FBFAE; }
+  p { margin: 12px 0 0; font-size: 15px; color: #B3AFA7; }
+  p em { font-family: "Newsreader", Georgia, serif; font-size: 18px; }
+</style>
+</head>
+<body>
+  <h1><u>Build backend services simply.</u> Ship Rust <em>binaries.</em></h1>
+  <p>Rust’s safety. Go’s <em>simplicity.</em> &nbsp; varyk.com</p>
+</body>
+</html>

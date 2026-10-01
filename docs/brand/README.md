@@ -31,6 +31,8 @@ The wordmark, `varyk` in lower case, is set in the system sans at weight 800; th
 | `varyk-app-icon-<size>.png` | 180, 192, 512, 1024 | Apple touch icon, web app manifest, and other places that want one flat colour |
 | `varyk-mark-bare-dark-<size>.png`, `varyk-mark-bare-paper-<size>.png` | 512, 1024 | placing the gears without a tile |
 | `varyk-mark-mono-black-512.png`, `varyk-mark-mono-white-512.png` | 512 | single-colour use |
+| `varyk-og-image.png` | 1200 × 630 | the social preview for posts and slides; a copy of `static/og.png`, rendered from `og-image.html` |
+| `varyk-linkedin-cover.png` | 2256 × 382 | the LinkedIn page cover (1128 × 191 at 2×), rendered from `linkedin-cover.html` |
 
 They were rendered from the SVGs with a browser engine. When the SVGs change, re-export at the same sizes rather than editing the PNGs.
 
@@ -44,4 +46,6 @@ python3 -m http.server 8771 --bind 127.0.0.1 &
   --window-size=1200,630 --screenshot "$PWD/static/og.png" http://127.0.0.1:8771/docs/brand/og-image.html
 ```
 
-Re-render it when the hero headline or the mark changes.
+Re-render it when the hero headline or the mark changes, and copy it to `png/varyk-og-image.png` so the two stay the same.
+
+`linkedin-cover.html` is rendered the same way, with `--window-size=2256,382` and `--screenshot "$PWD/docs/brand/png/varyk-linkedin-cover.png"`. LinkedIn lays the page logo over the left quarter of the cover, so the text is centred in the space to its right.
