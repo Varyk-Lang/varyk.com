@@ -1,10 +1,10 @@
 +++
 title = "Examples"
-description = "The example programs from milestones 1, 2, 4, and 5a, and the packages from milestones 3 and 5a, with their expected output."
+description = "The example programs from milestones 1, 2, 4, 5a, and 5b1, and the packages from milestones 3 and 5a, with their expected output."
 weight = 3
 +++
 
-These are the twenty-one programs milestones 1, 2, 4, and 5a must compile and run with the shown output, and four packages from milestones 3 and 5a; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, and the three from [JSON](#json) on milestone 5a; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
+These are the twenty-four programs milestones 1, 2, 4, 5a, and 5b1 must compile and run with the shown output, and four packages from milestones 3 and 5a; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, the three from [JSON](#json) on milestone 5a, and the three from [Tasks](#tasks) on milestone 5b1; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`, and milestone 5b1 renamed `todo`'s `Task` struct to `Item`, because `Task` is now a built-in type. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
@@ -355,20 +355,20 @@ Output: `Alice`, `Alice`, `Hello, Alice!`, `5`, `true`.
 ```varyk
 mod task;
 
-fn count_done(tasks: Vec<task::Task>) -> usize {
+fn count_done(tasks: Vec<task::Item>) -> usize {
     tasks.iter().filter(|t| t.is_done()).count()
 }
 
-fn print_all(tasks: Vec<task::Task>) {
+fn print_all(tasks: Vec<task::Item>) {
     for t in tasks {
         println!("{}", t.label());
     }
 }
 
 fn main() {
-    let mut tasks: Vec<task::Task> = Vec::new();
-    tasks.push(task::Task::new("Buy milk"));
-    tasks.push(task::Task::new("Write spec"));
+    let mut tasks: Vec<task::Item> = Vec::new();
+    tasks.push(task::Item::new("Buy milk"));
+    tasks.push(task::Item::new("Write spec"));
     print_all(tasks);
     tasks[0].complete();
     print_all(tasks);
@@ -384,14 +384,14 @@ pub enum Status {
     Done,
 }
 
-pub struct Task {
+pub struct Item {
     title: string,
     status: Status,
 }
 
-impl Task {
-    pub fn new(title: string) -> Task {
-        Task { title: title.clone(), status: Status::Open }
+impl Item {
+    pub fn new(title: string) -> Item {
+        Item { title: title.clone(), status: Status::Open }
     }
 
     pub fn complete(mut self) {
@@ -965,6 +965,189 @@ WARN queue is 90 percent full
 ERROR request failed: connection refused
 ```
 
+## Tasks
+
+Async functions awaited in place and started as tasks: two calls that overlap, ten squares waited on with `Task::all`, an async method, a detached task, and two async tests.
+
+`tasks.vr`
+
+```varyk
+struct Counter {
+    step: i64,
+}
+
+impl Counter {
+    async fn next(self, from: i64) -> i64 {
+        time::sleep(5).await;
+        from + self.step
+    }
+}
+
+async fn fetch_user(id: i64) -> string {
+    time::sleep(30).await;
+    format!("user {}", id)
+}
+
+async fn send_receipt(to: string) -> string {
+    time::sleep(30).await;
+    format!("receipt to {}", to)
+}
+
+async fn square(n: i64) -> i64 {
+    time::sleep(5).await;
+    n * n
+}
+
+async fn slow(n: i64) -> i64 {
+    time::sleep(40).await;
+    n
+}
+
+async fn double(n: i64) -> i64 {
+    time::sleep(5).await;
+    n * 2
+}
+
+async fn main() {
+    // Both start at once, so together they take as long as the slower one.
+    let user = fetch_user(7);
+    let receipt = send_receipt("ann".clone());
+    println!("fetched {}", user.await);
+    println!("sent {}", receipt.await);
+
+    let late = slow(2);
+    let early = Counter { step: 1 }.next(6);
+    println!("fast then slow: {} and {}", early.await, late.await);
+
+    let ids: Vec<i64> = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let squares = Task::all(ids.iter().map(|id| square(id)).collect()).await;
+    let mut total: i64 = 0;
+    for s in squares.iter() {
+        total = total + s;
+    }
+    println!("total of ten squares: {}", total);
+
+    println!("doubled 21 is {}", double(21).await);
+    slow(1).detach();
+    time::sleep(100).await;
+    println!("slow task done");
+}
+
+#[test]
+async fn doubles() {
+    assert_eq(double(4).await, 8);
+}
+
+#[test]
+async fn counts() {
+    let c = Counter { step: 3 };
+    assert_eq(c.next(1).await, 4);
+}
+```
+
+Output:
+
+```text
+fetched user 7
+sent receipt to ann
+fast then slow: 7 and 2
+total of ten squares: 385
+doubled 21 is 42
+slow task done
+```
+
+`varyk test tasks.vr` runs the two tests, and both pass.
+
+## Fanout
+
+`Task::all` over calls that can fail stops at the first error and cancels the rest; `Task::all_settled` waits for every call and keeps each outcome.
+
+`fanout.vr`
+
+```varyk
+async fn price(item: i64) -> Result<i64, Error> {
+    time::sleep(10 * item as u64).await;
+    if item == 3 {
+        return Err(Error::new(format!("no price for item {}", item)));
+    }
+    Ok(item * 12)
+}
+
+async fn prices(items: Vec<i64>) -> Result<Vec<i64>, Error> {
+    let found = Task::all(items.iter().map(|item| price(item)).collect()).await?;
+    Ok(found)
+}
+
+async fn main() {
+    let good: Vec<i64> = vec![1, 2, 4];
+    let bad: Vec<i64> = vec![1, 2, 3];
+    match prices(good).await {
+        Ok(found) => println!("prices: {} + {} + {}", found[0], found[1], found[2]),
+        Err(e) => println!("failed: {}", e.message()),
+    }
+    match prices(bad).await {
+        Ok(found) => println!("prices: {}", found.len()),
+        Err(e) => println!("failed: {}", e.message()),
+    }
+
+    let items: Vec<i64> = vec![1, 2, 3, 4];
+    let outcomes = Task::all_settled(items.iter().map(|item| price(item)).collect()).await;
+    let mut n: i64 = 1;
+    for outcome in outcomes.iter() {
+        match outcome {
+            Ok(value) => println!("item {}: {}", n, value),
+            Err(e) => println!("item {} failed: {}", n, e.message()),
+        }
+        n = n + 1;
+    }
+}
+```
+
+Output:
+
+```text
+prices: 12 + 24 + 48
+failed: no price for item 3
+item 1: 12
+item 2: 24
+item 3 failed: no price for item 3
+item 4: 48
+```
+
+## Shared
+
+One `Shared` value read by ten thousand tasks, each given a handle with `.clone()` rather than a copy of the value.
+
+`shared.vr`
+
+```varyk
+struct Config {
+    factor: i64,
+}
+
+async fn weigh(id: i64, config: Shared<Config>) -> i64 {
+    id + config.factor
+}
+
+async fn main() {
+    let config = Shared::new(Config { factor: 3 });
+    let mut ids: Vec<i64> = Vec::new();
+    let mut i: i64 = 0;
+    while i < 10000 {
+        ids.push(i);
+        i = i + 1;
+    }
+    let weights = Task::all(ids.iter().map(|id| weigh(id, config.clone())).collect()).await;
+    let mut total: i64 = 0;
+    for w in weights.iter() {
+        total = total + w;
+    }
+    println!("{} tasks, total {}", weights.len(), total);
+}
+```
+
+Output: `10000 tasks, total 50025000`.
+
 ## Packages
 
 A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`. These four are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
@@ -1213,8 +1396,6 @@ Output of `cargo run` in `consumer/`, after `varyk publish --assemble-only` in `
 
 Milestone 5a together: a store of users read from JSON, with `#[rename]` and `#[default]`, configuration from the environment and a `.env` file, logging, and three tests. It is laid out as `varyk init` writes a package: `Cargo.toml` depends on `varyk-std`, `src/main.rs` is `init`'s one-line stub, and `build.rs`, not shown, is `init`'s too.
 
-<!-- TODO(release): re-copy packages/users/Cargo.toml once the release pull request sets its varyk-std line to 0.3.0. -->
-
 `packages/users/Cargo.toml`
 
 ```toml
@@ -1224,7 +1405,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-varyk-std = "0.2.0"
+varyk-std = "0.3.0"
 ```
 
 `packages/users/.env`
