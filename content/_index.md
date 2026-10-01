@@ -11,7 +11,7 @@ lead = "Varyk is a small language for APIs, workers, and microservices. No garba
 install_label = "Install with Cargo"
 install = "cargo install varyk"
 # The hero figure (templates/partials/home-service.html) shows a service as milestone 5b2 is meant to write it.
-figure_caption = "A service as milestone 5b2 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). The compiler does not accept `http`, `db`, or `async` yet; `Error` and `log` are here since milestone 5a. See the [roadmap](/design/roadmap/)."
+figure_caption = "A service as milestone 5b2 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). The compiler does not accept `http` or `db` yet; `Error` and `log` are here since milestone 5a, and `async` since milestone 5b1. See the [roadmap](/design/roadmap/)."
 # The borrowing figure (templates/partials/home-figure.html) is placed in the band whose entry sets `figure = "borrowing"`.
 borrowing_caption = "The Rust that `varyk build` generates from `borrowing.vr`, as the compiler writes `src/main.rs`. **Marked**: everything the compiler writes for you. The program prints `Alice`, then `Bob`."
 
@@ -53,7 +53,7 @@ columns = true
 id = "roadmap"
 label = "Roadmap"
 style = "road"
-done = 5
+done = 6
 
 [[extra.bands]]
 id = "get-started"
@@ -63,7 +63,7 @@ style = "start"
 
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, and `async`, HTTP, and databases come in milestones 5b1 and 5b2.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, and HTTP and databases come in milestone 5b2.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -78,11 +78,11 @@ Rust underneath gives you all of this today. The batteries that make a service, 
 
 ### The batteries, milestone 5
 
-JSON, configuration, logging, and tests are in the compiler since milestone 5a; the [examples](/learn/examples/#json) show them. HTTP, databases, and `async` are not there yet; the figure at the top of the page shows the shape they are designed to take.
+JSON, configuration, logging, and tests are in the compiler since milestone 5a, and `async` since milestone 5b1; the [examples](/learn/examples/#json) show them. HTTP and databases are not there yet; the figure at the top of the page shows the shape they are designed to take.
 
 - **JSON from your structs.** Turn your structs into JSON and back with `json::parse` and `json::stringify`, and rename, default, or skip a field with an attribute. *Milestone 5a.*
 - **Configuration, logging, tests.** A struct filled from the environment and a `.env` file with `env::parse`, log lines on stderr as text or JSON, and `varyk test`. *Milestone 5a.*
-- **Async built in.** `async fn` and `.await` on a built-in runtime. *Milestone 5b1.*
+- **Async built in.** `async fn` and `.await` on a built-in runtime; call a function without `.await` to start it as a task, and wait on many with `Task::all`. *Milestone 5b1.*
 - **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack. *Milestone 5b2.*
 - **Databases through one API.** Query a database and get your structs back, on a proven Rust driver. *Milestone 5b2.*
 
@@ -123,7 +123,7 @@ From your source to the binary:
 - Application code as simple as Go: the compiler does the memory bookkeeping that Rust asks you to write by hand.
 - Native speed and memory safety with no garbage collector: no pauses, no memory ceiling to tune, and one small binary to deploy with no language runtime to install.
 - The bugs Go and TypeScript compile, a missing value, an unhandled error, two threads on one piece of data, rustc rejects.
-- `async`/`await` that looks like JavaScript, with a built-in runtime (milestone 5b1).
+- `async`/`await` that looks like JavaScript, with a built-in runtime, since milestone 5b1.
 - One toolchain and one package registry, inherited from Cargo and crates.io, since milestone 3.
 
 ### Coming from Rust
@@ -143,6 +143,8 @@ From your source to the binary:
 - A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
 - One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; HTTP and databases in milestone 5b2).
 
+<!-- TODO(release): the band names 0.4.0 as released; it must be on crates.io when the page goes live. -->
+
 ## Ordered milestones, no *dates.*
 
 1. **Milestone 1, complete.** Compiler skeleton and the borrow-by-default proof: six example programs, diagnostics with codes and fix-its, and `varyk check`, `build`, and `run`.
@@ -150,8 +152,8 @@ From your source to the binary:
 3. **Milestone 3, complete.** Packages and interop: `Cargo.toml`, Cargo dependencies through `.rs` facades, nested modules, `use`, private fields, Rust structs and enums imported from `.rs` files, `varyk init`, and publishing to crates.io. Released as 0.1.0.
 4. **Milestone 4, complete.** Closures, iterators, and patterns: chains such as `filter` and `map`, `if let` and `while let`, nested, literal, and range patterns, `HashMap`, `as`, `.clone()` and `==` on structs and enums, and getters that return part of their value with no copy. Released as 0.2.0.
 5. **Milestone 5a, complete.** Data, configuration, logging, and tests: a built-in `Error`, `json::parse` and `json::stringify`, `env::parse` with `.env`, `log` calls, the attributes `#[rename]`, `#[default]`, `#[skip]`, and `#[test]`, and `varyk test` and `varyk add`. Released as 0.3.0.
-6. **Milestone 5b1, next.** Async: `async`/`await` on a built-in runtime, and `spawn`.
-7. **Milestone 5b2.** HTTP and the database: an HTTP server and client, and databases through one API. The golden path, a users API on a database, is met here.
+6. **Milestone 5b1, complete.** Async: `async fn` and `.await` on a built-in runtime, calls started as tasks, `Task::all` and `Task::all_settled`, and `Shared` for a value many tasks read. Released as 0.4.0.
+7. **Milestone 5b2, next.** HTTP and the database: an HTTP server and client, and databases through one API. The golden path, a users API on a database, is met here.
 8. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.

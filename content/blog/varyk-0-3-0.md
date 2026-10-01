@@ -1,10 +1,8 @@
 +++
 title = "Varyk 0.3.0: data, config, logging, and tests"
 description = "Milestone 5a adds varyk-std and a built-in Error, JSON with attributes, configuration from the environment and .env, logging, and varyk test, and makes parse return a Result."
-date = 2026-09-30
+date = 2026-10-01
 +++
-
-<!-- TODO(release): set the date to the day 0.3.0 is on crates.io. -->
 
 Varyk 0.3.0 is on crates.io. It is milestone 5a of the [roadmap](/design/roadmap/), the first part of the batteries for services. Milestone 4 made the everyday code of a service easy to write in Varyk, a language for backend services that compiles to Rust. Milestone 5a adds what a service does with data before it talks to the network: read and write JSON, take its settings from the environment, write logs, and test itself.
 
