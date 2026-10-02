@@ -32,8 +32,6 @@ Milestone 5 is three milestones. The bar for the whole of it is one golden path:
 
 ### Milestone 5b1: async
 
-<!-- TODO(release): this page names 0.4.0 as released; it must be on crates.io when the page goes live. -->
-
 **Complete, released as 0.4.0.** `async fn` and `.await` on a built-in multi-threaded tokio runtime, with `Send`, `Sync`, and `Pin` kept out of the surface syntax; started calls, where a call to an async function without `.await` starts it at once and gives a `Task<T>`; tasks cancelled when dropped, `detach` to let one run on its own, `Task::all` and `Task::all_settled` to wait on many; `Shared<T>` for a read-only struct held by many tasks; `time::sleep`; `pub async fn` imported from `.rs` modules; and the examples `tasks`, `fanout`, and `shared`. Both questions it was gated on are answered: the runtime is multi-threaded, and ownership transfer needs no syntax, because the arguments of a started call are the one place a value is handed over. Its release is 0.4.0, because `Task`, `Shared`, and `time` become reserved names.
 
 ### Milestone 5b2: HTTP and the database

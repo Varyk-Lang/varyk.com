@@ -143,8 +143,6 @@ From your source to the binary:
 - A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
 - One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; HTTP and databases in milestone 5b2).
 
-<!-- TODO(release): the band names 0.4.0 as released; it must be on crates.io when the page goes live. -->
-
 ## Ordered milestones, no *dates.*
 
 1. **Milestone 1, complete.** Compiler skeleton and the borrow-by-default proof: six example programs, diagnostics with codes and fix-its, and `varyk check`, `build`, and `run`.

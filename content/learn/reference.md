@@ -4,10 +4,9 @@ description = "Everything Varyk accepts today: files, packages, modules, and `us
 weight = 2
 +++
 
-<!-- Copied from docs/language.md in the compiler repository at commit 6f4023b (milestone 5b1). Refresh it by hand when that file changes. -->
-<!-- TODO(release): replace 6f4023b with the commit on main after Varyk-Lang/varyk#18 merges. -->
+<!-- Copied from docs/language.md in the compiler repository at commit 249393e (milestone 5b1). Refresh it by hand when that file changes. -->
 
-This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `6f4023b`, milestone 5b1, released as 0.4.0.
+This is the compiler repository's [language reference](https://github.com/Varyk-Lang/varyk/blob/main/docs/language.md), copied at commit `249393e`, milestone 5b1, released as 0.4.0.
 
 This page describes everything Varyk accepts today, in milestone 5b1 of an
 experimental, pre-1.0 language (see [roadmap](/design/roadmap/) for what comes
