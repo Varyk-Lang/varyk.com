@@ -4,7 +4,7 @@ description = "How to install the Varyk compiler and check that it works."
 weight = 10
 +++
 
-Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build`, `varyk run`, `varyk test`, `varyk add`, and `varyk publish` invoke `cargo`, and a plain `cargo build` of a package that `varyk init` wrote invokes `varyk`.
+Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build`, `varyk run`, `varyk test`, `varyk add`, and `varyk publish` invoke `cargo`, and `varyk check` does too when a package lists a dependency besides `varyk-std`, to learn which packages the build uses. A Varyk package is built with `varyk`; plain `cargo build` builds a published Varyk crate, not a package's source.
 
 ## Install the compiler
 

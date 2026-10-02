@@ -1,28 +1,37 @@
-{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5b2 design target, not
+{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5b4 design target, not
     code the compiler accepts today, which the caption (`extra.figure_caption` in content/_index.md) says.
-    `Error` and `log::info` are written as milestone 5a settled them, and `async` and `.await` as 5b1 did; `http` and `db` are 5b2.
+    `Error` and `log::info` are written as milestone 5a settled them, and `async` and `.await` as 5b1 did; `http` and `sql` are
+    the keys `varyk add http sql` gives the `varyk-http` (5b4) and `varyk-sql` (5b3) packages, named as 5b2 settled. The shape follows
+    the compiler roadmap's 5b3 and 5b4 entries: parameters bound by name to the route and by type to shared state, the return value
+    as the response, `None` as 404.
     It lives only in this template, so it never reaches the Markdown copies that agents read. -#}
 <figure class="compare">
 <div class="compare-panes compare-single">
-<div class="pane"><p class="pane-head pane-varyk">users.vr <span class="pane-note">coming in milestone 5b2</span></p>
+<div class="pane"><p class="pane-head pane-varyk">users.vr <span class="pane-note">coming in milestone 5b4</span></p>
 <pre tabindex="0"><code data-lang="varyk">struct User {
     id: i64,
     name: string,
 }
 
-async fn get_user(req: http::Request) -&gt; Result&lt;http::Response, Error&gt; {
-    let id: i64 = req.param("id")?;
-    let user: User = db::query_one(
-        "select id, name from users where id = $1",
-        id,
-    ).await?;
-    Ok(http::json(user))
+struct State {
+    db: sql::Pool,
+}
+
+async fn get_user(id: i64, state: Shared&lt;State&gt;) -&gt; Result&lt;Option&lt;User&gt;, Error&gt; {
+    state.db.first("select id, name from users where id = $1", id).await
 }
 
 async fn main() {
     let port = 3000;
-    let mut app = http::App::new();
-    app.get("/users/:id", get_user);
+    let db = match sql::connect("sqlite://users.db").await {
+        Ok(db) =&gt; db,
+        Err(e) =&gt; {
+            log::error("cannot open the database: {}", e);
+            return;
+        }
+    };
+    let mut app = http::App::new(Shared::new(State { db: db }));
+    app.get("/users/{id}", get_user);
     log::info("listening on port {}", port);
     app.serve(port).await;
 }</code></pre></div>

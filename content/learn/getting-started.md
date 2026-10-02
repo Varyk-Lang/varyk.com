@@ -31,19 +31,17 @@ Hello, world!
 ## The commands
 
 ```text
-varyk check [file.vr]                            check for errors; never runs cargo
+varyk check [file.vr]                            check for errors
 varyk build [file.vr] [--release] [--emit-rust]  generate and build; print the executable's path
 varyk run [file.vr] [--release] [-- args...]     build, then run with the given arguments
 varyk test [file.vr]                             build the tests and run them
-varyk emit [file.vr] --out-dir DIR               check, then write the generated tree to DIR;
-                                                  never runs cargo
-varyk init [dir] [--lib]                         write a package that plain cargo build compiles
+varyk init [dir] [--lib]                         write a new package
 varyk add [cargo add args]                       run cargo add in the package
 varyk publish [--assemble-only] [-- cargo args]  check, assemble a plain Rust crate, and run
                                                   cargo publish there
 ```
 
-Without a file, a command works on the package around the current directory (see [a package](#a-package) below). `check` is the fast loop: it reports Varyk diagnostics without invoking cargo. `--release` builds with optimizations. `build` transpiles the program into a Rust crate, builds it with cargo, and prints the path of the executable; generated Rust goes under `target/varyk/`, never next to your `.vr` files. `--emit-rust` prints every generated file (`Cargo.toml` and the Rust files) and then builds, so you can see the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). `emit` writes the generated tree to a directory, for a file or a package; `init` and `publish` are for packages; the [tools page](/tools/#packages) describes them. Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer, including the warnings rustc gives about your `.rs` modules; under `run` and `test`, they go to standard error, since standard output is the program's or the test runner's own. `test` builds the program with its tests and runs them, and `add` runs `cargo add` in the package; the [reference](/learn/reference/#tests) describes tests.
+Without a file, a command works on the package around the current directory (see [a package](#a-package) below). `check` is the fast loop: it reports Varyk diagnostics without building anything, and it runs cargo only to learn which packages the build uses, when a package lists a dependency besides `varyk-std`. `--release` builds with optimizations. `build` transpiles the program into a Rust crate, builds it with cargo, and prints the path of the executable; generated Rust goes under `target/varyk/`, never next to your `.vr` files. `--emit-rust` prints every generated file (`Cargo.toml` and the Rust files) and then builds, so you can see the generated Rust, including the one kind of allocation Varyk inserts (a string literal placed into an owned slot). `init` and `publish` are for packages; the [tools page](/tools/#packages) describes them. Every command accepts `--message-format=json` to emit structured diagnostics instead of the human-readable renderer, including the warnings rustc gives about your `.rs` modules; under `run` and `test`, they go to standard error, since standard output is the program's or the test runner's own. `test` builds the program with its tests and runs them, and `add` runs `cargo add` in the package; the [reference](/learn/reference/#tests) describes tests.
 
 ## Functions
 
@@ -100,7 +98,7 @@ cd hello
 varyk run
 ```
 
-It prints `Hello, world!`. `init` wrote `Cargo.toml` (the manifest, with `edition = "2024"` and `varyk-std`, the crate behind `Error`, `json`, `env`, and `log`, under `[dependencies]`), `.gitignore`, `build.rs`, a one-line `src/main.rs` stub, and `src/main.vr`, the program. Inside the package, commands need no file name. `cargo run` works too, with `varyk` on the `PATH`, because `build.rs` calls it to generate the Rust. To use a crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way.
+It prints `Hello, world!`. `init` wrote three files: `Cargo.toml` (the manifest, with `edition = "2024"`, a `[[bin]]` table naming `src/main.vr` as the package's root, and `varyk-std`, the crate behind `Error`, `json`, `env`, `log`, and tasks, under `[dependencies]`), `.gitignore`, and `src/main.vr`, the program. Inside the package, commands need no file name. A Varyk package is built by `varyk`, not by plain `cargo build`, since its root is Varyk, not Rust; cargo's other tools, such as `cargo add` and `cargo tree`, still read it. To use another Varyk package, list it under `[dependencies]` and name it by its key: with `units = { path = "../units" }`, Varyk code calls `units::length::add(a, b)`; the [trip](/learn/examples/#trip) example uses two packages this way. To use a Rust crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way.
 
 ## Diagnostics
 

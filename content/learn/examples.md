@@ -1,10 +1,10 @@
 +++
 title = "Examples"
-description = "The example programs from milestones 1, 2, 4, 5a, and 5b1, and the packages from milestones 3 and 5a, with their expected output."
+description = "The example programs from milestones 1, 2, 4, 5a, and 5b1, and the packages from milestones 3, 5a, and 5b2, with their expected output."
 weight = 3
 +++
 
-These are the twenty-four programs milestones 1, 2, 4, 5a, and 5b1 must compile and run with the shown output, and four packages from milestones 3 and 5a; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, the three from [JSON](#json) on milestone 5a, and the three from [Tasks](#tasks) on milestone 5b1; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`, and milestone 5b1 renamed `todo`'s `Task` struct to `Item`, because `Task` is now a built-in type. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
+These are the twenty-four programs milestones 1, 2, 4, 5a, and 5b1 must compile and run with the shown output, and six packages from milestones 3, 5a, and 5b2; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, the three from [JSON](#json) on milestone 5a, and the three from [Tasks](#tasks) on milestone 5b1; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`, and milestone 5b1 renamed `todo`'s `Task` struct to `Item`, because `Task` is now a built-in type. Milestone 5b2 added the packages `route` and `trip`, made `matcher`'s facade report a bad pattern instead of stopping the program, and named each package's `.vr` root in its `Cargo.toml`, in place of the `build.rs` and stub `varyk init` used to write. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
@@ -1150,11 +1150,13 @@ Output: `10000 tasks, total 50025000`.
 
 ## Packages
 
-A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`. These four are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
+A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`, which `Cargo.toml` names as its target. These six are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
+
+<!-- TODO(release): re-copy the Cargo.toml of greeting, users, route, and trip once the release pull request sets their varyk-std line to 0.5.0. -->
 
 ### matcher
 
-A program that uses the crate `regex-lite` through a facade: Varyk code never names a crate, so `src/text.rs` wraps it in a struct, methods, and an enum that Varyk imports like its own.
+A program that uses the crate `regex-lite` through a facade: Varyk code never names a Rust crate, so `src/text.rs` wraps it in a struct, methods, and an enum that Varyk imports like its own. Since milestone 5b2, `Matcher::new` gives a `Result`, and the program says when the pattern is not valid instead of stopping.
 
 `packages/matcher/Cargo.toml`
 
@@ -1163,6 +1165,10 @@ A program that uses the crate `regex-lite` through a facade: Varyk code never na
 name = "matcher"
 version = "0.1.0"
 edition = "2024"
+
+[[bin]]
+name = "matcher"
+path = "src/main.vr"
 
 [dependencies]
 regex-lite = "0.1"
@@ -1181,7 +1187,13 @@ fn describe(kind: text::Kind) -> string {
 }
 
 fn main() {
-    let digits = text::Matcher::new("[0-9]+");
+    let digits = match text::Matcher::new("[0-9]+") {
+        Ok(m) => m,
+        Err(e) => {
+            println!("not a pattern: {}", e);
+            return;
+        }
+    };
     let mut inputs: Vec<string> = Vec::new();
     inputs.push("apple");
     inputs.push("42");
@@ -1210,9 +1222,12 @@ pub struct Matcher {
 }
 
 impl Matcher {
-    pub fn new(pattern: &str) -> Matcher {
-        let re = regex_lite::Regex::new(pattern).expect("the pattern should be a valid regex");
-        Matcher { re }
+    /// A matcher for `pattern`, or why it is not a valid pattern.
+    pub fn new(pattern: &str) -> Result<Matcher, String> {
+        match regex_lite::Regex::new(pattern) {
+            Ok(re) => Ok(Matcher { re }),
+            Err(e) => Err(e.to_string()),
+        }
     }
 
     pub fn is_match(&self, s: &str) -> bool {
@@ -1253,7 +1268,23 @@ true
 
 ### greeting
 
-A program with a nested module, `use`, and a private field, laid out as `varyk init` writes a package. It prints the same under `varyk run` and under plain `cargo run`, which calls `varyk` from `build.rs`, so it needs `varyk` on the `PATH`. `src/main.rs` is the one-line stub `init` writes, and `build.rs` is `init`'s too.
+A program with a nested module, `use`, and a private field, laid out as `varyk init` writes a package: `Cargo.toml` names `src/main.vr` as its `[[bin]]` target, and there is no `build.rs` and no stub.
+
+`packages/greeting/Cargo.toml`
+
+```toml
+[package]
+name = "greeting"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "greeting"
+path = "src/main.vr"
+
+[dependencies]
+varyk-std = "0.4.0"
+```
 
 `packages/greeting/src/main.vr`
 
@@ -1313,12 +1344,6 @@ pub fn title(word: string) -> string {
 }
 ```
 
-`packages/greeting/src/main.rs`
-
-```rust
-::std::include!(::std::concat!(::std::env!("OUT_DIR"), "/varyk/src/main.rs"));
-```
-
 Output:
 
 ```text
@@ -1330,7 +1355,7 @@ Hello, Grace!
 
 ### units
 
-A library, and a plain Rust program that uses it. `varyk publish --assemble-only` assembles `units` into a plain Rust crate at `target/varyk/package/units/`, with the generated `.rs` files, the `.vr` sources beside them, and no `build.rs`, and publishes nothing. The consumer depends on that crate by path and builds with plain `cargo`, with no `varyk` involved.
+A library, used by the `route` package below, and a plain Rust program that uses it. Its `Cargo.toml` names `src/lib.vr` as its `[lib]` target. `varyk publish --assemble-only` assembles `units` into a plain Rust crate at `target/varyk/package/units/`, with the generated `.rs` files, the `.vr` sources beside them, and no `build.rs`, and publishes nothing. The consumer depends on that crate by path and builds with plain `cargo`, with no `varyk` involved.
 
 `packages/units/Cargo.toml`
 
@@ -1341,6 +1366,9 @@ version = "0.1.0"
 edition = "2024"
 description = "A Varyk example library: lengths in meters"
 license = "MIT OR Apache-2.0"
+
+[lib]
+path = "src/lib.vr"
 
 [dependencies]
 ```
@@ -1394,7 +1422,7 @@ Output of `cargo run` in `consumer/`, after `varyk publish --assemble-only` in `
 
 ### users
 
-Milestone 5a together: a store of users read from JSON, with `#[rename]` and `#[default]`, configuration from the environment and a `.env` file, logging, and three tests. It is laid out as `varyk init` writes a package: `Cargo.toml` depends on `varyk-std`, `src/main.rs` is `init`'s one-line stub, and `build.rs`, not shown, is `init`'s too.
+Milestone 5a together: a store of users read from JSON, with `#[rename]` and `#[default]`, configuration from the environment and a `.env` file, logging, and three tests. It is laid out as `varyk init` writes a package: `Cargo.toml` names `src/main.vr` as its target and depends on `varyk-std`.
 
 `packages/users/Cargo.toml`
 
@@ -1404,8 +1432,12 @@ name = "users"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "users"
+path = "src/main.vr"
+
 [dependencies]
-varyk-std = "0.3.0"
+varyk-std = "0.4.0"
 ```
 
 `packages/users/.env`
@@ -1547,12 +1579,6 @@ fn a_store_counts_its_users() {
 }
 ```
 
-`packages/users/src/main.rs`
-
-```rust
-::std::include!(::std::concat!(::std::env!("OUT_DIR"), "/varyk/src/main.rs"));
-```
-
 Output of `varyk run`, in this directory, with its `.env`:
 
 ```text
@@ -1574,3 +1600,146 @@ WARN rejected a user: unknown variant `Root`, expected `Admin` or `member` at li
 ```
 
 `varyk test` runs the three tests in `store.vr`, and all three pass.
+
+### route
+
+A library that uses another: each leg of a trip has a length that is a `Meters` of the package `units`, which `route` names by its key in `Cargo.toml`. It also reads a stop from JSON and logs when it cannot, and has an async function.
+
+`packages/route/Cargo.toml`
+
+```toml
+[package]
+name = "route"
+version = "0.1.0"
+edition = "2024"
+description = "A Varyk example library: the legs of a trip, in meters"
+license = "MIT OR Apache-2.0"
+
+[lib]
+path = "src/lib.vr"
+
+[dependencies]
+units = { version = "0.1.0", path = "../units" }
+varyk-std = "0.4.0"
+```
+
+`packages/route/src/lib.vr`
+
+```varyk
+// A library that uses another: each leg's length is a `Meters` of the
+// package `units`.
+
+pub struct Leg {
+    pub from: string,
+    pub to: string,
+    pub length: units::length::Meters,
+}
+
+pub struct Stop {
+    pub name: string,
+    pub minutes: u32,
+}
+
+pub fn leg(from: string, to: string, meters: i32) -> Leg {
+    Leg {
+        from: from.clone(),
+        to: to.clone(),
+        length: units::length::Meters { value: meters },
+    }
+}
+
+pub fn total(legs: Vec<Leg>) -> units::length::Meters {
+    let mut sum = units::length::Meters { value: 0 };
+    for leg in legs {
+        sum = units::length::add(sum, leg.length);
+    }
+    sum
+}
+
+// Returns one of the legs it is given, not a copy.
+pub fn longest(legs: Vec<Leg>) -> Leg {
+    let mut best: usize = 0;
+    let mut index: usize = 0;
+    for leg in legs {
+        if leg.length.value > legs[best].length.value {
+            best = index;
+        }
+        index = index + 1;
+    }
+    legs[best]
+}
+
+pub fn parse_stop(text: string) -> Result<Stop, Error> {
+    let parsed: Result<Stop, Error> = json::parse(text);
+    if let Err(problem) = parsed {
+        log::warn("cannot read a stop: {}", problem);
+    }
+    parsed
+}
+
+pub async fn walking_minutes(meters: i32) -> i32 {
+    time::sleep(5).await;
+    meters / 80
+}
+```
+
+### trip
+
+A program that uses `route` and `units`, both named by their keys in its `Cargo.toml`. `route` returns a `Meters` of `units`, and `trip` lists `units` too, so it can hold one. `varyk run` checks all three packages from their `.vr` sources and builds `route` and `units` each as a crate of its own; `trip` writes no log line, but `route` does, so its warning reaches stderr.
+
+`packages/trip/Cargo.toml`
+
+```toml
+[package]
+name = "trip"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "trip"
+path = "src/main.vr"
+
+[dependencies]
+route = { path = "../route" }
+units = { path = "../units" }
+varyk-std = "0.4.0"
+```
+
+`packages/trip/src/main.vr`
+
+```varyk
+async fn main() {
+    let legs = vec![
+        route::leg("Home", "Mill", 800),
+        route::leg("Mill", "Lake", 900),
+    ];
+    let sum = units::length::add(route::total(legs), units::length::Meters { value: 0 });
+    println!("total {} meters", sum.value);
+    let best = route::longest(legs);
+    println!("longest {} to {}, {} meters", best.from, best.to, best.length.value);
+    for text in vec!["{\"name\": \"Lake\", \"minutes\": 12}", "Lake at noon"] {
+        match route::parse_stop(text) {
+            Ok(stop) => println!("stop {}, {} minutes", stop.name, stop.minutes),
+            Err(_) => println!("no stop"),
+        }
+    }
+    let minutes = route::walking_minutes(sum.value).await;
+    println!("about {} minutes on foot", minutes);
+}
+```
+
+Output of `varyk run`, in this directory, with `route` and `units` beside it:
+
+```text
+total 1700 meters
+longest Mill to Lake, 900 meters
+stop Lake, 12 minutes
+no stop
+about 21 minutes on foot
+```
+
+On stderr, after the time, `route`'s log line:
+
+```text
+WARN cannot read a stop: expected value at line 1 column 1
+```

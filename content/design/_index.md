@@ -23,6 +23,12 @@ In priority order. When two conflict, the earlier one wins.
 8. **Generated Rust is the first backend, not necessarily the last.** The front end never depends on the backend.
 9. **Advanced features must justify their complexity.** Go-like simplicity is the bar for anything added to the surface language.
 
+## Packages and batteries
+
+`varyk-std` stays the small runtime every program has: what the language itself needs and the light things nearly every service uses, `Error`, tasks, `json`, `env`, and `log`. Anything heavy is a package the writer adds: SQL, MongoDB, Redis, the HTTP server and client. A program that prints a line never compiles a web server or a database driver. Official packages are named `varyk-*` and community packages `*-varyk`, with neither `std` nor the crate underneath in the name. The mechanism came first, in milestone 5b2: with packages in place, a battery is written once as a package, by this project or by anyone, and needs no work in the compiler.
+
+Varyk code is built by `varyk`, as Go code is built by `go`. A package is `Cargo.toml`, its `.vr` files, and its `.rs` facades, with no `build.rs` and no stub, and `varyk` compiles every Varyk package a build uses from its `.vr` sources, never from Rust a publisher shipped, so what runs is what a reader can review. Cargo still reads the package, for `cargo add`, `cargo update`, `cargo tree`, `cargo audit`, and dependency bots, and cargo refuses a manifest with no target, so the manifest names the `.vr` root as its target. Plain `cargo build` does not build a source package, but it builds a published Varyk crate, which carries its generated Rust, so a Rust project can depend on one as on any crate.
+
 ## Non-goals
 
 - Varyk is not a superset of Rust and does not aim to accept arbitrary Rust syntax in `.vr` files.

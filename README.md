@@ -60,7 +60,7 @@ Every branch pushed to this repository, including pull request branches, gets a 
 
 ### Keeping the site in sync with the compiler
 
-`content/learn/reference.md` and the examples are copies from the compiler repository, and the generated Rust on the home and examples pages matches the generated `src/main.rs` byte for byte: the file the compiler writes for `examples/borrowing.vr` (`varyk emit --out-dir DIR examples/borrowing.vr` writes it to `DIR/src/main.rs`), not the rustfmt pass that `--emit-rust` prints. When the compiler's `docs/language.md`, `examples/`, or code generation changes, copy them again and update the commit noted at the top of the reference. The compiler is released by release-please, so release versions appear only on the roadmap page, in the home page's roadmap band, in the blog, and inside the copied files (the reference, the examples' manifests); the Install page links to crates.io instead.
+`content/learn/reference.md` and the examples are copies from the compiler repository, and the generated Rust on the home and examples pages matches the generated `src/main.rs` byte for byte: the file the compiler writes for `examples/borrowing.vr` (`varyk build examples/borrowing.vr` writes it to `src/main.rs` in its build directory under `target/varyk/`), not the rustfmt pass that `--emit-rust` prints. When the compiler's `docs/language.md`, `examples/`, or code generation changes, copy them again and update the commit noted at the top of the reference. The compiler is released by release-please, so release versions appear only on the roadmap page, in the home page's roadmap band, in the blog, and inside the copied files (the reference, the examples' manifests); the Install page links to crates.io instead.
 
 ### Cloudflare settings
 
