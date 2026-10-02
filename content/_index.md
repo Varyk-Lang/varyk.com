@@ -10,8 +10,8 @@ headline = ["Build backend services simply.", "Ship Rust *binaries.*"]
 lead = "Varyk is a small language for APIs, workers, and microservices. No garbage collector, no lifetime annotations, no borrow ceremony, and Rust and crates.io underneath. You write Go-like application code and ship one native binary, checked by the Rust compiler."
 install_label = "Install with Cargo"
 install = "cargo install varyk"
-# The hero figure (templates/partials/home-service.html) shows a service as milestone 5b2 is meant to write it.
-figure_caption = "A service as milestone 5b2 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). The compiler does not accept `http` or `db` yet; `Error` and `log` are here since milestone 5a, and `async` since milestone 5b1. See the [roadmap](/design/roadmap/)."
+# The hero figure (templates/partials/home-service.html) shows a service as milestone 5b4 is meant to write it.
+figure_caption = "A service as milestone 5b4 is meant to write it; the details are still [open questions](https://github.com/Varyk-Lang/varyk/blob/main/docs/open-questions.md). `http` and `sql` are the keys `varyk add http sql` gives the `varyk-http` and `varyk-sql` packages, named as any Varyk package is since milestone 5b2; neither package exists yet. `Error` and `log` are here since milestone 5a, and `async` and `Shared` since milestone 5b1. See the [roadmap](/design/roadmap/)."
 # The borrowing figure (templates/partials/home-figure.html) is placed in the band whose entry sets `figure = "borrowing"`.
 borrowing_caption = "The Rust that `varyk build` generates from `borrowing.vr`, as the compiler writes `src/main.rs`. **Marked**: everything the compiler writes for you. The program prints `Alice`, then `Bob`."
 
@@ -53,7 +53,7 @@ columns = true
 id = "roadmap"
 label = "Roadmap"
 style = "road"
-done = 6
+done = 7
 
 [[extra.bands]]
 id = "get-started"
@@ -63,7 +63,7 @@ style = "start"
 
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, and HTTP and databases come in milestone 5b2.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, and packages that use packages in milestone 5b2; databases and HTTP come as packages, `varyk-sql` and `varyk-http`, in milestones 5b3 and 5b4.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -78,21 +78,21 @@ Rust underneath gives you all of this today. The batteries that make a service, 
 
 ### The batteries, milestone 5
 
-JSON, configuration, logging, and tests are in the compiler since milestone 5a, and `async` since milestone 5b1; the [examples](/learn/examples/#json) show them. HTTP and databases are not there yet; the figure at the top of the page shows the shape they are designed to take.
+JSON, configuration, logging, and tests are in the compiler since milestone 5a, and `async` since milestone 5b1; the [examples](/learn/examples/#json) show them. HTTP and databases are not there yet. They come as packages you add, `varyk-http` and `varyk-sql`, so a program that prints a line never compiles a web server or a database driver; the figure at the top of the page shows the shape they are designed to take.
 
 - **JSON from your structs.** Turn your structs into JSON and back with `json::parse` and `json::stringify`, and rename, default, or skip a field with an attribute. *Milestone 5a.*
 - **Configuration, logging, tests.** A struct filled from the environment and a `.env` file with `env::parse`, log lines on stderr as text or JSON, and `varyk test`. *Milestone 5a.*
 - **Async built in.** `async fn` and `.await` on a built-in runtime; call a function without `.await` to start it as a task, and wait on many with `Task::all`. *Milestone 5b1.*
-- **HTTP server and client.** Routes, handlers, and calls to other services on one built-in stack. *Milestone 5b2.*
-- **Databases through one API.** Query a database and get your structs back, on a proven Rust driver. *Milestone 5b2.*
+- **Databases through one API.** Query SQLite, Postgres, or MySQL and get your structs back, in the `varyk-sql` package on sqlx; the query text is written in the program, so a query built from input is a compile error. *Milestone 5b3.*
+- **HTTP server and client.** An explicit route table, handlers whose return value is the response, and calls to other services, in the `varyk-http` package. *Milestone 5b4.*
 
 Varyk exists so that ordinary backend services can be written simply and shipped as safe Rust. It is for the application: kernels, database engines, and borrow-heavy libraries stay in Rust, in a `.rs` file beside your Varyk, in the same build. [Read why Varyk exists](/why/).
 
 ## Varyk packages are Cargo *packages.*
 
-A Varyk package is a `Cargo.toml` and a `src/main.vr`. `varyk init` writes one, plain `cargo build` compiles it, and `varyk publish` ships it to crates.io as an ordinary Rust crate that needs no Varyk to use. There is nothing to bootstrap: every crate on crates.io was Varyk's ecosystem from the first day, and every Varyk package joins it.
+A Varyk package is a `Cargo.toml` and a `src/main.vr`. `varyk init` writes one, `varyk run` builds it, and `varyk publish` ships it to crates.io as an ordinary Rust crate that needs no Varyk to use. Since milestone 5b2, a Varyk package uses another Varyk package by its key in `Cargo.toml`, with no facade, and `varyk` builds every one of them from its `.vr` sources, never from Rust its publisher shipped. There is nothing to bootstrap: every crate on crates.io was Varyk's ecosystem from the first day, and every Varyk package joins it.
 
-1. **`main.vr`** Your service, in Varyk. It never names a crate, and it never writes a reference.
+1. **`main.vr`** Your service, in Varyk. It never names a Rust crate, and it never writes a reference.
 2. **`text.rs`** A Rust file beside it: a facade that wraps what the program needs in plain functions, structs, and enums, which Varyk imports like a module of its own.
 3. **crates.io** Any crate, added with `varyk add` or `cargo add`. Need Stripe, AWS, or Kafka? Use the Rust crate.
 
@@ -141,7 +141,9 @@ From your source to the binary:
 - Concrete code, with few abstractions to see through.
 - rustc checks memory safety and data races, so a review can focus on what the service does.
 - A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
-- One built-in stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; HTTP and databases in milestone 5b2).
+- One official stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; databases and HTTP as the packages `varyk-sql` and `varyk-http`, in milestones 5b3 and 5b4).
+
+<!-- TODO(release): the band names 0.5.0 as released; it must be on crates.io when the page goes live. -->
 
 ## Ordered milestones, no *dates.*
 
@@ -151,8 +153,10 @@ From your source to the binary:
 4. **Milestone 4, complete.** Closures, iterators, and patterns: chains such as `filter` and `map`, `if let` and `while let`, nested, literal, and range patterns, `HashMap`, `as`, `.clone()` and `==` on structs and enums, and getters that return part of their value with no copy. Released as 0.2.0.
 5. **Milestone 5a, complete.** Data, configuration, logging, and tests: a built-in `Error`, `json::parse` and `json::stringify`, `env::parse` with `.env`, `log` calls, the attributes `#[rename]`, `#[default]`, `#[skip]`, and `#[test]`, and `varyk test` and `varyk add`. Released as 0.3.0.
 6. **Milestone 5b1, complete.** Async: `async fn` and `.await` on a built-in runtime, calls started as tasks, `Task::all` and `Task::all_settled`, and `Shared` for a value many tasks read. Released as 0.4.0.
-7. **Milestone 5b2, next.** HTTP and the database: an HTTP server and client, and databases through one API. The golden path, a users API on a database, is met here.
-8. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
+7. **Milestone 5b2, complete.** Packages: Varyk code uses a Varyk package by its key in `Cargo.toml`, to any depth, and `varyk` builds every package from its `.vr` sources, never running Rust a publisher shipped or a build script. Released as 0.5.0.
+8. **Milestone 5b3, next.** Facades and `varyk-sql`: what a `.rs` facade can say, `pub use`, and databases through one API, on sqlx.
+9. **Milestone 5b4.** `varyk-http` and the golden path: an HTTP server and client, and a users API on a database, `varyk init`, `varyk add http sql`, one file, and `varyk run` away.
+10. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 
@@ -168,4 +172,4 @@ $ varyk run
 Hello, world!
 ```
 
-`init` wrote `Cargo.toml`, `build.rs`, and `src/main.vr`, the program; `cargo run` works too. Continue with [getting started](/learn/getting-started/) and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+`init` wrote `Cargo.toml`, `.gitignore`, and `src/main.vr`, the program. Continue with [getting started](/learn/getting-started/) and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
