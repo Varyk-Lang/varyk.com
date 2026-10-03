@@ -13,7 +13,7 @@ Varyk targets services first, the space Go occupies, and standalone binaries sec
 
 In priority order. When two conflict, the earlier one wins.
 
-1. **Rust's safety model, unchanged.** No garbage collector, no implicit `Clone`, no implicit deep copy. The compiler inserts exactly one kind of allocation: a string literal placed into an owned slot is converted at that line, and `--emit-rust` shows it. The generated Rust is checked by rustc, and Varyk never works around rustc with unsafe code.
+1. **Rust's safety model, unchanged.** No garbage collector, no implicit `Clone`, no implicit deep copy. The compiler inserts exactly two kinds of allocation: a string literal placed into an owned slot is converted at that line, and a string passed as a trailing value of a facade (milestone 5b3) is copied into the value it is handed over in; `--emit-rust` shows both. The generated Rust is checked by rustc, and Varyk never works around rustc with unsafe code.
 2. **The service developer first, human or agent.** Every tie-breaker on the surface language goes toward the developer building services who has never written Rust. AI agents are first-class writers of Varyk; where their needs and human readability diverge, human readability wins.
 3. **Rust syntax with sigils inferred.** Functions borrow their arguments by default. Mutation is declared in the function contract with `mut`. References are never written at call sites. Lifetimes are inferred wherever the compiler can infer them.
 4. **One way to do each thing.** A small, regular grammar with one obvious spelling per idea is the most useful property a language can have for both a newcomer and a code generator.
@@ -25,7 +25,7 @@ In priority order. When two conflict, the earlier one wins.
 
 ## Packages and batteries
 
-`varyk-std` stays the small runtime every program has: what the language itself needs and the light things nearly every service uses, `Error`, tasks, `json`, `env`, and `log`. Anything heavy is a package the writer adds: SQL, MongoDB, Redis, the HTTP server and client. A program that prints a line never compiles a web server or a database driver. Official packages are named `varyk-*` and community packages `*-varyk`, with neither `std` nor the crate underneath in the name. The mechanism came first, in milestone 5b2: with packages in place, a battery is written once as a package, by this project or by anyone, and needs no work in the compiler.
+`varyk-std` stays the small runtime every program has: what the language itself needs and the light things nearly every service uses, `Error`, tasks, `json`, `env`, and `log`. Anything heavy is a package the writer adds: SQL, MongoDB, Redis, the HTTP server and client. A program that prints a line never compiles a web server or a database driver. Official packages are named `varyk-*` and community packages `*-varyk`, with neither `std` nor the crate underneath in the name. The mechanism came first, in milestone 5b2: with packages in place, a battery is written once as a package, by this project or by anyone, and needs no work in the compiler. Milestone 5b3 lets a `.rs` facade take a type parameter filled from where the result goes, any number of plain values after the other arguments, and a parameter that takes only text written in the program, so a package such as `varyk-sql` is Varyk with a thin layer of Rust, and its users write no Rust.
 
 Varyk code is built by `varyk`, as Go code is built by `go`. A package is `Cargo.toml`, its `.vr` files, and its `.rs` facades, with no `build.rs` and no stub, and `varyk` compiles every Varyk package a build uses from its `.vr` sources, never from Rust a publisher shipped, so what runs is what a reader can review. Cargo still reads the package, for `cargo add`, `cargo update`, `cargo tree`, `cargo audit`, and dependency bots, and cargo refuses a manifest with no target, so the manifest names the `.vr` root as its target. Plain `cargo build` does not build a source package, but it builds a published Varyk crate, which carries its generated Rust, so a Rust project can depend on one as on any crate.
 
@@ -41,7 +41,7 @@ Varyk code is built by `varyk`, as Go code is built by `go`. A package is `Cargo
 
 ## Stability
 
-Before 1.0, everything may change; a breaking change bumps the minor version. Diagnostic codes are stable in one sense from the start: a code, once assigned, is never reused for a different meaning, though it may be retired. Command-line flags and the generated Rust layout have no stability guarantee before 1.0.
+Before 1.0, everything may change; a new feature or a breaking change bumps the minor version. Diagnostic codes are stable in one sense from the start: a code, once assigned, is never reused for a different meaning, though it may be retired. Command-line flags and the generated Rust layout have no stability guarantee before 1.0.
 
 ## Concurrency direction
 

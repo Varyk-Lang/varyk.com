@@ -160,7 +160,7 @@ site_desc=$(toml_get description < config.toml)
 entry() { awk -F '\t' -v u="$1" -v b="$site_base" '$1 == u { printf "- [%s](%s%sindex.md): %s\n", $2, b, $1, $3 }' "$tmp/pages"; }
 {
   printf '# Varyk\n\n> %s\n\n' "$site_desc"
-  printf '%s\n' "Varyk is experimental and pre-1.0: syntax, diagnostic codes, and command-line flags may still change, and a breaking change bumps the minor version. Every page below is also available as Markdown at the linked address."
+  printf '%s\n' "Varyk is experimental and pre-1.0: syntax, diagnostic codes, and command-line flags may still change. Every page below is also available as Markdown at the linked address."
   : > "$tmp/listed"
   for i in "${!GROUP_NAMES[@]}"; do
     lines=""

@@ -1152,8 +1152,6 @@ Output: `10000 tasks, total 50025000`.
 
 A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`, which `Cargo.toml` names as its target. These six are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
 
-<!-- TODO(release): re-copy the Cargo.toml of greeting, users, route, and trip once the release pull request sets their varyk-std line to 0.5.0. -->
-
 ### matcher
 
 A program that uses the crate `regex-lite` through a facade: Varyk code never names a Rust crate, so `src/text.rs` wraps it in a struct, methods, and an enum that Varyk imports like its own. Since milestone 5b2, `Matcher::new` gives a `Result`, and the program says when the pattern is not valid instead of stopping.
@@ -1283,7 +1281,7 @@ name = "greeting"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.4.0"
+varyk-std = "0.6.0"
 ```
 
 `packages/greeting/src/main.vr`
@@ -1437,7 +1435,7 @@ name = "users"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.4.0"
+varyk-std = "0.6.0"
 ```
 
 `packages/users/.env`
@@ -1620,7 +1618,7 @@ path = "src/lib.vr"
 
 [dependencies]
 units = { version = "0.1.0", path = "../units" }
-varyk-std = "0.4.0"
+varyk-std = "0.6.0"
 ```
 
 `packages/route/src/lib.vr`
@@ -1702,7 +1700,7 @@ path = "src/main.vr"
 [dependencies]
 route = { path = "../route" }
 units = { path = "../units" }
-varyk-std = "0.4.0"
+varyk-std = "0.6.0"
 ```
 
 `packages/trip/src/main.vr`
