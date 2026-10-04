@@ -4,8 +4,6 @@ description = "Milestone 5b2 lets Varyk code use a Varyk package by its key in C
 date = 2026-10-02
 +++
 
-<!-- TODO(release): set the date to the day 0.5.0 is on crates.io. -->
-
 Varyk 0.5.0 is on crates.io. It is milestone 5b2 of the [roadmap](/design/roadmap/), the third part of the batteries for services. Milestones 5a and 5b1 gave Varyk, a language for backend services that compiles to Rust, the data a service works with and the way it waits: JSON, configuration, logging, tests, and tasks. Milestone 5b2 adds the way Varyk code is shared: a Varyk package uses another Varyk package by name, with no Rust file in between, and every package is built from the Varyk its author wrote. It comes before HTTP and the database because they will be packages too.
 
 ## What is in it
@@ -59,10 +57,8 @@ path = "src/main.vr"
 [dependencies]
 route = { path = "../route" }
 units = { path = "../units" }
-varyk-std = "0.4.0"
+varyk-std = "0.5.0"
 ```
-
-<!-- TODO(release): re-copy trip's Cargo.toml once the release pull request sets its varyk-std line to 0.5.0. -->
 
 and its `src/main.vr`:
 
