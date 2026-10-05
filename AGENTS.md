@@ -15,6 +15,8 @@ npx wrangler deploy --dry-run      # validate wrangler.jsonc without deploying
 
 A change is done when `./scripts/build.sh` and `npx wrangler deploy --dry-run` both succeed. CI runs the same steps on every pull request.
 
+Update the docs, `README.md` included (and `docs/design-guidelines.md`, `AGENTS.md` itself), in the same change whenever what they describe changes (layout, commands, build or deploy, the site's structure, the design system), and check them before every pull request.
+
 ## Layout
 
 - `content/` pages as Markdown with TOML front matter; `content/blog/` posts.
