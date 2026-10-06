@@ -1,16 +1,24 @@
-{#- The hero figure: a service as Varyk is designed to write it. This is the milestone-5b4 design target, not
-    code the compiler accepts today, which the caption (`extra.figure_caption` in content/_index.md) says.
-    `Error` and `log::info` are written as milestone 5a settled them, and `async` and `.await` as 5b1 did; `http` and `sql` are
-    the keys `varyk add http sql` gives the `varyk-http` (5b4) and `varyk-sql` (5b3) packages, named as 5b2 settled. The shape follows
-    the compiler roadmap's 5b3 and 5b4 entries: parameters bound by name to the route and by type to shared state, the return value
-    as the response, `None` as 404. The query call has the shape milestone 5b3 gives a facade: literal query text, the values after it,
-    awaited, and `T` taken from where the result goes (here the handler's return type); `?` is SQLite's own placeholder.
-    It lives only in this template, so it never reaches the Markdown copies that agents read. -#}
+{#- The hero figure: a service as Varyk writes it. This is the users API of section 1 of the milestone-5b4 spec
+    (docs/specs/2026-10-05-milestone-5b4-design.md in the compiler repository), copied as written there. It runs with
+    the released `varyk-http` package, and `varyk check` accepts it against that package; the caption
+    (`extra.figure_caption` in content/_index.md) says so.
+    `Error` is written as milestone 5a settled it, and `async` and `.await` as 5b1 did; `http` and `sql` are
+    the keys `varyk add http sql` gives the `varyk-http` (5b4) and `varyk-sql` (5b3) packages, named as 5b2 settled. A handler's
+    parameters are bound by name to the route, by type to the JSON body and to shared state, and its return value is the
+    response, `None` a 404; `http::bad_request` is an error with a status, and `set_status` gives the 201. The query calls have
+    the shape milestone 5b3 gives a facade: literal query text, the values after it, awaited, and `T` taken from where the
+    result goes; `?` is SQLite's own placeholder. `serve` gives a `Result`, an `Err` when the port cannot be used.
+    It is not one of the compiler's `examples/`, so it lives only in this template and never reaches the Markdown copies
+    that agents read, which hold only compiler-verified examples. -#}
 <figure class="compare">
 <div class="compare-panes compare-single">
-<div class="pane"><p class="pane-head pane-varyk">users.vr <span class="pane-note">coming in milestone 5b4</span></p>
+<div class="pane"><p class="pane-head pane-varyk">users.vr</p>
 <pre tabindex="0"><code data-lang="varyk">struct User {
     id: i64,
+    name: string,
+}
+
+struct NewUser {
     name: string,
 }
 
@@ -22,9 +30,25 @@ async fn get_user(id: i64, state: Shared&lt;State&gt;) -&gt; Result&lt;Option&lt
     state.db.first("select id, name from users where id = ?", id).await
 }
 
+async fn create_user(user: NewUser, state: Shared&lt;State&gt;) -&gt; Result&lt;http::Response, Error&gt; {
+    if user.name.is_empty() {
+        return Err(http::bad_request("a user needs a name"));
+    }
+    let created: User = state.db.one("insert into users (name) values (?) returning id, name", user.name).await?;
+    let mut r = http::Response::json(created);
+    r.set_status(201);
+    Ok(r)
+}
+
+async fn open_db() -&gt; Result&lt;sql::Pool, Error&gt; {
+    let db = sql::connect("sqlite://users.db?mode=rwc").await?;
+    db.run("create table if not exists users (id integer primary key, name text not null)").await?;
+    Ok(db)
+}
+
 async fn main() {
-    let port = 3000;
-    let db = match sql::connect("sqlite://users.db?mode=rwc").await {
+    let port: u16 = 3000;
+    let db = match open_db().await {
         Ok(db) =&gt; db,
         Err(e) =&gt; {
             log::error("cannot open the database: {}", e);
@@ -33,8 +57,10 @@ async fn main() {
     };
     let mut app = http::App::new(Shared::new(State { db: db }));
     app.get("/users/{id}", get_user);
-    log::info("listening on port {}", port);
-    app.serve(port).await;
+    app.post("/users", create_user);
+    if let Err(e) = app.serve(port).await {
+        log::error("cannot serve: {}", e);
+    }
 }</code></pre></div>
 </div>
 <figcaption><span class="fig">Fig. 1</span> {{ section.extra.figure_caption | markdown(inline=true) | safe }}</figcaption>

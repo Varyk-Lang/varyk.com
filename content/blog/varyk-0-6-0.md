@@ -108,7 +108,7 @@ fn add_ada() -> Result<User, Error> {
 
 ## What is not yet
 
-A type parameter in a parameter (`&T: Serialize`, for sending a Varyk value out, planned for 5b4), two type parameters, a `where` clause, or another bound; a `u64`, a struct, a `Vec`, or a map as a trailing value. Also not yet: `varyk_std::Error` anywhere but as the error of a returned `Result`; a Varyk function with a literal-only parameter or one taking any number of values, so a `.vr` wrapper cannot pass a query through, and `varyk-sql` puts every call that takes a query in its `.rs` facade; naming `varyk_std::Value` from Varyk code; `pub use` of a module, with braces, globs, or `as`, or of an item of another package; and several shorthands in one `varyk add`. The [reference](/learn/reference/#not-in-milestone-5b3) lists them.
+A type parameter in a parameter (`&T: Serialize`, for sending a Varyk value out, planned for 5b4), two type parameters, a `where` clause, or another bound; a `u64`, a struct, a `Vec`, or a map as a trailing value. Also not yet: `varyk_std::Error` anywhere but as the error of a returned `Result`; a Varyk function with a literal-only parameter or one taking any number of values, so a `.vr` wrapper cannot pass a query through, and `varyk-sql` puts every call that takes a query in its `.rs` facade; naming `varyk_std::Value` from Varyk code; `pub use` of a module, with braces, globs, or `as`, or of an item of another package; and several shorthands in one `varyk add`. The [reference](https://github.com/Varyk-Lang/varyk/blob/varyk-v0.6.0/docs/language.md#not-in-milestone-5b3) lists them.
 
 ## Upgrading
 

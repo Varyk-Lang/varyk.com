@@ -248,9 +248,8 @@ main { display: block; }
 .pane-head::before { content: ""; width: 0.5rem; height: 0.5rem; background: var(--accent); }
 .pane-rust::before { background: var(--red); }
 .compare pre { margin: 0; border: 0; border-radius: 0; background: none; padding: 1.1rem 1.25rem 1.4rem; font-size: 0.875rem; }
-/* The hero figure has one pane: a service as Varyk is designed to write it, with a "coming" note in the header. */
+/* The hero figure has one pane: a service as Varyk writes it. */
 .compare-panes.compare-single { grid-template-columns: minmax(0, 1fr); }
-.pane-note { margin-left: auto; font-family: var(--sans); color: var(--muted); }
 figcaption { margin-top: 0.9rem; font-size: 0.9375rem; line-height: 1.55; color: var(--muted); }
 .fig { font-family: var(--serif); font-style: italic; font-size: 1.1em; color: var(--ink); margin-right: 0.3rem; }
 figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark); box-shadow: inset 0 -2px 0 var(--red); padding: 0 2px; }
@@ -362,7 +361,8 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band-road[data-done="5"] li:nth-child(-n + 5)::before,
 .band-road[data-done="6"] li:nth-child(-n + 6)::before,
 .band-road[data-done="7"] li:nth-child(-n + 7)::before,
-.band-road[data-done="8"] li:nth-child(-n + 8)::before { background: var(--accent); }
+.band-road[data-done="8"] li:nth-child(-n + 8)::before,
+.band-road[data-done="9"] li:nth-child(-n + 9)::before { background: var(--accent); }
 .band-road[data-done="0"] li:nth-child(1)::before,
 .band-road[data-done="1"] li:nth-child(2)::before,
 .band-road[data-done="2"] li:nth-child(3)::before,
@@ -371,7 +371,8 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band-road[data-done="5"] li:nth-child(6)::before,
 .band-road[data-done="6"] li:nth-child(7)::before,
 .band-road[data-done="7"] li:nth-child(8)::before,
-.band-road[data-done="8"] li:nth-child(9)::before { background: var(--accent); opacity: 0.45; }
+.band-road[data-done="8"] li:nth-child(9)::before,
+.band-road[data-done="9"] li:nth-child(10)::before { background: var(--accent); opacity: 0.45; }
 @media (min-width: 64rem) {
   .band-road li:not(:last-child):not(:nth-child(3n))::after { content: ""; position: absolute; top: 1.25rem; left: 3.25rem; right: -2.25rem; height: 1px; background: var(--line); }
 }
@@ -383,7 +384,8 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band-road[data-done="5"] li:nth-child(-n + 5) > strong:first-child,
 .band-road[data-done="6"] li:nth-child(-n + 6) > strong:first-child,
 .band-road[data-done="7"] li:nth-child(-n + 7) > strong:first-child,
-.band-road[data-done="8"] li:nth-child(-n + 8) > strong:first-child { color: var(--accent); }
+.band-road[data-done="8"] li:nth-child(-n + 8) > strong:first-child,
+.band-road[data-done="9"] li:nth-child(-n + 9) > strong:first-child { color: var(--accent); }
 :root { --gear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cmask id='m'%3E%3Crect width='64' height='64' fill='white'/%3E%3Ccircle cx='32' cy='32' r='7.6' fill='black'/%3E%3C/mask%3E%3Cg mask='url(%23m)'%3E%3Ccircle cx='32' cy='32' r='20'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(22.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(67.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(112.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(157.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(202.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(247.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(292.5 32 32)'/%3E%3Crect x='27.5' y='5' width='9' height='9' rx='1.2' transform='rotate(337.5 32 32)'/%3E%3C/g%3E%3C/svg%3E"); }
 
 /* 06: get started. */
