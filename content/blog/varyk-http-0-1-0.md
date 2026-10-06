@@ -137,12 +137,12 @@ API_KEY=dev-key
 `varyk run` serves on `127.0.0.1:3000`:
 
 ```sh
-curl -i -H 'x-api-key: dev-key' -d '{"name":"Ada"}' localhost:3000/users
+curl -i -H 'x-api-key: dev-key' -d '{"name":"Ada"}' 127.0.0.1:3000/users
 # 201, location: /users/1, {"id":1,"name":"Ada"}
-curl -H 'x-api-key: dev-key' localhost:3000/users/1   # {"id":1,"name":"Ada"}
-curl -H 'x-api-key: dev-key' localhost:3000/users/2   # 404 {"error":"not found"}
-curl localhost:3000/users                             # 401
-curl localhost:3000/health                            # "ok"
+curl -H 'x-api-key: dev-key' 127.0.0.1:3000/users/1   # {"id":1,"name":"Ada"}
+curl -H 'x-api-key: dev-key' 127.0.0.1:3000/users/2   # 404 {"error":"not found"}
+curl 127.0.0.1:3000/users                             # 401
+curl 127.0.0.1:3000/health                            # "ok"
 ```
 
 The same program, with its tests, is the package's [`demo/users`](https://github.com/Varyk-Lang/varyk-http/tree/main/demo/users). A handler is an ordinary `async fn`. Its parameters are bound by name to the path (`{id}`) and the query string, and by type to the JSON body, the shared state, and the request; its return value is the response: a value is JSON with 200, `None` is 404, nothing is 204, and an `http::Response` is sent as built. `varyk check` checks every route against its handler before anything builds. A path or query value that does not parse as its type, a missing query value, and a body that is not JSON of its type are each a 400 naming the parameter, and the handler is not called. The [Varyk 0.7.0 post](/blog/varyk-0-7-0/#what-is-in-it) and the [language reference](/learn/reference/#http) have the rules.
