@@ -1281,7 +1281,7 @@ name = "greeting"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.6.0"
+varyk-std = "0.7.0"
 ```
 
 `packages/greeting/src/main.vr`
@@ -1435,7 +1435,7 @@ name = "users"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.6.0"
+varyk-std = "0.7.0"
 ```
 
 `packages/users/.env`
@@ -1618,7 +1618,7 @@ path = "src/lib.vr"
 
 [dependencies]
 units = { version = "0.1.0", path = "../units" }
-varyk-std = "0.6.0"
+varyk-std = "0.7.0"
 ```
 
 `packages/route/src/lib.vr`
@@ -1700,7 +1700,7 @@ path = "src/main.vr"
 [dependencies]
 route = { path = "../route" }
 units = { path = "../units" }
-varyk-std = "0.6.0"
+varyk-std = "0.7.0"
 ```
 
 `packages/trip/src/main.vr`
