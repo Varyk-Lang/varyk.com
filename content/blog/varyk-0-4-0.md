@@ -1,7 +1,7 @@
 +++
 title = "Varyk 0.4.0: async functions and tasks"
 description = "Milestone 5b1 adds async fn and .await on a built-in multi-threaded runtime, calls that start tasks without a spawn, Task::all and Task::all_settled, Shared for a value many tasks read, and time::sleep."
-date = 2026-10-01
+date = 2026-10-01T19:00:00+02:00
 +++
 
 Varyk 0.4.0 is on crates.io. It is milestone 5b1 of the [roadmap](/design/roadmap/), the second part of the batteries for services. Milestone 5a gave Varyk, a language for backend services that compiles to Rust, the data a service works with: JSON, configuration, logging, and tests. Milestone 5b1 adds the way a service waits: `async` and `.await` on a built-in runtime, and tasks that run alongside each other, so that a handler can fetch three things at once instead of one after another.
