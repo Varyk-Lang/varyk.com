@@ -10,8 +10,8 @@ headline = ["Build backend services simply.", "Ship Rust *binaries.*"]
 lead = "Varyk is a small language for APIs, workers, and microservices. No garbage collector, no lifetime annotations, no borrow ceremony, and Rust and crates.io underneath. You write Go-like application code and ship one native binary, checked by the Rust compiler."
 install_label = "Install with Cargo"
 install = "cargo install varyk --locked"
-# The hero figure (templates/partials/home-service.html) shows the users API of milestone 5b4, as it runs with varyk-http.
-figure_caption = "A users API on a database in one file, the service of milestone 5b4's [design](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-10-05-milestone-5b4-design.md); it runs with the `varyk-http` package, and `varyk check` checks each route against its handler. `http` and `sql` are the keys `varyk add http sql` gives the [`varyk-http`](https://github.com/Varyk-Lang/varyk-http) and `varyk-sql` packages, named as any Varyk package is since milestone 5b2; `varyk-sql` arrived with milestone 5b3, and `varyk-http` with milestone 5b4. `Error` and `log` are here since milestone 5a, and `async` and `Shared` since milestone 5b1. See the [roadmap](/design/roadmap/)."
+# The hero figure (templates/partials/home-service.html) shows the users API of milestone 5b4 with the created_at of milestone 5c, as it runs with varyk-http.
+figure_caption = "A users API on a database in one file, the service of milestone 5b4's [design](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-10-05-milestone-5b4-design.md), with the `created_at: Time` of milestone 5c's [design](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-10-07-milestone-5c-design.md); it runs with the `varyk-http` package, and `varyk check` checks each route against its handler. `http` and `sql` are the keys `varyk add http sql` gives the [`varyk-http`](https://github.com/Varyk-Lang/varyk-http) and `varyk-sql` packages, named as any Varyk package is since milestone 5b2; `varyk-sql` arrived with milestone 5b3, and `varyk-http` with milestone 5b4. `Error` and `log` are here since milestone 5a, `async` and `Shared` since milestone 5b1, and `Time` since milestone 5c. See the [roadmap](/design/roadmap/)."
 # The borrowing figure (templates/partials/home-figure.html) is placed in the band whose entry sets `figure = "borrowing"`.
 borrowing_caption = "The Rust that `varyk build` generates from `borrowing.vr`, as the compiler writes `src/main.rs`. **Marked**: everything the compiler writes for you. The program prints `Alice`, then `Bob`."
 
@@ -53,7 +53,7 @@ columns = true
 id = "roadmap"
 label = "Roadmap"
 style = "road"
-done = 9
+done = 10
 
 [[extra.bands]]
 id = "get-started"
@@ -63,7 +63,7 @@ style = "start"
 
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, packages that use packages in milestone 5b2, facades for packages in milestone 5b3, and routes checked against their handlers in milestone 5b4; databases and HTTP come as packages, `varyk-sql` since milestone 5b3 and `varyk-http` since milestone 5b4.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, packages that use packages in milestone 5b2, facades for packages in milestone 5b3, routes checked against their handlers in milestone 5b4, and times, ids, and bytes in milestone 5c; databases and HTTP come as packages, `varyk-sql` since milestone 5b3 and `varyk-http` since milestone 5b4.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -78,11 +78,12 @@ Rust underneath gives you all of this today. The batteries that make a service, 
 
 ### The batteries, milestone 5
 
-JSON, configuration, logging, and tests are in the compiler since milestone 5a, and `async` since milestone 5b1; the [examples](/learn/examples/#json) show them. Databases and HTTP come as packages you add, `varyk-sql` and `varyk-http`, so a program that prints a line never compiles a web server or a database driver. Milestone 5b3 gave the compiler what `varyk-sql` needs, and milestone 5b4 what `varyk-http` needs; each package lives in its own repository and is released with them. The figure at the top of the page is a service with both.
+JSON, configuration, logging, and tests are in the compiler since milestone 5a, `async` since milestone 5b1, and `Time`, `Uuid`, and `Bytes` since milestone 5c; the [examples](/learn/examples/#json) show them. Databases and HTTP come as packages you add, `varyk-sql` and `varyk-http`, so a program that prints a line never compiles a web server or a database driver. Milestone 5b3 gave the compiler what `varyk-sql` needs, and milestone 5b4 what `varyk-http` needs; each package lives in its own repository and is released with them. The figure at the top of the page is a service with both.
 
 - **JSON from your structs.** Turn your structs into JSON and back with `json::parse` and `json::stringify`, and rename, default, or skip a field with an attribute. *Milestone 5a.*
 - **Configuration, logging, tests.** A struct filled from the environment and a `.env` file with `env::parse`, log lines on stderr as text or JSON, and `varyk test`. *Milestone 5a.*
 - **Async built in.** `async fn` and `.await` on a built-in runtime; call a function without `.await` to start it as a task, and wait on many with `Task::all`. *Milestone 5b1.*
+- **Times, ids, and bytes.** `Time`, a point in time in UTC written as `2026-10-07T12:00:00Z`, `Uuid`, with `Uuid::new()` a time-ordered id, and `Bytes`, base64 in JSON, as built-in types that go through JSON and into `varyk-sql`'s native columns, so a `created_at` is a time and not a string. *Milestone 5c.*
 - **Databases through one API.** Query SQLite, Postgres, or MySQL and get your structs back, in the [`varyk-sql`](https://github.com/Varyk-Lang/varyk-sql) package on sqlx; the query text is written in the program, so a query built from input is a compile error. *Milestone 5b3.*
 - **HTTP server and client.** An explicit route table that `varyk check` checks against each handler, handlers whose return value is the response, errors whose internal message never reaches a client, and calls to other services, in the [`varyk-http`](https://github.com/Varyk-Lang/varyk-http) package on axum and reqwest. *Milestone 5b4.*
 
@@ -154,8 +155,8 @@ From your source to the binary:
 7. **Milestone 5b2, complete.** Packages: Varyk code uses a Varyk package by its key in `Cargo.toml`, to any depth, and `varyk` builds every package from its `.vr` sources, never running Rust a publisher shipped or a build script. Released as 0.5.0.
 8. **Milestone 5b3, complete.** Facades for packages: a `.rs` facade function that reads its result into whatever type the caller names, takes any number of values after its other arguments, or takes only text written in the program, plus `pub use` and `varyk add sql`. Released as 0.6.0, with the database package `varyk-sql`, in [its own repository](https://github.com/Varyk-Lang/varyk-sql), released as 0.1.0.
 9. **Milestone 5b4, complete.** HTTP: routes and hooks on an app of the `varyk-http` package, each route checked against its handler by `varyk check`, an optional status on `Error`, `app.request` for tests, and `varyk add http sql`. Released as 0.7.0, with the HTTP package `varyk-http`, in [its own repository](https://github.com/Varyk-Lang/varyk-http), released as 0.1.0: a users API on a database is `varyk init`, `varyk add http sql`, one file, and `varyk run` away.
-10. **Milestone 5c, next.** Time, ids, and bytes: a date-time type, a UUID type, and a bytes type, so the users API does not send a date as a string. With it, milestone 5 is met.
-11. **Milestone 6.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
+10. **Milestone 5c, complete.** Time, ids, and bytes: `Time`, `Uuid`, and `Bytes` as built-in types, through JSON, database values, and facades, and `Time` and `Uuid` through configuration and route parameters, so the users API does not send a date as a string. Released as 0.8.0, with `varyk-sql` 0.3.0, which stores the three as native columns, and `varyk-http` 0.2.0, which reads times and ids from routes and sends and receives bytes; with them, milestone 5 is met.
+11. **Milestone 6, next.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 

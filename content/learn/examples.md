@@ -1,10 +1,10 @@
 +++
 title = "Examples"
-description = "The example programs from milestones 1, 2, 4, 5a, and 5b1, and the packages from milestones 3, 5a, and 5b2, with their expected output."
+description = "The example programs from milestones 1, 2, 4, 5a, 5b1, and 5c, and the packages from milestones 3, 5a, and 5b2, with their expected output."
 weight = 3
 +++
 
-These are the twenty-four programs milestones 1, 2, 4, 5a, and 5b1 must compile and run with the shown output, and six packages from milestones 3, 5a, and 5b2; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, the three from [JSON](#json) on milestone 5a, and the three from [Tasks](#tasks) on milestone 5b1; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`, and milestone 5b1 renamed `todo`'s `Task` struct to `Item`, because `Task` is now a built-in type. Milestone 5b2 added the packages `route` and `trip`, made `matcher`'s facade report a bad pattern instead of stopping the program, and named each package's `.vr` root in its `Cargo.toml`, in place of the `build.rs` and stub `varyk init` used to write. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
+These are the twenty-five programs milestones 1, 2, 4, 5a, 5b1, and 5c must compile and run with the shown output, and six packages from milestones 3, 5a, and 5b2; they are the compiler's integration tests. The first six programs are milestone 1, the next six milestone 2, the six from [Iterators](#iterators) on milestone 4, the three from [JSON](#json) on milestone 5a, the three from [Tasks](#tasks) on milestone 5b1, and [Records](#records) milestone 5c; the packages are under [Packages](#packages). Milestone 4 also updated three earlier ones: `todo` counts with a chain and reads its title through a getter, `interop` imports a Rust function that returns part of its argument, and `matcher` compares an imported Rust enum with `==`. Milestone 5a updated `readings` and `text`, because `parse` now gives a `Result`, and milestone 5b1 renamed `todo`'s `Task` struct to `Item`, because `Task` is now a built-in type. Milestone 5b2 added the packages `route` and `trip`, made `matcher`'s facade report a bad pattern instead of stopping the program, and named each package's `.vr` root in its `Cargo.toml`, in place of the `build.rs` and stub `varyk init` used to write. They are copied from the [compiler repository](https://github.com/Varyk-Lang/varyk/tree/main/examples), leaving out the `// expected output` comment that heads each file there.
 
 ## Hello
 
@@ -1148,6 +1148,79 @@ async fn main() {
 
 Output: `10000 tasks, total 50025000`.
 
+## Records
+
+`Time`, `Uuid`, and `Bytes` in one struct: an id read from text in capitals and printed in lower case, a time read with an offset and kept in UTC, a time an hour later and the seconds between the two, the struct written as JSON, with the bytes as base64, and read back equal, a fresh id from `Uuid::new()`, and text that is not an id or not a time an `Error` printed with `{}`.
+
+`records.vr`
+
+```varyk
+struct Upload {
+    id: Uuid,
+    at: Time,
+    data: Bytes,
+}
+
+fn first_upload() -> Result<Upload, Error> {
+    let id: Uuid = "0192F0C4-7A3E-7B5C-9D1E-2F3A4B5C6D7E".parse()?;
+    let at = Time::from_iso("2026-10-07T12:00:00+02:00")?;
+    Ok(Upload { id: id, at: at, data: Bytes::from_text("hello, world") })
+}
+
+// Writes `upload` as JSON, reads it back, and compares the two.
+fn report(upload: Upload) -> Result<bool, Error> {
+    println!("{} at {}", upload.id, upload.at);
+    let expires = upload.at.add_seconds(3600)?;
+    println!("expires at {}, {} seconds later", expires, expires.seconds_since(upload.at));
+    let text = json::stringify(upload);
+    println!("{}", text);
+    let back: Upload = json::parse(text)?;
+    Ok(back == upload)
+}
+
+fn main() {
+    match first_upload() {
+        Ok(upload) => {
+            match report(upload) {
+                Ok(same) => println!("read back the same: {}", same),
+                Err(e) => println!("error: {}", e),
+            }
+            match upload.data.to_text() {
+                Ok(text) => println!("{}", text),
+                Err(e) => println!("error: {}", e),
+            }
+            println!("{}", upload.data.to_base64());
+            let fresh = Upload { id: Uuid::new(), at: Time::now(), data: Bytes::from_text("") };
+            println!("a new upload has its own id: {}", fresh.id != upload.id);
+        }
+        Err(e) => println!("error: {}", e),
+    }
+    let bad: Result<Uuid, Error> = "42".parse();
+    match bad {
+        Ok(id) => println!("{}", id),
+        Err(e) => println!("{}", e),
+    }
+    match Time::from_iso("2026-10-07 12:00") {
+        Ok(t) => println!("{}", t),
+        Err(e) => println!("{}", e),
+    }
+}
+```
+
+Output:
+
+```text
+0192f0c4-7a3e-7b5c-9d1e-2f3a4b5c6d7e at 2026-10-07T10:00:00Z
+expires at 2026-10-07T11:00:00Z, 3600 seconds later
+{"id":"0192f0c4-7a3e-7b5c-9d1e-2f3a4b5c6d7e","at":"2026-10-07T10:00:00Z","data":"aGVsbG8sIHdvcmxk"}
+read back the same: true
+hello, world
+aGVsbG8sIHdvcmxk
+a new upload has its own id: true
+`42` is not a Uuid like 01890a5d-ac96-774b-bcce-b302099a8057
+`2026-10-07 12:00` is not a time like 2026-10-07T12:00:00Z
+```
+
 ## Packages
 
 A package is a directory with a `Cargo.toml` and a `src/main.vr` or `src/lib.vr`, which `Cargo.toml` names as its target. These six are in [`examples/packages/`](https://github.com/Varyk-Lang/varyk/tree/main/examples/packages); each is run from its own directory, with no file named.
@@ -1281,7 +1354,7 @@ name = "greeting"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.7.0"
+varyk-std = "0.8.0"
 ```
 
 `packages/greeting/src/main.vr`
@@ -1435,7 +1508,7 @@ name = "users"
 path = "src/main.vr"
 
 [dependencies]
-varyk-std = "0.7.0"
+varyk-std = "0.8.0"
 ```
 
 `packages/users/.env`
@@ -1618,7 +1691,7 @@ path = "src/lib.vr"
 
 [dependencies]
 units = { version = "0.1.0", path = "../units" }
-varyk-std = "0.7.0"
+varyk-std = "0.8.0"
 ```
 
 `packages/route/src/lib.vr`
@@ -1700,7 +1773,7 @@ path = "src/main.vr"
 [dependencies]
 route = { path = "../route" }
 units = { path = "../units" }
-varyk-std = "0.7.0"
+varyk-std = "0.8.0"
 ```
 
 `packages/trip/src/main.vr`
