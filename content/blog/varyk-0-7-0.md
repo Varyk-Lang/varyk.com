@@ -166,6 +166,10 @@ The three crates, `varyk`, `varyk-syntax`, and `varyk-std`, are released togethe
 
 A program that uses `varyk-sql` moves to varyk-sql 0.2 at the same time: run `varyk add sql` again, which rewrites the `sql` line to varyk-sql 0.2.0. Until it does, `varyk check` reports V0404 at varyk-sql 0.1's own manifest, not at the program's. The two releases differ only in the `varyk-std` they need: a program and its packages resolve to one `varyk-std`, so varyk-sql 0.2 works with Varyk 0.7, and varyk-sql 0.1 stays with Varyk 0.6. varyk-sql's [README](https://github.com/Varyk-Lang/varyk-sql#versions) has the table.
 
+**Varyk 0.7.1**, on 7 October, is a patch release: `varyk init` also writes a `.dockerignore` with `target` and `.env`, so a container build copies neither, and V0219's note for a path parameter of the wrong type names the types that fit. Nothing else changed. After `cargo install varyk --locked`, `varyk check` in a package made with 0.7.0 asks for `cargo update -p varyk-std`.
+
+**Varyk 0.7.2**, the same day, is another patch release from the same walkthrough. `main` may return a `Result` of something and `Error`: `?` then works in it, and an `Err` is logged, or printed on stderr in a program that does not log, and the program exits with code 1, so a service that cannot start says so to whatever runs it. A `main` that returns nothing works as before. A `Result` used where its value is wanted now suggests `?`; `http::` or `sql::` used before `varyk add http sql` says how to add the package; and text that is not JSON at all, such as a form sent where a JSON body is expected, is reported as "it is not JSON".
+
 ## Try it
 
 You need a stable Rust toolchain installed through [rustup](https://rustup.rs).

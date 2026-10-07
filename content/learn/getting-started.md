@@ -100,7 +100,79 @@ cd hello
 varyk run
 ```
 
-It prints `Hello, world!`. `init` wrote three files: `Cargo.toml` (the manifest, with `edition = "2024"`, a `[[bin]]` table naming `src/main.vr` as the package's root, and `varyk-std`, the crate behind `Error`, `json`, `env`, `log`, and tasks, under `[dependencies]`), `.gitignore`, and `src/main.vr`, the program. Inside the package, commands need no file name. A Varyk package is built by `varyk`, not by plain `cargo build`, since its root is Varyk, not Rust; cargo's other tools, such as `cargo add` and `cargo tree`, still read it. To use another Varyk package, list it under `[dependencies]` and name it by its key: with `units = { path = "../units" }`, Varyk code calls `units::length::add(a, b)`; the [trip](/learn/examples/#trip) example uses two packages this way. To use a Rust crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way. To serve HTTP and use a database, `varyk add http sql` adds the official packages `varyk-http` and `varyk-sql`; the [varyk-http post](/blog/varyk-http-0-1-0/#a-first-service) shows a users API on a database in one file, the [varyk-sql post](/blog/varyk-sql-0-1-0/#a-first-service) a first service on a database alone, and the READMEs of [varyk-http](https://github.com/Varyk-Lang/varyk-http#readme) and [varyk-sql](https://github.com/Varyk-Lang/varyk-sql#readme) have the full documentation.
+It prints `Hello, world!`. `init` wrote four files: `Cargo.toml` (the manifest, with `edition = "2024"`, a `[[bin]]` table naming `src/main.vr` as the package's root, and `varyk-std`, the crate behind `Error`, `json`, `env`, `log`, and tasks, under `[dependencies]`), `.gitignore` and `.dockerignore`, which keep the build folder and `.env` out of git and out of a container build, and `src/main.vr`, the program. Inside the package, commands need no file name. A Varyk package is built by `varyk`, not by plain `cargo build`, since its root is Varyk, not Rust; cargo's other tools, such as `cargo add` and `cargo tree`, still read it. To use another Varyk package, list it under `[dependencies]` and name it by its key: with `units = { path = "../units" }`, Varyk code calls `units::length::add(a, b)`; the [trip](/learn/examples/#trip) example uses two packages this way. To use a Rust crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way. To serve HTTP and use a database, the official packages `varyk-http` and `varyk-sql` do it, as the next section shows.
+
+## A first service
+
+A service is a package with the official packages added:
+
+```text
+varyk init users
+cd users
+varyk add http sql
+```
+
+`varyk add http sql` adds `varyk-http` as `http` and `varyk-sql` as `sql`. Replace `src/main.vr` with:
+
+```varyk
+struct Config {
+    #[default(3000)]
+    port: u16,
+    #[default("127.0.0.1")]
+    address: string,
+}
+
+struct User {
+    id: i64,
+    name: string,
+}
+
+struct NewUser {
+    name: string,
+}
+
+struct State {
+    db: sql::Pool,
+}
+
+async fn list_users(state: Shared<State>) -> Result<Vec<User>, Error> {
+    state.db.all("select id, name from users order by id").await
+}
+
+async fn create_user(user: NewUser, state: Shared<State>) -> Result<User, Error> {
+    let id: i64 = state.db.one("insert into users (name) values (?) returning id", user.name).await?;
+    Ok(User { id: id, name: user.name.clone() })
+}
+
+async fn main() -> Result<bool, Error> {
+    let config: Config = env::parse()?;
+    let db = sql::connect("sqlite::memory:").await?;
+    db.migrate("migrations").await?;
+    let mut app = http::App::new(Shared::new(State { db: db }));
+    app.get("/users", list_users);
+    app.post("/users", create_user);
+    app.set_address(config.address);
+    app.serve(config.port).await
+}
+```
+
+and add the database's first migration, `migrations/0001_users.sql`:
+
+```sql
+create table users (
+    id integer primary key,
+    name text not null
+);
+```
+
+`varyk run` builds it and serves on `127.0.0.1:3000`. The first build compiles SQLite from C, which needs a C compiler and takes a few minutes, once:
+
+```text
+curl -d '{"name":"Ada"}' 127.0.0.1:3000/users   # {"id":1,"name":"Ada"}
+curl 127.0.0.1:3000/users                      # [{"id":1,"name":"Ada"}]
+```
+
+`app.get` and `app.post` add the routes, and `varyk check` checks each against its handler before anything builds. A handler's parameters are filled by type: `create_user` takes the JSON body as a `NewUser`, and both handlers read the shared `State`. What a handler returns is the response, here JSON, and an `Err` is an error response whose message is logged, never sent. A body that is not a `NewUser` is a 400 naming the parameter, and the handler never runs. `migrate` applies the files in `migrations` in order, each once; the database is in memory, so it starts empty on every run. `main` returns a `Result`, so `?` works in it: a service that cannot start, on a port already in use say, logs why and exits with code 1, which tells a supervisor or a container platform it failed. `env::parse` reads `PORT` and `ADDRESS` from the environment, or from a `.env` file, with the defaults written on `Config`. In a container, `ADDRESS=0.0.0.0` lets connections from outside it reach the service, and the [Dockerfile in varyk-http's README](https://github.com/Varyk-Lang/varyk-http#production) builds this package as it is. The [varyk-http post](/blog/varyk-http-0-1-0/#a-first-service) grows it into a users API with an API key and a database URL from the environment, and the READMEs of [varyk-http](https://github.com/Varyk-Lang/varyk-http#readme) and [varyk-sql](https://github.com/Varyk-Lang/varyk-sql#readme) have the full documentation, tests included.
 
 ## Diagnostics
 

@@ -9,7 +9,7 @@ eyebrow = "Simple services. Rust underneath."
 headline = ["Build backend services simply.", "Ship Rust *binaries.*"]
 lead = "Varyk is a small language for APIs, workers, and microservices. No garbage collector, no lifetime annotations, no borrow ceremony, and Rust and crates.io underneath. You write Go-like application code and ship one native binary, checked by the Rust compiler."
 install_label = "Install with Cargo"
-install = "cargo install varyk"
+install = "cargo install varyk --locked"
 # The hero figure (templates/partials/home-service.html) shows the users API of milestone 5b4, as it runs with varyk-http.
 figure_caption = "A users API on a database in one file, the service of milestone 5b4's [design](https://github.com/Varyk-Lang/varyk/blob/main/docs/specs/2026-10-05-milestone-5b4-design.md); it runs with the `varyk-http` package, and `varyk check` checks each route against its handler. `http` and `sql` are the keys `varyk add http sql` gives the [`varyk-http`](https://github.com/Varyk-Lang/varyk-http) and `varyk-sql` packages, named as any Varyk package is since milestone 5b2; `varyk-sql` arrived with milestone 5b3, and `varyk-http` with milestone 5b4. `Error` and `log` are here since milestone 5a, and `async` and `Shared` since milestone 5b1. See the [roadmap](/design/roadmap/)."
 # The borrowing figure (templates/partials/home-figure.html) is placed in the band whose entry sets `figure = "borrowing"`.
@@ -164,11 +164,11 @@ The [roadmap](/design/roadmap/) has every item; nothing there is a date or a rel
 Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). Install the compiler, write a package, and run it:
 
 ```text
-$ cargo install varyk
+$ cargo install varyk --locked
 $ varyk init hello
 $ cd hello
 $ varyk run
 Hello, world!
 ```
 
-`init` wrote `Cargo.toml`, `.gitignore`, and `src/main.vr`, the program. Continue with [getting started](/learn/getting-started/) and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+`init` wrote `Cargo.toml`, `.gitignore`, `.dockerignore`, and `src/main.vr`, the program. Continue with [getting started](/learn/getting-started/), which ends with [a first service](/learn/getting-started/#a-first-service) on HTTP and a database, and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).

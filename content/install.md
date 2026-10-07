@@ -4,15 +4,15 @@ description = "How to install the Varyk compiler and check that it works."
 weight = 10
 +++
 
-Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build`, `varyk run`, `varyk test`, `varyk add`, and `varyk publish` invoke `cargo`, and `varyk check` does too when a package lists a dependency besides `varyk-std`, to learn which packages the build uses. A Varyk package is built with `varyk`; plain `cargo build` builds a published Varyk crate, not a package's source.
+Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). `varyk build`, `varyk run`, `varyk test`, `varyk add`, and `varyk publish` invoke `cargo`, and `varyk check` does too when a package lists a dependency besides `varyk-std`, to learn which packages the build uses. A Varyk package is built with `varyk`; plain `cargo build` builds a published Varyk crate, not a package's source. A service on `varyk-sql` also needs a C compiler, since its default database, SQLite, is compiled from C on the first build: Xcode's command-line tools on macOS, `build-essential` on Debian and Ubuntu.
 
 ## Install the compiler
 
 ```text
-cargo install varyk
+cargo install varyk --locked
 ```
 
-Releases are listed on [crates.io](https://crates.io/crates/varyk). To build the compiler from source instead, clone the [repository](https://github.com/Varyk-Lang/varyk) and run `cargo build -p varyk`.
+`--locked` builds it with the dependency versions it was released with. Releases are listed on [crates.io](https://crates.io/crates/varyk). To build the compiler from source instead, clone the [repository](https://github.com/Varyk-Lang/varyk) and run `cargo build -p varyk`.
 
 ## Check that it works
 
