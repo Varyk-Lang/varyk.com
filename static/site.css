@@ -353,7 +353,7 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
   -webkit-mask: var(--gear) center / contain no-repeat;
   mask: var(--gear) center / contain no-repeat;
 }
-/* `done` in the band's front matter: completed milestones are solid verdigris, the next one faded. */
+/* `done` in the band's front matter: completed milestones are solid verdigris, the next one faded. At 10 none is faded: milestone 6 is not scheduled. */
 .band-road[data-done="1"] li:nth-child(-n + 1)::before,
 .band-road[data-done="2"] li:nth-child(-n + 2)::before,
 .band-road[data-done="3"] li:nth-child(-n + 3)::before,
@@ -373,8 +373,7 @@ figcaption strong { font-weight: 400; color: var(--ink); background: var(--mark)
 .band-road[data-done="6"] li:nth-child(7)::before,
 .band-road[data-done="7"] li:nth-child(8)::before,
 .band-road[data-done="8"] li:nth-child(9)::before,
-.band-road[data-done="9"] li:nth-child(10)::before,
-.band-road[data-done="10"] li:nth-child(11)::before { background: var(--accent); opacity: 0.45; }
+.band-road[data-done="9"] li:nth-child(10)::before { background: var(--accent); opacity: 0.45; }
 @media (min-width: 64rem) {
   .band-road li:not(:last-child):not(:nth-child(3n))::after { content: ""; position: absolute; top: 1.25rem; left: 3.25rem; right: -2.25rem; height: 1px; background: var(--line); }
 }

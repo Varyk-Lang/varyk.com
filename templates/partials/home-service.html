@@ -2,14 +2,14 @@
     (docs/specs/2026-10-05-milestone-5b4-design.md in the compiler repository), with the `created_at: Time` that section 1
     of the milestone-5c spec (docs/specs/2026-10-07-milestone-5c-design.md) gives its `User`: set by `Time::now()`, bound as
     a trailing value, and stored by `varyk-sql` on SQLite as text of a fixed width. It runs with `varyk-http` 0.2 and
-    `varyk-sql` 0.3, and `varyk check` and `varyk build` accept it against the published packages; the caption (`extra.figure_caption` in
+    `varyk-sql` 0.4, and `varyk check` and `varyk build` accept it against those packages; the caption (`extra.figure_caption` in
     content/_index.md) says so.
     `Error` is written as milestone 5a settled it, and `async` and `.await` as 5b1 did; `http` and `sql` are
     the keys `varyk add http sql` gives the `varyk-http` (5b4) and `varyk-sql` (5b3) packages, named as 5b2 settled. A handler's
     parameters are bound by name to the route, by type to the JSON body and to shared state, and its return value is the
     response, `None` a 404; `http::bad_request` is an error with a status, and `set_status` gives the 201. The query calls have
     the shape milestone 5b3 gives a facade: literal query text, the values after it, awaited, and `T` taken from where the
-    result goes; `?` is SQLite's own placeholder. `serve` gives a `Result`, an `Err` when the port cannot be used.
+    result goes; `$1` and `$2` are `varyk-sql`'s placeholders, the same on every database since 0.4. `serve` gives a `Result`, an `Err` when the port cannot be used.
     It is not one of the compiler's `examples/`, so it lives only in this template and never reaches the Markdown copies
     that agents read, which hold only compiler-verified examples. -#}
 <figure class="compare">
@@ -30,14 +30,14 @@ struct State {
 }
 
 async fn get_user(id: i64, state: Shared&lt;State&gt;) -&gt; Result&lt;Option&lt;User&gt;, Error&gt; {
-    state.db.first("select id, name, created_at from users where id = ?", id).await
+    state.db.first("select id, name, created_at from users where id = $1", id).await
 }
 
 async fn create_user(user: NewUser, state: Shared&lt;State&gt;) -&gt; Result&lt;http::Response, Error&gt; {
     if user.name.is_empty() {
         return Err(http::bad_request("a user needs a name"));
     }
-    let created: User = state.db.one("insert into users (name, created_at) values (?, ?) returning id, name, created_at", user.name, Time::now()).await?;
+    let created: User = state.db.one("insert into users (name, created_at) values ($1, $2) returning id, name, created_at", user.name, Time::now()).await?;
     let mut r = http::Response::json(created);
     r.set_status(201);
     Ok(r)
