@@ -147,7 +147,7 @@ A client with several databases; cursors; change streams; GridFS; bulk writes; `
 
 ## varyk-sql 0.4.0
 
-varyk-sql 0.4.0 takes `$1`, `$2`, and so on, on every database, SQLite, Postgres, and MySQL, so the same placeholders work on all three:
+[varyk-sql](https://github.com/Varyk-Lang/varyk-sql) 0.4.0 takes `$1`, `$2`, and so on, on every database, SQLite, Postgres, and MySQL, so the same placeholders work on all three:
 
 ```varyk
 let user: Option<User> = db.first("select id, name from users where id = $1", id).await?;

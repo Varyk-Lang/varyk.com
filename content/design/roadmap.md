@@ -55,7 +55,7 @@ Milestone 5 is six milestones. The bar for the whole of it is one golden path: a
 Not a milestone: packages that came after milestone 5, each in its own repository and released on its own.
 
 - **`varyk-mongo`, released as 0.1.0**, in [its own repository](https://github.com/Varyk-Lang/varyk-mongo), on the official `mongodb` crate: the MongoDB package, with documents written from structs and read back into them; filters, updates, and aggregation pipelines in MongoDB's own syntax, as literal text with `?` where a value goes and the values beside it; `Time`, `Uuid`, and `Bytes` stored as native BSON dates and binaries; indexes; and transactions, which need a replica set. It needs Rust 1.88, for the driver. The compiler side came as two patch releases: Varyk 0.8.1, where `Time`, `Uuid`, and `Bytes` keep their type when a serializer is not JSON, and Varyk 0.8.2, with `varyk add mongo`.
-- **`varyk-sql` 0.4.0**: `$1`, `$2`, and so on, on every database, and `?` still on SQLite and MySQL.
+- **`varyk-sql` 0.4.0**, in [its own repository](https://github.com/Varyk-Lang/varyk-sql): `$1`, `$2`, and so on, on every database, and `?` still on SQLite and MySQL.
 
 `varyk-redis` is next.
 
