@@ -6,7 +6,7 @@ date = 2026-10-10T16:30:00+02:00
 
 varyk-mongo 0.1.0 is on crates.io. It is the official MongoDB package for [Varyk](/), a language for backend services that compiles to Rust, over the official `mongodb` crate. It covers what an ordinary service does with MongoDB and nothing more: connect over TLS, read and write typed documents, filter with MongoDB's own operators, aggregate, index, run transactions, and test against a real server. It lives in [its own repository](https://github.com/Varyk-Lang/varyk-mongo), and its [README](https://github.com/Varyk-Lang/varyk-mongo#readme) is the full documentation. varyk-mongo is not affiliated with or endorsed by MongoDB, Inc.
 
-Milestone 5 of the [roadmap](/design/roadmap/), the batteries for services, is complete, and varyk-mongo is the first of [the next packages](/design/roadmap/#the-next-packages) it lists after that, not a milestone of its own. It is written in Varyk, with a `.rs` facade over the driver, and a program that uses it writes no Rust. The compiler side came as two patch releases, Varyk 0.8.1 and 0.8.2, and varyk-sql 0.4.0 came in the same round; all three are below.
+Milestone 5 of the [roadmap](/design/roadmap/), the batteries for services, is complete, and varyk-mongo is the first of [the next packages](/design/roadmap/#the-next-packages) it lists after that, not a milestone of its own. Its work is done in a `.rs` facade over the driver, its tests against a real server are written in Varyk, and a program that uses it writes no Rust. The compiler side came as two patch releases, Varyk 0.8.1 and 0.8.2, and varyk-sql 0.4.0 came in the same round; all three are below.
 
 ## Adding it
 
