@@ -159,7 +159,7 @@ From your source to the binary:
 10. **Milestone 5c, complete.** Time, ids, and bytes: `Time`, `Uuid`, and `Bytes` as built-in types, through JSON, database values, and facades, and `Time` and `Uuid` through configuration and route parameters, so the users API does not send a date as a string. Released as 0.8.0, with `varyk-sql` 0.3.0, which stores the three as native columns, and `varyk-http` 0.2.0, which reads times and ids from routes and sends and receives bytes; with them, milestone 5 is met.
 11. **Milestone 6, planned.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend. Not started, and not scheduled.
 
-After milestone 5 came the next packages, each in its own repository: the MongoDB package [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo), released as 0.1.0, and `varyk-sql` 0.4.0, with `$1` placeholders on every database. Varyk 0.8.1 added what `varyk-mongo` needs, and 0.8.2 added `varyk add mongo`. `varyk-redis` is next.
+After milestone 5 came the next packages, each in its own repository: the MongoDB package [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo), released as 0.1.0, and [`varyk-sql`](https://github.com/Varyk-Lang/varyk-sql) 0.4.0, with `$1` placeholders on every database. Varyk 0.8.1 added what `varyk-mongo` needs, and 0.8.2 added `varyk add mongo`. `varyk-redis` is next.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 
