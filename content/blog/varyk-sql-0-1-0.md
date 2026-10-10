@@ -6,7 +6,7 @@ date = 2026-10-04T14:00:00+02:00
 
 varyk-sql 0.1.0 is on crates.io. It is the official Varyk package for SQL databases: SQLite, Postgres, and MySQL through sqlx. It covers what an ordinary service does with a database and nothing more: connect, over TLS when the URL asks for it, run migrations, query, write inside transactions, log, and test against an in-memory SQLite database. It lives in [its own repository](https://github.com/Varyk-Lang/varyk-sql), and its [README](https://github.com/Varyk-Lang/varyk-sql#readme) is the full documentation.
 
-varyk-sql ships with [Varyk 0.6.0](/blog/varyk-0-6-0/) because it needs that release's facade features. The package is written in Varyk, with a thin `.rs` facade over sqlx: a query call reads its rows into whatever struct the caller names, takes the query's values after the text, and takes the text itself only as written in the program. A program that uses it writes no Rust. varyk-sql 0.1 works with Varyk 0.6, and each minor Varyk release is followed by a varyk-sql release, since a program and the package must resolve to one `varyk-std`.
+varyk-sql ships with [Varyk 0.6.0](/blog/varyk-0-6-0/) because it needs that release's facade features. The package is a `.rs` facade over sqlx, with its tests written in Varyk: a query call reads its rows into whatever struct the caller names, takes the query's values after the text, and takes the text itself only as written in the program. A program that uses it writes no Rust. varyk-sql 0.1 works with Varyk 0.6, and each minor Varyk release is followed by a varyk-sql release, since a program and the package must resolve to one `varyk-std`.
 
 ## Adding it
 
