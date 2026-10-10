@@ -63,7 +63,7 @@ style = "start"
 
 ## What a service needs. What Rust *guarantees.*
 
-Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, packages that use packages in milestone 5b2, facades for packages in milestone 5b3, routes checked against their handlers in milestone 5b4, and times, ids, and bytes in milestone 5c; databases and HTTP come as packages, `varyk-sql` since milestone 5b3 and `varyk-http` since milestone 5b4.
+Rust underneath gives you all of this today. The batteries that make a service, what a Go or TypeScript team expects to find built in, are listed below them: JSON, configuration, logging, and tests arrived in milestone 5a, `async` in milestone 5b1, packages that use packages in milestone 5b2, facades for packages in milestone 5b3, routes checked against their handlers in milestone 5b4, and times, ids, and bytes in milestone 5c; databases and HTTP come as packages, `varyk-sql` since milestone 5b3 and `varyk-http` since milestone 5b4, and MongoDB as `varyk-mongo`, after milestone 5.
 
 <!-- Size, memory, and start time: examples/todo built with `varyk build --release` (compiler commits 84509f6 and 5675863) on an Apple Silicon Mac, September 2026: 435 KB as built, 342 KB stripped, 1.5 MB peak resident memory, about 4 ms wall clock to start (examples/hello.vr: 434 KB, 342 KB stripped, 1.5 MB, 4 ms). Refresh these when the figures in the list change. -->
 
@@ -76,9 +76,9 @@ Rust underneath gives you all of this today. The batteries that make a service, 
 - **The whole Rust ecosystem.** A Varyk package is a Cargo package: since milestone 3 you add a crate with `cargo add`, or `varyk add` since milestone 5a, and call it from a `.rs` file in the package, and the next section shows how.
 - **Drop into Rust when you need it.** A `.rs` file beside your `.vr`, in the same package and the same build. Write the borrow-heavy part in Rust and the rest in Varyk. Use Varyk until you actually need Rust.
 
-### The batteries, milestone 5
+### The batteries
 
-JSON, configuration, logging, and tests are in the compiler since milestone 5a, `async` since milestone 5b1, and `Time`, `Uuid`, and `Bytes` since milestone 5c; the [examples](/learn/examples/#json) show them. Databases and HTTP come as packages you add, `varyk-sql` and `varyk-http`, so a program that prints a line never compiles a web server or a database driver. Milestone 5b3 gave the compiler what `varyk-sql` needs, and milestone 5b4 what `varyk-http` needs; each package lives in its own repository and is released with them. The figure at the top of the page is a service with both.
+JSON, configuration, logging, and tests are in the compiler since milestone 5a, `async` since milestone 5b1, and `Time`, `Uuid`, and `Bytes` since milestone 5c; the [examples](/learn/examples/#json) show them. Databases and HTTP come as packages you add, `varyk-sql`, `varyk-mongo`, and `varyk-http`, so a program that prints a line never compiles a web server or a database driver. Milestone 5b3 gave the compiler what `varyk-sql` needs, and milestone 5b4 what `varyk-http` needs; `varyk-mongo` came after milestone 5. Each package lives in its own repository and is released on its own. The figure at the top of the page is a service with `varyk-http` and `varyk-sql`.
 
 - **JSON from your structs.** Turn your structs into JSON and back with `json::parse` and `json::stringify`, and rename, default, or skip a field with an attribute. *Milestone 5a.*
 - **Configuration, logging, tests.** A struct filled from the environment and a `.env` file with `env::parse`, log lines on stderr as text or JSON, and `varyk test`. *Milestone 5a.*
@@ -86,6 +86,7 @@ JSON, configuration, logging, and tests are in the compiler since milestone 5a, 
 - **Times, ids, and bytes.** `Time`, a point in time in UTC written as `2026-10-07T12:00:00Z`, `Uuid`, with `Uuid::new()` a time-ordered id, and `Bytes`, base64 in JSON, as built-in types that go through JSON and into `varyk-sql`'s native columns, so a `created_at` is a time and not a string. *Milestone 5c.*
 - **Databases through one API.** Query SQLite, Postgres, or MySQL and get your structs back, in the [`varyk-sql`](https://github.com/Varyk-Lang/varyk-sql) package on sqlx; the query text is written in the program, so a query built from input is a compile error. *Milestone 5b3.*
 - **HTTP server and client.** An explicit route table that `varyk check` checks against each handler, handlers whose return value is the response, errors whose internal message never reaches a client, and calls to other services, in the [`varyk-http`](https://github.com/Varyk-Lang/varyk-http) package on axum and reqwest. *Milestone 5b4.*
+- **MongoDB.** Documents from your structs, with times, ids, and bytes as native BSON types, and filters, updates, and pipelines in MongoDB's own syntax with the values beside the text, in the [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo) package on the official `mongodb` crate; `varyk add mongo` adds it. *After milestone 5.*
 
 Varyk exists so that ordinary backend services can be written simply and shipped as safe Rust. It is for the application: kernels, database engines, and borrow-heavy libraries stay in Rust, in a `.rs` file beside your Varyk, in the same build. [Read why Varyk exists](/why/).
 
@@ -142,7 +143,7 @@ From your source to the binary:
 - Concrete code, with few abstractions to see through.
 - rustc checks memory safety and data races, so a review can focus on what the service does.
 - A reference that fits in a prompt, and JSON diagnostics with codes and fix-its, so the agent fixes its own mistakes first.
-- One official stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; databases and HTTP as the packages `varyk-sql`, since milestone 5b3, and `varyk-http`, since milestone 5b4).
+- One official stack for HTTP, JSON, and databases, the same in every Varyk service (JSON since milestone 5a; databases and HTTP as the packages `varyk-sql`, since milestone 5b3, and `varyk-http`, since milestone 5b4, and MongoDB as `varyk-mongo`, after milestone 5).
 
 ## Ordered milestones, no *dates.*
 
@@ -156,7 +157,9 @@ From your source to the binary:
 8. **Milestone 5b3, complete.** Facades for packages: a `.rs` facade function that reads its result into whatever type the caller names, takes any number of values after its other arguments, or takes only text written in the program, plus `pub use` and `varyk add sql`. Released as 0.6.0, with the database package `varyk-sql`, in [its own repository](https://github.com/Varyk-Lang/varyk-sql), released as 0.1.0.
 9. **Milestone 5b4, complete.** HTTP: routes and hooks on an app of the `varyk-http` package, each route checked against its handler by `varyk check`, an optional status on `Error`, `app.request` for tests, and `varyk add http sql`. Released as 0.7.0, with the HTTP package `varyk-http`, in [its own repository](https://github.com/Varyk-Lang/varyk-http), released as 0.1.0: a users API on a database is `varyk init`, `varyk add http sql`, one file, and `varyk run` away.
 10. **Milestone 5c, complete.** Time, ids, and bytes: `Time`, `Uuid`, and `Bytes` as built-in types, through JSON, database values, and facades, and `Time` and `Uuid` through configuration and route parameters, so the users API does not send a date as a string. Released as 0.8.0, with `varyk-sql` 0.3.0, which stores the three as native columns, and `varyk-http` 0.2.0, which reads times and ids from routes and sends and receives bytes; with them, milestone 5 is met.
-11. **Milestone 6, next.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend.
+11. **Milestone 6, planned.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend. Not started, and not scheduled.
+
+After milestone 5 came the next packages, each in its own repository: the MongoDB package [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo), released as 0.1.0, and `varyk-sql` 0.4.0, with `$1` placeholders on every database. Varyk 0.8.1 added what `varyk-mongo` needs, and 0.8.2 added `varyk add mongo`. `varyk-redis` is next.
 
 The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
 

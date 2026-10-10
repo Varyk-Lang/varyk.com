@@ -37,8 +37,8 @@ varyk run [file.vr] [--release] [-- args...]     build, then run with the given 
 varyk test [file.vr]                             build the tests and run them
 varyk init [dir] [--lib]                         write a new package
 varyk add [cargo add args]                       run cargo add in the package
-varyk add http sql                               add the official packages as `http` and `sql`
-varyk add sql [cargo add args]                   add one official package under its short name
+varyk add http sql mongo                         add the official packages as `http`, `sql`, and `mongo`
+varyk add sql [cargo add args]                   add one official package under its short name (`http`, `sql`, `mongo`)
 varyk publish [--assemble-only] [-- cargo args]  check, assemble a plain Rust crate, and run
                                                   cargo publish there
 ```
@@ -100,7 +100,7 @@ cd hello
 varyk run
 ```
 
-It prints `Hello, world!`. `init` wrote four files: `Cargo.toml` (the manifest, with `edition = "2024"`, a `[[bin]]` table naming `src/main.vr` as the package's root, and `varyk-std`, the crate behind `Error`, `json`, `env`, `log`, tasks, and `Time`, `Uuid`, and `Bytes`, under `[dependencies]`), `.gitignore` and `.dockerignore`, which keep the build folder and `.env` out of git and out of a container build, and `src/main.vr`, the program. Inside the package, commands need no file name. A Varyk package is built by `varyk`, not by plain `cargo build`, since its root is Varyk, not Rust; cargo's other tools, such as `cargo add` and `cargo tree`, still read it. To use another Varyk package, list it under `[dependencies]` and name it by its key: with `units = { path = "../units" }`, Varyk code calls `units::length::add(a, b)`; the [trip](/learn/examples/#trip) example uses two packages this way. To use a Rust crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way. To serve HTTP and use a database, the official packages `varyk-http` and `varyk-sql` do it, as the next section shows.
+It prints `Hello, world!`. `init` wrote four files: `Cargo.toml` (the manifest, with `edition = "2024"`, a `[[bin]]` table naming `src/main.vr` as the package's root, and `varyk-std`, the crate behind `Error`, `json`, `env`, `log`, tasks, and `Time`, `Uuid`, and `Bytes`, under `[dependencies]`), `.gitignore` and `.dockerignore`, which keep the build folder and `.env` out of git and out of a container build, and `src/main.vr`, the program. Inside the package, commands need no file name. A Varyk package is built by `varyk`, not by plain `cargo build`, since its root is Varyk, not Rust; cargo's other tools, such as `cargo add` and `cargo tree`, still read it. To use another Varyk package, list it under `[dependencies]` and name it by its key: with `units = { path = "../units" }`, Varyk code calls `units::length::add(a, b)`; the [trip](/learn/examples/#trip) example uses two packages this way. To use a Rust crate, add it with `varyk add` or `cargo add` and call it from a `.rs` file in the package, a facade that wraps what the program needs; the [matcher](/learn/examples/#matcher) example wraps `regex-lite` this way. To serve HTTP and use a database, the official packages `varyk-http` and `varyk-sql` do it, as the next section shows; for MongoDB, `varyk add mongo` adds the official [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo#readme) package.
 
 ## A first service
 
@@ -140,7 +140,7 @@ async fn list_users(state: Shared<State>) -> Result<Vec<User>, Error> {
 }
 
 async fn create_user(user: NewUser, state: Shared<State>) -> Result<User, Error> {
-    let id: i64 = state.db.one("insert into users (name) values (?) returning id", user.name).await?;
+    let id: i64 = state.db.one("insert into users (name) values ($1) returning id", user.name).await?;
     Ok(User { id: id, name: user.name.clone() })
 }
 
