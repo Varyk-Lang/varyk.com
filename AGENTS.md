@@ -25,7 +25,7 @@ Update the docs, `README.md` included (and `docs/design-guidelines.md`, `AGENTS.
 - `config.toml` site settings; nav and footer links live under `[extra]`.
 - `scripts/build.sh` build entry point for local builds, CI, and Cloudflare.
 - `scripts/agents.sh` writes a Markdown copy of each page (the home page copy starts with the hero lead from `extra.lead`) and `/llms.txt`, and checks the borrowing figure against the borrowing example.
-- `syntaxes/varyk.json` minimal grammar that keeps Varyk code blocks labelled `varyk`.
+- `syntaxes/varyk.json` the Varyk grammar, a copy of `textmate/varyk.tmLanguage.json` from [Varyk-Lang/varyk-editors](https://github.com/Varyk-Lang/varyk-editors); it keeps Varyk code blocks labelled `varyk`. Refresh it by copying from there, never edit it here.
 - `wrangler.jsonc` the Worker: assets only, custom domain `varyk.com`.
 - `docs/design-guidelines.md` the design system: logo, colour, type, layout, components; `docs/brand/` the logo as standalone SVG files. Neither is published.
 

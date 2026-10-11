@@ -9,7 +9,7 @@ The site is built with [Zola](https://www.getzola.org) and served as static asse
 - `content/` — the pages, as Markdown with TOML front matter.
 - `templates/` — Tera templates; `partials/` holds the head, nav, footer, the logo, the GitHub icon, the borrowing figure, and the hero figure; `robots.txt` is a template too.
 - `static/` — copied as is: `site.css`, `favicon.svg`, `og.png` (the social preview), `fonts/` (Newsreader, SIL Open Font License), `_headers`, `.well-known/security.txt`.
-- `syntaxes/varyk.json` — a minimal grammar so Varyk code blocks keep their `varyk` label.
+- `syntaxes/varyk.json` — the Varyk grammar, copied from `textmate/varyk.tmLanguage.json` in [Varyk-Lang/varyk-editors](https://github.com/Varyk-Lang/varyk-editors) and updated from there, so Varyk code blocks keep their `varyk` label.
 - `scripts/build.sh` — the build entry point for local builds, CI, and Cloudflare: uses the pinned Zola from `PATH` or downloads it into `.zola/`, builds into `public/`, then runs `scripts/agents.sh`.
 - `scripts/agents.sh` — writes a Markdown copy of every page (`<page>/index.md`, the home page copy starting with the hero lead) and `/llms.txt` for AI agents, and fails the build if the borrowing figure on the home page differs from the borrowing example.
 - `config.toml` — site settings; the nav and footer link lists and the site-wide copy live under `[extra]`.
