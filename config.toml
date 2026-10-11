@@ -12,8 +12,9 @@ generate_feeds = false
 feed_filenames = ["atom.xml"]
 
 # Zola 0.23 cannot switch highlighting off. Class-based output with the theme
-# stylesheet left unlinked renders code as plain text, and the small Varyk
-# grammar keeps `data-lang="varyk"` on Varyk blocks instead of "plain".
+# stylesheet left unlinked renders code as plain text, and the Varyk grammar
+# (a copy of varyk-editors' textmate/varyk.tmLanguage.json, updated from
+# there) keeps `data-lang="varyk"` on Varyk blocks instead of "plain".
 [markdown.highlighting]
 style = "class"
 theme = "github-light"
