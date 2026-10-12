@@ -157,15 +157,15 @@ From your source to the binary:
 8. **Milestone 5b3, complete.** Facades for packages: a `.rs` facade function that reads its result into whatever type the caller names, takes any number of values after its other arguments, or takes only text written in the program, plus `pub use` and `varyk add sql`. Released as 0.6.0, with the database package `varyk-sql`, in [its own repository](https://github.com/Varyk-Lang/varyk-sql), released as 0.1.0.
 9. **Milestone 5b4, complete.** HTTP: routes and hooks on an app of the `varyk-http` package, each route checked against its handler by `varyk check`, an optional status on `Error`, `app.request` for tests, and `varyk add http sql`. Released as 0.7.0, with the HTTP package `varyk-http`, in [its own repository](https://github.com/Varyk-Lang/varyk-http), released as 0.1.0: a users API on a database is `varyk init`, `varyk add http sql`, one file, and `varyk run` away.
 10. **Milestone 5c, complete.** Time, ids, and bytes: `Time`, `Uuid`, and `Bytes` as built-in types, through JSON, database values, and facades, and `Time` and `Uuid` through configuration and route parameters, so the users API does not send a date as a string. Released as 0.8.0, with `varyk-sql` 0.3.0, which stores the three as native columns, and `varyk-http` 0.2.0, which reads times and ids from routes and sends and receives bytes; with them, milestone 5 is met.
-11. **Milestone 6, planned.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend. Not started, and not scheduled.
+11. **Milestone 6, in progress.** Tooling and beyond: `varyk fmt`, a language server, more of Rust imported from `.rs` files, and a decision on a native backend. The first of it came as 0.9.0: `varyk lsp`, which shows errors and quick fixes in an editor when a file is opened or saved, and a `varyk-std` line that names the oldest varyk a package needs, so a varyk release no longer stops a published package from building. Not scheduled.
 
 After milestone 5 came the next packages, each in its own repository: the MongoDB package [`varyk-mongo`](https://github.com/Varyk-Lang/varyk-mongo), released as 0.1.0, and [`varyk-sql`](https://github.com/Varyk-Lang/varyk-sql) 0.4.0, with `$1` placeholders on every database. Varyk 0.8.1 added what `varyk-mongo` needs, and 0.8.2 added `varyk add mongo`. `varyk-redis` is next.
 
-The [roadmap](/design/roadmap/) has every item; nothing there is a date or a release commitment.
+The [roadmap](/design/roadmap/) has every item. None of it has a date, and none of it is a promise of a release.
 
 ## Install. Write. Run.
 
-Varyk requires a stable Rust toolchain installed through [rustup](https://rustup.rs). Install the compiler, write a package, and run it:
+Varyk requires a stable Rust toolchain, 1.88 or newer, installed through [rustup](https://rustup.rs). Install the compiler, write a package, and run it:
 
 ```text
 $ cargo install varyk --locked
@@ -175,4 +175,4 @@ $ varyk run
 Hello, world!
 ```
 
-`init` wrote `Cargo.toml`, `.gitignore`, `.dockerignore`, and `src/main.vr`, the program. Continue with [getting started](/learn/getting-started/), which ends with [a first service](/learn/getting-started/#a-first-service) on HTTP and a database, and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).
+`init` wrote `Cargo.toml`, `.gitignore`, `.dockerignore`, and `src/main.vr`, the program. For colour and errors in your editor, install the **Varyk** extension in VS Code, or in Zed once Zed lists it ([set up your editor](/install/#set-up-your-editor)). Continue with [getting started](/learn/getting-started/), which ends with [a first service](/learn/getting-started/#a-first-service) on HTTP and a database, and the [language reference](/learn/reference/). Source and issues are at [github.com/Varyk-Lang/varyk](https://github.com/Varyk-Lang/varyk).

@@ -61,7 +61,11 @@ Not a milestone: packages that came after milestone 5, each in its own repositor
 
 ## Milestone 6: tooling and beyond
 
-Planned, not started, and not scheduled. `varyk fmt`, a deterministic formatter on `varyk-syntax`; a language server on `varyk-syntax`; nested modules in `.rs` files; import of Rust tuple and unit structs; `Debug` on imported Rust structs, with a `{:?}` placeholder; and a decision on a native backend. Direct import of a published Varyk library from Varyk, once listed here, arrived in milestone 5b2.
+In progress, and not scheduled.
+
+- **Released as 0.9.0:** `varyk lsp`, the language server's first stage: diagnostics and quick fixes when a file is opened or saved, in any editor that speaks the Language Server Protocol, with extensions for VS Code and Zed in [`varyk-editors`](https://github.com/Varyk-Lang/varyk-editors); a package's `varyk-std` line names the oldest varyk it needs, so a minor varyk release does not stop it from building; and Rust 1.88 as the oldest supported Rust.
+
+Still planned: `varyk fmt`, a deterministic formatter on `varyk-syntax`; the rest of the language server, hover, go-to-definition, and completion, which need error recovery in the parser; nested modules in `.rs` files; import of Rust tuple and unit structs; `Debug` on imported Rust structs, with a `{:?}` placeholder; and a decision on a native backend. Direct import of a published Varyk library from Varyk, once listed here, arrived in milestone 5b2.
 
 ## Unscheduled
 
